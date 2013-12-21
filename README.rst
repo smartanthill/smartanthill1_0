@@ -1,18 +1,6 @@
 SmartAnthill
 ============
 
-.. code-block::
-                      _________________________________________
-                    /                                        /\
-                   /        \/             \\             __/ /\
-                  /   ___  _@@    Smart    @@_  ___     /  \/
-                 /   (___)(_)    Anthill    (_)(___)   /__
-                /    //|| ||                 || ||\\     /\
-               /_______________________________________/ /
-               \_______________________________________\/
-                \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
-
-
 `SmartAnthill <http://smartanthill.readthedocs.org/en/latest/index.html>`_ is an
 intelligent micro-oriented networked system. It opens the doors for people
 that not familiar with electronics and micro-controller programming, but early
