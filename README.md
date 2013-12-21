@@ -2,15 +2,15 @@ SmartAnthill
 ============
 
 ```
-                             _________________________________________
-                            /                                        /\
-                           /        \/             \\             __/ /\
-                          /   ___  _@@    Smart    @@_  ___     /  \/
-                         /   (___)(_)    Anthill    (_)(___)   /__
-                        /    //|| ||                 || ||\\     /\
-                       /_______________________________________/ /
-                       \_______________________________________\/
-                        \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+                     _________________________________________
+                    /                                        /\
+                   /        \/             \\             __/ /\
+                  /   ___  _@@    Smart    @@_  ___     /  \/
+                 /   (___)(_)    Anthill    (_)(___)   /__
+                /    //|| ||                 || ||\\     /\
+               /_______________________________________/ /
+               \_______________________________________\/
+                \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
 ```
 
 [SmartAnthill](http://smartanthill.readthedocs.org/en/latest/index.html) is an
@@ -31,7 +31,7 @@ Documentation
 -------------
 
 You can find detailed documentation on
-[ReadTheDocs](http://smartanthill.readthedocs.org/en/latest/index.html)
+[ReadTheDocs](http://smartanthill.readthedocs.org/en/latest/index.html).
 
 Questions
 ---------
@@ -42,4 +42,5 @@ Licence
 -------
 
 Copyright (c) 2013 Ivan Kravets
+
 Licenced under the MIT Licence.
