@@ -33,7 +33,6 @@ setup(
         'Topic :: Home Automation',
         'Topic :: Internet',
         'Topic :: Scientific/Engineering',
-        'Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)',
         'Topic :: Scientific/Engineering :: Human Machine Interfaces',
         'Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator',
         'Topic :: Software Development :: Compilers',
