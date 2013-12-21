@@ -1,0 +1,51 @@
+@startuml
+participant SACP
+
+SACP -> SATP: Message
+activate SATP
+
+SATP -> SARP: Segment #1
+activate SARP
+
+SARP -> Device: Packet #1
+activate Device
+Device --> SARP: ACK=OK for Packet #1
+deactivate Device
+
+SARP --> SATP: ACK=OK for Segment #1
+deactivate SARP
+
+SATP -> SARP: Segment #2
+activate SARP
+
+SARP -> Device: Packet #2
+activate Device #DarkSalmon
+Device --> SARP: ACK=FAILURE for Packet #2
+destroy Device
+
+SARP --> SATP: ACK=FAILURE for Segment #2
+SATP -> SARP: Segment #2
+
+SARP -> Device: Packet #2
+activate Device
+Device --> SARP: ACK=OK for Packet #2
+deactivate Device
+
+SARP --> SATP: ACK=OK for Segment #2
+deactivate SARP
+
+SATP -> SARP: Segment #N
+activate SARP
+
+SARP -> Device: Packet #N
+activate Device
+Device --> SARP: ACK=OK for Packet #N
+deactivate Device
+
+SARP --> SATP: ACK=OK for Segment #N
+deactivate SARP
+
+SATP --> SACP: ACK=OK for Message
+deactivate SATP
+
+@enduml
