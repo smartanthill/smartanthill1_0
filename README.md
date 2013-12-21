@@ -2,15 +2,15 @@ SmartAnthill
 ============
 
 ```
-                                       _________________________________________
-                                     /                                        /\
-                                    /        \/             \\             __/ /\
-                                   /   ___  _@@    Smart    @@_  ___     /  \/
-                                  /   (___)(_)    Anthill    (_)(___)   /__
-                                 /    //|| ||                 || ||\\     /\
-                                /_______________________________________/ /
-                                \_______________________________________\/
-                                 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \   
+                                      _________________________________________
+                                    /                                        /\
+                                   /        \/             \\             __/ /\
+                                  /   ___  _@@    Smart    @@_  ___     /  \/
+                                 /   (___)(_)    Anthill    (_)(___)   /__
+                                /    //|| ||                 || ||\\     /\
+                               /_______________________________________/ /
+                               \_______________________________________\/
+                                \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \   
 ```
 
 [SmartAnthill](http://smartanthill.readthedocs.org/en/latest/index.html) is an intelligent micro-oriented networked system. It opens
@@ -23,7 +23,7 @@ into general [SmartAnthill Network](http://smartanthill.readthedocs.org/en/lates
 You do not need to learn micro-programming languages, you do not need to install
 any [IDE](http://en.wikipedia.org/wiki/Integrated_development_environment)
 or [Toolchain](http://en.wikipedia.org/wiki/Toolchain). All you need is to
-connect micro-device to |SA|, to select capabilities that device should
+connect micro-device to SmartAnthill, to select capabilities that device should
 have and ["train it"](http://smartanthill.readthedocs.org/en/latest/index.html#id2) to behave as the network device. 
 
 Documentation
