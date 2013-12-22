@@ -15,16 +15,32 @@ or `Toolchain <http://en.wikipedia.org/wiki/Toolchain>`_. All you need is to
 connect micro-device to SmartAnthill, to select capabilities that device should
 have and "train it" to behave as the network device.
 
+Applications
+------------
+
+* Connectivity
+* Sensor aggregation
+* Security and access control
+* Home and building automation
+* Industrial automation
+* Human machine interface
+* Lighting control
+* Energy
+* Data acquisition
+* System management
+
 Documentation
 -------------
 
 You can find detailed documentation on
-`ReadTheDocs <http://smartanthill.readthedocs.org/en/latest/index.html>`_.
+`Read The Docs <http://smartanthill.readthedocs.org/en/latest/index.html>`_.
 
 Questions
 ---------
 
-Please use the issue tracker to ask questions.
+Please use the
+`issue tracker <https://github.com/ivankravets/smartanthill/issues>`_
+to ask questions.
 
 Licence
 -------

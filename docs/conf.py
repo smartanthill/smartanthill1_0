@@ -68,7 +68,7 @@ release = smartanthill.__version__
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', '_diagrams']
+exclude_patterns = ['_build']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -177,7 +177,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'smartanthilldoc'
+htmlhelp_basename = 'SmartAnthilldoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------

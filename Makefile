@@ -5,3 +5,6 @@ all: docs
 
 docs:
 	$(MAKE) -C docs/ html
+
+pushrtfd:
+	curl -X POST http://readthedocs.org/build/smartanthill
