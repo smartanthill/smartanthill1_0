@@ -5,7 +5,7 @@ Welcome to SmartAnthill's Documentation
 =======================================
 
 :Release: |release|
-:Status:  Planing
+:Status:  Planning
 :Date:    |today|
 :Author:  `Ivan Kravets <http://www.ikravets.com/about-me>`_
 

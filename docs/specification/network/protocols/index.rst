@@ -1,7 +1,7 @@
 Protocols
 =========
 
-.. image:: ../../../_static/diagrams/protocols.png
+.. image:: protocols.png
 
 .. toctree::
     :maxdepth: 2
