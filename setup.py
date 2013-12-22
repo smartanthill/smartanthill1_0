@@ -10,7 +10,7 @@ setup(
     long_description=open("README.rst").read(),
     author='Ivan Kravets',
     author_email='me@ikravets.com',
-    url='https://github.com/ivankravets/smartanthill',
+    url='http://www.ikravets.com/smartanthill',
     license='MIT Licence',
     classifiers=[
         'Development Status :: 1 - Planning',
