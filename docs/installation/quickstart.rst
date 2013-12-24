@@ -16,7 +16,7 @@ Installation
 ------------
 
 .. warning::
-    |SA| is not released yet. Please
+    |SA| has not been released yet. Please
     `follow us <http://www.ikravets.com/smartanthill>`_ and you will be
     informed about all news.
 
