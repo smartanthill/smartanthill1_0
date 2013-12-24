@@ -47,7 +47,7 @@ Home Page
 All information about this project you can find on special
 [SmartAnthill Home Page](http://www.ikravets.com/smartanthill).
 
-Here I will publish article about *"How we can use SmartAnthill in our life"*.
+Here I will publish articles about *"How we can use SmartAnthill in our life"*.
 
 Documentation
 -------------
