@@ -1,4 +1,5 @@
 .. |SA| replace:: *SmartAnthill*
+.. |SASys| replace:: *SmartAnthill System*
 
 Quick-Start
 ===========
@@ -11,15 +12,28 @@ Requirements
 * PyYAML, http://pyyaml.org
 * PySerial, http://pyserial.sourceforge.net
 
-Download
---------
+Installation
+------------
 
-Using `PIP <http://www.pip-installer.org/en/latest/index.html>`_::
+.. warning::
+    |SA| is not released yet. Please
+    `follow us <http://www.ikravets.com/smartanthill>`_ and you will be
+    informed about all news.
 
-    pip install smartanthill
+To install the latest release via
+`PIP <http://www.pip-installer.org/en/latest/index.html>`_:
 
-Go to https://github.com/ivankravets/smartanthill if you need to download
-a package or clone the repository.
+.. code-block:: bash
+
+    $ pip install smartanthill
+
+To install the development version:
+
+.. code-block:: bash
+
+    $ git clone https://github.com/ivankravets/smartanthill.git
+    $ cd smartanthill
+    $ python setup.py install
 
 
 .. _datadir:
@@ -28,46 +42,54 @@ Working Data Directory
 ----------------------
 
 The only one option that is required for starting |SA| is ``--data`` (the path
-to working data directory, like "project directory"). |SA| will use this
+to the working data directory, like "project directory"). |SA| will use this
 folder for:
 
-* to find user's specific start-up configuration options. They must be located
+* finding user's specific start-up configuration options. They must be located
   in the ``config.yaml`` file. (Check the list of the available options at
   :ref:`configuration` page)
-* to find the *Addons* for :ref:`sasys`
-* to store the settings about micro-devices
-* to store the another working data.
+* finding the *Addons* for |SASys|
+* storing the settings about micro-devices
+* storing the another working data.
 
 .. warning::
-    The *Working Data Directory* must have `Write Permission
+    The *Working Data Directory* must have `Written Permission
     <http://en.wikipedia.org/wiki/File_system_permissions>`_
 
 
-Launch
-------
+Getting Started
+---------------
 
 |SA| is based on `Twisted <http://en.wikipedia.org/wiki/Twisted_(software)>`_
-and can be launched as
-`Background Process <http://en.wikipedia.org/wiki/Background_process>`_ well as
-*Foreground Process*
+and can be started as
+`Background Process <http://en.wikipedia.org/wiki/Background_process>`_ as well
+as *Foreground Process*
 
 Background Process
 ^^^^^^^^^^^^^^^^^^
-The launching in *Background Process* implements through ``twistd`` utility. The
-whole list of usage options for ``twistd`` are accessible via ``twistd -h``
-command. The final |SA| command looks like::
 
-    twistd smartanthill --data=/path/to/working/data/directory
+The starting in the *Background Process* implements through ``twistd`` utility.
+The whole list of usage options for ``twistd`` is accessible via ``twistd -h``
+command. The final |SA| command looks like:
 
-The whole list of usage options for |SA| are accessible via::
+.. code-block:: bash
 
-    twistd smartanthill --help
+    $ twistd smartanthill --data=/path/to/working/data/directory
+
+The whole list of usage options for |SA| is accessible via:
+
+.. code-block:: bash
+
+    $ twistd smartanthill --help
 
 Foreground Process
 ^^^^^^^^^^^^^^^^^^
-The command for *Foreground Process*::
 
-    twistd --nodaemon smartanthill --data=/path/to/working/data/directory
+The command for *Foreground Process*:
+
+.. code-block:: bash
+
+    $ twistd --nodaemon smartanthill --data=/path/to/working/data/directory
 
 
-Check the :ref:`configuration` page for detail configuration options.
+Check the :ref:`configuration` page for detailed configuration options.

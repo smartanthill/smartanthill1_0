@@ -6,7 +6,7 @@ from smartanthill import __version__
 setup(
     name='smartanthill',
     version=__version__,
-    description='An intelligent micro-oriented networked system',
+    description='An intelligent micro-oriented networking system',
     long_description=open("README.rst").read(),
     author='Ivan Kravets',
     author_email='me@ikravets.com',

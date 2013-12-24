@@ -19,7 +19,7 @@
 
 |SAES| allows main :ref:`sasys` to communicate with hardware part
 (`Peripherals <http://en.wikipedia.org/wiki/Peripheral>`_) of micro-based
-device through *Network Layer* of :ref:`sanet` Model.
+device through *Network Layer* of :ref:`netmodel`.
 
 
 Peripherals

@@ -1,4 +1,5 @@
 .. |SA| replace:: *SmartAnthill*
+.. |SASys| replace:: *SmartAnthill System*
 
 .. _configuration:
 
@@ -24,7 +25,7 @@ The |SA| *Configuration Parser* gathers data in the next order (steps):
 
 Base Configuration
 ------------------
-The :ref:`baseconf` is predefined in :ref:`sasys`:
+The :ref:`baseconf` is predefined in |SASys|:
 
 .. literalinclude:: ../../smartanthill/config_base.yaml
    :language: yaml
@@ -40,10 +41,12 @@ Working Configuration
 Console Options
 ---------------
 
-The simple options that defined in :ref:`baseconf` can be redefined through
+The simple options that are defined in :ref:`baseconf` can be redefined through
 console options for |SA| *Application*.
 
-The whole list of usage options for |SA| are accessible via::
+The whole list of usage options for |SA| are accessible via:
 
-    twistd smartanthill --help
+.. code-block:: bash
+
+    $ twistd smartanthill --help
 

@@ -43,45 +43,45 @@ Packet structure
 ``SOP (8 bits)``
 ^^^^^^^^^^^^^^^^
 
-Specifies the start of the packet. These 8 bits are equal to `ASCII Start Of
+It specifies the start of the packet. These 8 bits are equal to `ASCII Start Of
 Heading (SOH) <http://en.wikipedia.org/wiki/C0_and_C1_control_codes>`_
 character ``0x1``.
 
 ``SACP (10 bits)``
 ^^^^^^^^^^^^^^^^^^
 
-The *Channel* and *Data Classifier* for |SACP|.
+These are the *Channel* and *Data Classifier* for |SACP|.
 
 ``Source device (8 bits)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The *Identifier (ID)* of the source device. |SANet| supports up to 255 devices.
-Each device has unique identifier from range 0-255. The device with ``ID=0x0``
-corresponds to :ref:`zvd`.
+This is an *Identifier (ID)* of the source device. |SANet| supports up to 255
+devices. Each device has unique identifier from range 0-255. The device with
+``ID=0x0`` corresponds to :ref:`zvd`.
 
 ``Destination device (8 bits)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The *Identifier (ID)* of destination device. |SANet| supports up to 255 devices.
-Each device has unique identifier from range 0-255. The device with ``ID=0x0``
-corresponds to :ref:`zvd`.
+This is an *Identifier (ID)* of destination device. |SANet| supports up to 255
+devices. Each device has unique identifier from range 0-255. The device with
+``ID=0x0`` corresponds to :ref:`zvd`.
 
 ``SATP (3 bits)``
 ^^^^^^^^^^^^^^^^^
 
-The *Segmentation*, *Final* and *Acknowledgment* flags for |SATP|
+These are the *Segmentation*, *Final* and *Acknowledgment* flags for |SATP|
 
 ``Data length (4 bits)``
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-The length of *Payload* data in bytes. The *Packet* can be empty (without
+This is a length of *Payload* data in bytes. The *Packet* can be empty (without
 *Payload*). In this situation ``Data length=0x0`` and *Payload* part is not
 present in the *Packet*. The maximum size of *Payload* part are 8 bytes.
 
 ``Data (0-64 bits)``
 ^^^^^^^^^^^^^^^^^^^^
 
-The *Payload* part for |SATP|.
+This is a *Payload* part for |SATP|.
 
 ``CRC (16 bits)``
 ^^^^^^^^^^^^^^^^^
@@ -92,6 +92,6 @@ parts.
 ``EOF (8 bits)``
 ^^^^^^^^^^^^^^^^
 
-Specifies the end of the packet. These 8 bits are equal to `ASCII End of
+It specifies the end of the packet. These 8 bits are equal to `ASCII End of
 Transmission (SOH) <http://en.wikipedia.org/wiki/C0_and_C1_control_codes>`_
 character ``0x17``.

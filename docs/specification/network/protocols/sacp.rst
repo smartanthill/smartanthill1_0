@@ -36,9 +36,9 @@ Message structure
 ``Channel (3 bits)``
 ^^^^^^^^^^^^^^^^^^^^
 
-The *Channel ID* that specifies the priority of this *Message*. The smaller ID
-is, the *Message* has the greater priority. For the whole channels list please
-check the :ref:`cdc`.
+This is a *Channel ID* that specifies the priority of this *Message*. The
+smaller ID is, greater priority has the *Message*. For the whole channels
+list please check the :ref:`cdc`.
 
 
 ``Data Classifier (7 bits)``
@@ -49,30 +49,31 @@ Check the :ref:`cdc`
 ``SARP (16 bits)``
 ^^^^^^^^^^^^^^^^^^
 
-The address information that contains *Source and Destination IDs* for |SARP|.
+This is an address information that contains *Source and Destination IDs*
+for |SARP|.
 
 ``SATP (2 bits)``
 ^^^^^^^^^^^^^^^^^
 
-The *Segmentation* and *Final* flags for |SATP|.
+These are the *Segmentation* and *Final* flags for |SATP|.
 
 ``ACK (1 bit)``
 ^^^^^^^^^^^^^^^
 
-This is *Acknowledgment* flag. If ``ACK=1`` then this *Message* should be
+This is an *Acknowledgment* flag. If ``ACK=1`` then this *Message* should be
 confirmed by recipient about reception.
 
 ``Data length (11 bits)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The length of *Payload* part in bytes. The *Message* can be empty (without
-*Payload*). In this situation when ``Data length=0x0`` *Payload* part is not
-presented in the *Message*.
+This is a length of *Payload* part in bytes. The *Message* can be empty
+(without *Payload*). In this situation when ``Data length=0x0`` *Payload* part
+is not presented in the *Message*.
 
 ``Data (0-14336 bits)``
 ^^^^^^^^^^^^^^^^^^^^^^^
 The maximum size of *Payload* part is 1792 bytes.
 
 .. note::
-    This limitation caused by maximum numbers of *Segments* from |SATP|.
+    This limitation was caused by maximum numbers of *Segments* from |SATP|.
     ``256 segments * 7 bytes of user data = 1792 bytes``

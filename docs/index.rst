@@ -1,5 +1,5 @@
-.. |SA| replace:: SmartAnthill
-.. |SANet| replace:: :ref:`sanet`
+.. |SA| replace:: *SmartAnthill*
+.. |SANet| replace:: *SmartAnthill Network*
 
 Welcome to SmartAnthill's Documentation
 =======================================
@@ -10,12 +10,12 @@ Welcome to SmartAnthill's Documentation
 :Author:  `Ivan Kravets <http://www.ikravets.com/about-me>`_
 
 
-:ref:`sasys` is an intelligent micro-oriented networked system. It opens
-the doors for people that not familiar with electronics and micro-controller
-programming, but early had dream to use it. The main goal of |SA| is to
-destroy the wall between usual user and hardware world. Thanks to this
-system we can combine the independent micro-devices or micro-based networks
-into general |SANet|.
+**SmartAnthill System** is an intelligent micro-oriented networking system.
+It opens the door for people that are not familiar with electronics and
+micro-controller programming, but earlier had dream to use it. The main goal of
+|SA| is to destroy the wall between usual user and hardware world. Thanks to
+this system we can combine the independent micro-devices or micro-based
+networks into general |SANet|.
 
 You do not need to learn micro-programming languages, you do not need to install
 any `IDE <http://en.wikipedia.org/wiki/Integrated_development_environment>`_
