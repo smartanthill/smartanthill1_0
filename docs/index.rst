@@ -9,6 +9,10 @@ Welcome to SmartAnthill's Documentation
 :Date:    |today|
 :Author:  `Ivan Kravets <http://www.ikravets.com/about-me>`_
 
+.. warning::
+    |SA| has not been released yet. The documentation is being updated. Please
+    `follow us <http://www.ikravets.com/smartanthill>`_ and you will be
+    informed about all news.
 
 **SmartAnthill System** is an intelligent micro-oriented networking system.
 It opens the door for people that are not familiar with electronics and
