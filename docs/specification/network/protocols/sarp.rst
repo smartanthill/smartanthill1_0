@@ -31,13 +31,13 @@ Packet structure
 +         +--------------------+---------------+-------------------------------+
 |         | SATP               | 3             | SATP flags                    |
 +         +--------------------+---------------+-------------------------------+
+|         | Delimiter          | 7             | Must be set to 0x0            |
++         +--------------------+---------------+-------------------------------+
 |         | Data length        | 4             | The length of data in bytes   |
 +---------+--------------------+---------------+-------------------------------+
 | Payload | Data               | 0-64          | Max 8 bytes                   |
 +---------+--------------------+---------------+-------------------------------+
 |         | CRC                | 16            | Checksum                      |
-+---------+--------------------+---------------+-------------------------------+
-|         | EOF                | 8             | End of packet                 |
 +---------+--------------------+---------------+-------------------------------+
 
 ``SOP (8 bits)``
@@ -88,10 +88,3 @@ This is a *Payload* part for |SATP|.
 
 The 16-bit checksum is used for error-checking of the *Header* and *Payload*
 parts.
-
-``EOF (8 bits)``
-^^^^^^^^^^^^^^^^
-
-It specifies the end of the packet. These 8 bits are equal to `ASCII End of
-Transmission (SOH) <http://en.wikipedia.org/wiki/C0_and_C1_control_codes>`_
-character ``0x17``.
