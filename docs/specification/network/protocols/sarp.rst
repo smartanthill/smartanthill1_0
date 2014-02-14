@@ -23,7 +23,7 @@ Packet structure
 +=========+====================+===============+===============================+
 |         | SOP                | 8             | Start of packet               |
 +---------+--------------------+---------------+-------------------------------+
-| Header  | SACP               | 10            | SACP Data Classifier          |
+| Header  | SACP               | 8             | SACP Data Classifier          |
 +         +--------------------+---------------+-------------------------------+
 |         | Source device      | 8             | The source device ID          |
 +         +--------------------+---------------+-------------------------------+
@@ -31,13 +31,15 @@ Packet structure
 +         +--------------------+---------------+-------------------------------+
 |         | SATP               | 3             | SATP flags                    |
 +         +--------------------+---------------+-------------------------------+
-|         | Delimiter          | 7             | Must be set to 0x0            |
+|         | Reserved           | 1             | Must be set to 0x0            |
 +         +--------------------+---------------+-------------------------------+
 |         | Data length        | 4             | The length of data in bytes   |
 +---------+--------------------+---------------+-------------------------------+
 | Payload | Data               | 0-64          | Max 8 bytes                   |
 +---------+--------------------+---------------+-------------------------------+
 |         | CRC                | 16            | Checksum                      |
++---------+--------------------+---------------+-------------------------------+
+|         | EOF                | 8             | End of packet                 |
 +---------+--------------------+---------------+-------------------------------+
 
 ``SOP (8 bits)``
@@ -47,7 +49,7 @@ It specifies the start of the packet. These 8 bits are equal to `ASCII Start Of
 Heading (SOH) <http://en.wikipedia.org/wiki/C0_and_C1_control_codes>`_
 character ``0x1``.
 
-``SACP (10 bits)``
+``SACP (8 bits)``
 ^^^^^^^^^^^^^^^^^^
 
 These are the *Channel* and *Data Classifier* for |SACP|.
@@ -69,7 +71,7 @@ devices. Each device has unique identifier from range 0-255. The device with
 ``SATP (3 bits)``
 ^^^^^^^^^^^^^^^^^
 
-These are the *Segmentation*, *Final* and *Acknowledgment* flags for |SATP|
+These are the *Segmentation*, *Final* and *Acknowledgment* flags for |SATP|.
 
 ``Data length (4 bits)``
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -88,3 +90,10 @@ This is a *Payload* part for |SATP|.
 
 The 16-bit checksum is used for error-checking of the *Header* and *Payload*
 parts.
+
+``EOF (8 bits)``
+^^^^^^^^^^^^^^^^
+
+It specifies the end of the packet. These 8 bits are equal to `ASCII End of
+Transmission (SOH) <http://en.wikipedia.org/wiki/C0_and_C1_control_codes>`_
+character ``0x17``.

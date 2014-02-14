@@ -1,6 +1,5 @@
 .. |SATP| replace:: :ref:`satp`
 .. |SARP| replace:: :ref:`sarp`
-.. _MSB: http://en.wikipedia.org/wiki/Most_significant_bit
 
 .. _cdc:
 
@@ -8,25 +7,17 @@ Channel Data Classifier
 =======================
 
 +-------+--------------------+-------+-----------------------------------------+
-| Channel (3 bits)           | Data Classifier (7 bits)                        |
+| Channel (2 bits)           | Data Classifier (6 bits)                        |
 +-------+--------------------+-------+-----------------------------------------+
 | ID    | Name               | ID    | Name                                    |
 +=======+====================+=======+=========================================+
 | 0x0   | :ref:`cdc_urg`     | 0x10  | :ref:`cdc_urg_0x10`                     |
 +-------+--------------------+-------+-----------------------------------------+
-| 0x1   | :ref:`cdc_ser`     |       |                                         |
+| 0x1   | :ref:`cdc_ed`      |       |                                         |
 +-------+--------------------+-------+-----------------------------------------+
-| 0x2   | :ref:`cdc_ed1`     |       |                                         |
+| 0x2   | :ref:`cdc_bdcreq`  |       |                                         |
 +-------+--------------------+-------+-----------------------------------------+
-| 0x3   | :ref:`cdc_ed2`     |       |                                         |
-+-------+--------------------+-------+-----------------------------------------+
-| 0x4   | :ref:`cdc_rt`      |       |                                         |
-+-------+--------------------+-------+-----------------------------------------+
-| 0x5   | :ref:`cdc_bdcreq`  |       |                                         |
-+-------+--------------------+-------+-----------------------------------------+
-| 0x6   | :ref:`cdc_bdcres`  |       |                                         |
-+-------+--------------------+-------+-----------------------------------------+
-| 0x7   | :ref:`cdc_mis`     |       |                                         |
+| 0x3   | :ref:`cdc_bdcres`  |       |                                         |
 +-------+--------------------+-------+-----------------------------------------+
 
 
@@ -42,16 +33,16 @@ tasks or operations.
 ``Segment Acknowledgment``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``ID=0x10`` The :ref:`cdc_urg_0x10` uses for notification that *Segment* from
-sender was received and verified. Then return *Segment* by |SATP| must have the
-next structure:
+``ID=0x10`` The :ref:`cdc_urg_0x10` uses for notification when *Segment* from
+sender was received and verified. The acknowledgment *Segment* by |SATP|
+must have the next structure:
 
 +---------+--------------------+---------------+-------------------------------+
 | Part    | Field name         | Length (bits) | Value                         |
 +=========+====================+===============+===============================+
-| Header  | Channel            | 3             | 0x0                           |
+| Header  | Channel            | 2             | 0x0                           |
 +         +--------------------+---------------+-------------------------------+
-|         | Data Classifier    | 7             | 0x10                          |
+|         | Data Classifier    | 6             | 0x10                          |
 +         +--------------------+---------------+-------------------------------+
 |         | SARP               | 16            | |SARP| address information    |
 +         +--------------------+---------------+-------------------------------+
@@ -61,38 +52,23 @@ next structure:
 +         +--------------------+---------------+-------------------------------+
 |         | ACK                | 1             | 0x0                           |
 +         +--------------------+---------------+-------------------------------+
-|         | Data length        | 4             | Length of Data in bytes       |
+|         | Reserved           | 1             | Must be set to 0x0            |
++         +--------------------+---------------+-------------------------------+
+|         | Data length        | 4             | 0x5                           |
 +---------+--------------------+---------------+-------------------------------+
-| Payload | Data               | 40            | *Header* part from received   |
-|         |                    |               | *Segment* without *Data       |
-|         |                    |               | Length* field (4 bytes)       |
-|         |                    |               | and *Segment Order* (1 byte)  |
-|         |                    |               | must be packed to MSB_        |
+| Payload | Data               | 32            | The *Header* part from        |
+|         |                    |               | received *Segment*            |
++         +                    +---------------+-------------------------------+
+|         |                    | 8             | The *Segment Order* that can  |
+|         |                    |               | be located in the first block |
+|         |                    |               | of *Data* field if ``SEG=1``  |
 +---------+--------------------+---------------+-------------------------------+
 
 
-.. _cdc_ser:
+.. _cdc_ed:
 
-Service
--------
-
-
-.. _cdc_ed1:
-
-Event-Driven 1
---------------
-
-
-.. _cdc_ed2:
-
-Event-Driven 2
---------------
-
-
-.. _cdc_rt:
-
-Remote Trigger
---------------
+Event-Driven
+------------
 
 
 .. _cdc_bdcreq:
@@ -105,9 +81,3 @@ Bi-Directional Communication (Request)
 
 Bi-Directional Communication (Response)
 ---------------------------------------
-
-
-.. _cdc_mis:
-
-Miscellaneous
--------------
