@@ -34,11 +34,13 @@ Frame structure
 +---------+--------------------+----+----------+-------------------------------+
 | Part    | Field name         | Length (bits) | Description                   |
 +=========+====================+====+==========+===============================+
-| Header  | SACP               | 29 | 10       | SACP Data Classifier          |
+| Header  | SACP               | 29 | 8        | SACP Data Classifier          |
 +         +--------------------+    +----------+-------------------------------+
 |         | SARP               |    | 16       | SARP address information      |
 +         +--------------------+    +----------+-------------------------------+
 |         | SATP               |    | 3        | SATP flags                    |
++         +--------------------+    +----------+-------------------------------+
+|         | Reserved           |    | 2        | Must be set to 0x0            |
 +---------+--------------------+----+----------+-------------------------------+
 | Length  | Data length        | 4             | The length of data in bytes   |
 +---------+--------------------+----+----------+-------------------------------+
@@ -50,8 +52,8 @@ Frame structure
     are not presented in this structure because the CAN_ protocol has own
     implementation for its.
 
-``SACP (10 bits)``
-******************
+``SACP (8 bits)``
+*****************
 The *Channel* and *Data Classifier* for |SACP|.
 
 ``SARP (16 bits)``

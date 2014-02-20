@@ -1,0 +1,21 @@
+@startuml
+
+start
+
+if (Out-Packets Stack is not empty?) then (yes)
+    :Resend non-ACKed Out-Packets;
+endif
+
+while (Is income data available?)
+    :Parse Network Packet;
+    
+    if (Is new Packet?) then (yes)
+        if (PACKET_FLAG_ACK?) then (yes)
+            :Acknowledge In-Packet;
+        endif
+    endif
+end while
+
+stop
+
+@enduml

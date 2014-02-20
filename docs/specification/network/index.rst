@@ -23,5 +23,6 @@ be extended with another |SANET| or with Fieldbuses_, like CAN_.
 
     netmodel
     protocols/index
+    cdc/index
     can
     zvd

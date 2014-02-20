@@ -48,10 +48,10 @@ Specification
 .. toctree::
     :maxdepth: 2
 
+    specification/network/index
     specification/system/index
     specification/embedded/index
-    specification/network/index
 
 
-.. [#] The *"train it"* is that |SA| creates unique :ref:`saes` (firmware) for
-    each supported micro-device and then installs it.
+.. [#] The *"train it"* is that |SA| creates unique :ref:`esystem`
+    (firmware) for each supported micro-device and then installs it.

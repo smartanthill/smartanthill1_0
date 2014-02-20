@@ -1,0 +1,25 @@
+@startuml
+
+[*] --> Idle
+
+state Idle {
+    Idle: routerLoop()
+    Idle: findStateByCDC()
+}
+
+state operationalState {
+    operationalState: update()
+    operationalState: processIncomingData()
+    operationalState: sendResult()
+}
+
+state Paused {
+    Paused: waitForResumeCmd()
+}
+
+Idle --> operationalState : Channel Data Classifier
+operationalState -->  Idle
+operationalState --> Paused : Service Command
+Paused --> Idle
+
+@enduml

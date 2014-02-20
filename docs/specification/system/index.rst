@@ -1,10 +1,7 @@
-.. |SA| replace:: SmartAnthill
-.. |SASys| replace:: |SA| System
+.. _system:
 
-.. _sasys:
-
-|SASys|
-=======
+System
+======
 
 Applications
 ------------
