@@ -65,6 +65,6 @@ to ask questions.
 Licence
 -------
 
-Copyright (c) 2013 Ivan Kravets
+Copyright (c) 2013-2014 Ivan Kravets
 
 Licenced under the MIT Licence.

@@ -12,7 +12,6 @@ static RouterPacketOutStack _outRPStack[BUFFER_OUT_LEN] = {{0}};
 
 void routerInit()
 {
-
     UARTInit(ROUTER_UART_SPEED);
 }
 

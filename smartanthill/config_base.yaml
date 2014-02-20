@@ -1,5 +1,6 @@
-# Copyright (C) 2013 Ivan Kravets <me@ikravets.com>
+# Copyright (C) 2013-2014 Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
+
 ---
 logger:
     level: INFO  # DEBUG, INFO, WARN, ERROR, FATAL
