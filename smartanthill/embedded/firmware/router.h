@@ -50,6 +50,7 @@ typedef struct
 extern "C" {
 #endif
 
+void routerInit();
 void routerLoop();
 inline uint8_t routerHasInPacket();
 inline RouterPacket *routerGetInPacket();

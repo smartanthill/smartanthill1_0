@@ -15,4 +15,6 @@ SmartAnthill System */
 #define OSM_STATE_READDIGITALPIN        0x8B
 #define OSM_STATE_WRITEDIGITALPIN       0x8C
 
+#define ROUTER_UART_SPEED               9600
+
 #endif

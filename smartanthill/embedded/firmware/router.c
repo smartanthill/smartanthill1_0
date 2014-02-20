@@ -10,6 +10,11 @@ static uint8_t _newInRPReady = 0;
 static uint8_t _inBuffer[BUFFER_IN_LEN] = {0};
 static RouterPacketOutStack _outRPStack[BUFFER_OUT_LEN] = {{0}};
 
+void routerInit()
+{
+
+    UARTInit(ROUTER_UART_SPEED);
+}
 
 void routerLoop()
 {

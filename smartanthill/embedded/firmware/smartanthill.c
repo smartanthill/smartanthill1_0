@@ -7,7 +7,7 @@
 
 void setup()
 {
-    UARTInit(9600);
+    routerInit();
 }
 
 void loop()
