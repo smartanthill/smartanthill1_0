@@ -12,8 +12,10 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
+import sys
+
+import smartanthill
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -51,7 +53,6 @@ copyright = u'2013-2014, Ivan Kravets'
 # built documents.
 #
 # The short X.Y version.
-import smartanthill
 version = '.'.join(map(str, smartanthill.VERSION[0:2]))
 # The full version, including alpha/beta/rc tags.
 release = smartanthill.__version__
