@@ -23,13 +23,13 @@ Packet structure
 +=========+====================+===============+===============================+
 |         | SOP                | 8             | Start of packet               |
 +---------+--------------------+---------------+-------------------------------+
-| Header  | SACP               | 8             | SACP Data Classifier          |
+| Header  | SACP               | 8             | SACP Header part              |
 +         +--------------------+---------------+-------------------------------+
-|         | Source device      | 8             | The source device ID          |
+|         | Source             | 8             | The source device ID          |
 +         +--------------------+---------------+-------------------------------+
-|         | Destination device | 8             | The destination device ID     |
+|         | Destination        | 8             | The destination device ID     |
 +         +--------------------+---------------+-------------------------------+
-|         | SATP               | 3             | SATP flags                    |
+|         | SATP               | 3             | SATP Header part              |
 +         +--------------------+---------------+-------------------------------+
 |         | Reserved           | 1             | Must be set to 0x0            |
 +         +--------------------+---------------+-------------------------------+
@@ -54,15 +54,15 @@ character ``0x1``.
 
 These are the *Channel* and *Data Classifier* for |SACP|.
 
-``Source device (8 bits)``
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+``Source (8 bits)``
+^^^^^^^^^^^^^^^^^^^
 
 This is an *Identifier (ID)* of the source device. |SANet| supports up to 255
 devices. Each device has unique identifier from range 0-255. The device with
 ``ID=0x0`` corresponds to :ref:`zvd`.
 
-``Destination device (8 bits)``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``Destination (8 bits)``
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 This is an *Identifier (ID)* of destination device. |SANet| supports up to 255
 devices. Each device has unique identifier from range 0-255. The device with

@@ -26,9 +26,9 @@ Segment structure
 +---------+--------------------+---------------+-------------------------------+
 | Part    | Field name         | Length (bits) | Description                   |
 +=========+====================+===============+===============================+
-| Header  | SACP               | 8             | SACP Data Classifier          |
+| Header  | SACP               | 8             | SACP Header part              |
 +         +--------------------+---------------+-------------------------------+
-|         | SARP               | 16            | SARP address information      |
+|         | SARP               | 16            | SARP Header part              |
 +         +--------------------+---------------+-------------------------------+
 |         | SEG                | 1             | Segmentation flag             |
 +         +--------------------+---------------+-------------------------------+
@@ -41,6 +41,8 @@ Segment structure
 |         | Data length        | 4             | Length of Data in bytes       |
 +---------+--------------------+---------------+-------------------------------+
 | Payload | Data               | 0-64          | Maximum is 8 bytes            |
++---------+--------------------+---------------+-------------------------------+
+|         | CRC                | 16            | Checksum                      |
 +---------+--------------------+---------------+-------------------------------+
 
 
@@ -91,3 +93,9 @@ size of *Payload* part is 8 bytes.
 
 This is a *Payload* data. If ``SEG=1`` the first byte of the data will be used
 for *Segments Order* information and another 7 are available for user.
+
+``CRC (16 bits)``
+^^^^^^^^^^^^^^^^^
+
+The 16-bit checksum is used for error-checking of the *Header* and *Payload*
+parts.
