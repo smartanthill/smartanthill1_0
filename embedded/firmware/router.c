@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Ivan Kravets <me@ikravets.com>
+ * Copyright (C) Ivan Kravets <me@ikravets.com>
  * See LICENSE for details.
  */
 
