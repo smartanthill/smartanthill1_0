@@ -15,7 +15,6 @@
 import os
 import sys
 
-import smartanthill
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -52,6 +51,7 @@ copyright = u'2013-2014, Ivan Kravets'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
+import smartanthill
 # The short X.Y version.
 version = '.'.join(map(str, smartanthill.VERSION[0:2]))
 # The full version, including alpha/beta/rc tags.
