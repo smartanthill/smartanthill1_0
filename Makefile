@@ -11,7 +11,7 @@ pushrtfd:
 
 inobuild:
 	mkdir -p /tmp/{inotmp,inotmp/lib,inotmp/src}
-	cp -R smartanthill/embedded/firmware/ /tmp/inotmp/src/
+	cp -R embedded/firmware/ /tmp/inotmp/src/
 	mv /tmp/inotmp/src/smartanthill.c /tmp/inotmp/src/smartanthill.ino
 	#cd /tmp/inotmp/; ino build --verbose
 	cd /tmp/inotmp/; ino build
