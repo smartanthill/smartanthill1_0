@@ -27,7 +27,7 @@ void routerLoop()
         _routerOnByteReceived(_rxByte);
 
     if (_newInRPReady && _inRP.destinationId == DEVICE_ID \
-            && _inRP.satpFlags & PACKET_FLAG_ACK)
+         && _inRP.satpFlags & SATP_FLAG_ACK)
         _routerAcknowledgeInPacket();
 }
 
@@ -43,7 +43,7 @@ inline RouterPacket *routerGetInPacket()
 
 void routerSendPacket(RouterPacket* outRP)
 {
-    UARTTransmitByte(PROTOCOL_SOP_CODE);
+    UARTTransmitByte(PACKET_SOP_CODE);
     UARTTransmitByte(outRP->cdc);
     UARTTransmitByte(outRP->sourceId);
     UARTTransmitByte(outRP->destinationId);
@@ -64,9 +64,9 @@ void routerSendPacket(RouterPacket* outRP)
     UARTTransmitByte(outRP->crc >> 8);
     UARTTransmitByte(outRP->crc & 0xFF);
 
-    UARTTransmitByte(PROTOCOL_EOF_CODE);
+    UARTTransmitByte(PACKET_EOF_CODE);
 
-    if (BUFFER_OUT_LEN && outRP->satpFlags & PACKET_FLAG_ACK)
+    if (BUFFER_OUT_LEN && outRP->satpFlags & SATP_FLAG_ACK)
     {
         /* check if this packet already in buffer */
         for (i = 0; i < BUFFER_OUT_LEN; i++)
@@ -77,7 +77,7 @@ void routerSendPacket(RouterPacket* outRP)
 
         _routerShiftOutPacketStack();
         _outRPStack[0].rp = *outRP;
-        _outRPStack[0].expireTime = getTimeMillis() + PACKET_OUT_TIMEOUT;
+        _outRPStack[0].expireTime = getTimeMillis() + PACKET_OUT_TIMESTEP;
         _outRPStack[0].sentNums = 1;
     }
 }
@@ -100,28 +100,27 @@ void routerAcknowledgeOutPacket(RouterPacket* outRP)
 
 static void _routerOnByteReceived(uint8_t inByte)
 {
-    _routerBufferPushByte(inByte);
+    _routerInBufferPushByte(inByte);
 
-    if (inByte != PROTOCOL_EOF_CODE)
+    if (inByte != PACKET_EOF_CODE)
         return;
 
-    /* "-1" this is EOF length */
-    uint8_t i = BUFFER_IN_LEN - 1 - PROTOCOL_CRC_LEN - PROTOCOL_HEADER_LEN;
+    uint8_t i = BUFFER_IN_LEN - 1 - PACKET_CRC_LEN - PACKET_HEADER_LEN;
     for (; i > 0; i--)
     {
-        if (_inBuffer[i-1] != PROTOCOL_SOP_CODE)
+        if (_inBuffer[i-1] != PACKET_SOP_CODE)
             continue;
 
-        if (_routerBufferContainsPacket(i - 1))
+        if (_routerInBufferContainsPacket(i-1))
         {
-            _routerParseBufferPacket(i - 1);
+            _routerParseInBufferPacket(i-1);
             _newInRPReady = 1;
             return;
         }
     }
 }
 
-static void _routerBufferPushByte(byte inByte)
+static void _routerInBufferPushByte(byte inByte)
 {
     uint8_t i;
     for (i = 1; i < BUFFER_IN_LEN; i++)
@@ -130,30 +129,30 @@ static void _routerBufferPushByte(byte inByte)
     _inBuffer[BUFFER_IN_LEN - 1] = inByte;
 }
 
-static uint8_t _routerBufferContainsPacket(uint8_t sopIndex)
+static uint8_t _routerInBufferContainsPacket(uint8_t sopIndex)
 {
-    _inRP.dataLength = _inBuffer[sopIndex + PROTOCOL_HEADER_LEN] & 0xF;
+    _inRP.dataLength = _inBuffer[sopIndex + PACKET_HEADER_LEN] & 0xF;
 
-    if (_inRP.dataLength > PROTOCOL_MAXDATA_LEN ||
-        sopIndex + PROTOCOL_HEADER_LEN + _inRP.dataLength \
-        + PROTOCOL_CRC_LEN + 2 != BUFFER_IN_LEN )
+    if (_inRP.dataLength > PACKET_MAXDATA_LEN ||
+        sopIndex + PACKET_HEADER_LEN + _inRP.dataLength \
+        + PACKET_CRC_LEN + 2 != BUFFER_IN_LEN )
         return 0;
 
-    _inRP.crc = _inBuffer[BUFFER_IN_LEN - PROTOCOL_CRC_LEN - 1] << 8;
-    _inRP.crc |= _inBuffer[BUFFER_IN_LEN - PROTOCOL_CRC_LEN];
+    _inRP.crc = _inBuffer[BUFFER_IN_LEN - PACKET_CRC_LEN - 1] << 8;
+    _inRP.crc |= _inBuffer[BUFFER_IN_LEN - PACKET_CRC_LEN];
 
     return _inRP.crc == crc_update(
             0,
             &_inBuffer[sopIndex + 1],
-            PROTOCOL_HEADER_LEN + _inRP.dataLength);
+            PACKET_HEADER_LEN + _inRP.dataLength);
 }
 
-static void _routerParseBufferPacket(uint8_t sopIndex)
+static void _routerParseInBufferPacket(uint8_t sopIndex)
 {
-    /* dataLen + crc already parsed in _routerBufferContainsPacket */
+    /* dataLen + crc already parsed in _routerInBufferContainsPacket */
     uint8_t i;
     for (i = 0; i < _inRP.dataLength; i++)
-        _inRP.data[i] = _inBuffer[sopIndex + PROTOCOL_HEADER_LEN + i + 1];
+        _inRP.data[i] = _inBuffer[sopIndex + PACKET_HEADER_LEN + i + 1];
 
     _inRP.cdc = _inBuffer[sopIndex + 1];
     _inRP.sourceId = _inBuffer[sopIndex + 2];
@@ -167,7 +166,7 @@ static void _routerAcknowledgeInPacket()
     outRP.cdc = 0x0A;
     outRP.sourceId = _inRP.destinationId;
     outRP.destinationId = _inRP.sourceId;
-    outRP.satpFlags = PACKET_FLAG_FIN;
+    outRP.satpFlags = SATP_FLAG_FIN;
     outRP.dataLength = 2;
     outRP.data[0] = _inRP.crc >> 8;
     outRP.data[1] = _inRP.crc & 0xFF;
@@ -192,10 +191,9 @@ static void _routerResendOutPackets()
             continue;
 
         _outRPStack[i].expireTime = now + \
-                                (PACKET_OUT_TIMEOUT * _outRPStack[i].sentNums);
+                            (PACKET_OUT_TIMESTEP * _outRPStack[i].sentNums);
         _outRPStack[i].sentNums++;
 
         routerSendPacket(&_outRPStack[i].rp);
     }
 }
-
