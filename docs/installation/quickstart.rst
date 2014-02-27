@@ -9,7 +9,6 @@ Requirements
 
 * Python >= 2.6, http://python.org
 * Twisted >= 11.1, http://twistedmatrix.com/trac/
-* PyYAML, http://pyyaml.org
 * PySerial, http://pyserial.sourceforge.net
 
 Installation
@@ -46,7 +45,7 @@ to the working data directory, like "project directory"). |SA| will use this
 folder for:
 
 * finding user's specific start-up configuration options. They must be located
-  in the ``config.yaml`` file. (Check the list of the available options at
+  in the ``config.json`` file. (Check the list of the available options at
   :ref:`configuration` page)
 * finding the *Addons* for |SASys|
 * storing the settings about micro-devices

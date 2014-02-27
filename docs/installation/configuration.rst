@@ -6,9 +6,8 @@
 Configuration
 =============
 
-|SA| uses `YAML <http://en.wikipedia.org/wiki/YAML>`_ human-readable format for
-data serialization. This syntax is easy for using and reading. The comment line
-starts with ``#`` symbol.
+|SA| uses `JSON <http://en.wikipedia.org/wiki/JSON>`_ human-readable format for
+data serialization. This syntax is easy for using and reading.
 
 The |SA| *Configuration Parser* gathers data in the next order (steps):
 
@@ -25,10 +24,10 @@ The |SA| *Configuration Parser* gathers data in the next order (steps):
 
 Base Configuration
 ------------------
-The :ref:`baseconf` is predefined in |SASys|:
+The *Base Configuration* is predefined in |SASys|:
 
-.. literalinclude:: ../../smartanthill/config_base.yaml
-   :language: yaml
+.. literalinclude:: ../../smartanthill/config_base.json
+   :language: json
 
 
 .. _workingconf:

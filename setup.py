@@ -44,7 +44,7 @@ setup(
                          open("requirements.txt").readlines()),
     packages=find_packages()+['twisted.plugins'],
     package_data={
-        '': ['*.yaml'],
+        '': ['*.json'],
         'twisted': ['plugins/smartanthill_plugin.py']
     },
     include_package_data=True

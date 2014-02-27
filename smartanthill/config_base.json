@@ -1,0 +1,14 @@
+{
+  "logger":
+  {
+    "level": "INFO"
+  },
+  "services":
+  {
+    "litemq":
+    {
+      "enabled": true,
+      "options": []
+    }
+  }
+}
