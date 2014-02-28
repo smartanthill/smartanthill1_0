@@ -48,7 +48,7 @@ void osmStateReadDigitalPin()
     RouterPacket *inPacket = routerGetInPacket();
     RouterPacket outPacket;
 
-    outPacket.cdc = 0xCA;
+    outPacket.cdc = 0xCB;
     outPacket.sourceId = inPacket->destinationId;
     outPacket.destinationId = inPacket->sourceId;
     outPacket.satpFlags = SATP_FLAG_FIN | SATP_FLAG_ACK;
