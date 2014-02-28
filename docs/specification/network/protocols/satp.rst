@@ -77,7 +77,7 @@ It indicates that this *Segment* is final.
 ``ACK (1 bit)``
 ^^^^^^^^^^^^^^^
 
-This is an *Acknowledgment* flag. If ``ACK=1`` then this *Message* should be
+This is an *Acknowledgment* flag. If ``ACK=1`` then this *Segment* should be
 confirmed by recipient about reception.
 
 ``Data length (4 bits)``

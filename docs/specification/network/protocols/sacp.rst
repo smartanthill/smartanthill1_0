@@ -24,9 +24,9 @@ Message structure
 +         +--------------------+---------------+-------------------------------+
 |         | SARP               | 16            | SARP Header part              |
 +         +--------------------+---------------+-------------------------------+
-|         | SATP               | 3             | SATP Header part              |
+|         | ACK                | 1             | Acknowledgment flag           |
 +         +--------------------+---------------+-------------------------------+
-|         | Reserved           | 2             | Must be set to 0x0            |
+|         | TTL                | 4             | Time to live                  |
 +         +--------------------+---------------+-------------------------------+
 |         | Data length        | 11            | Length of Data in bytes       |
 +---------+--------------------+---------------+-------------------------------+
@@ -46,16 +46,27 @@ list please check the :ref:`cdc`.
 
 Check the :ref:`cdc`.
 
+
 ``SARP (16 bits)``
 ^^^^^^^^^^^^^^^^^^
 
 This is an address information that contains *Source and Destination IDs*
 for |SARP|.
 
-``SATP (3 bits)``
-^^^^^^^^^^^^^^^^^
 
-These are the *Segmentation*, *Final* and *Acknowledgment* flags for |SATP|.
+``ACK (1 bit)``
+^^^^^^^^^^^^^^^
+
+This is an *Acknowledgment* flag. If ``ACK=1`` then this *Message* should be
+confirmed by recipient about reception.
+
+
+``TTL (4 bit)``
+^^^^^^^^^^^^^^^
+
+Time to live (*TTL*) is a lifetime in seconds of *Message* in :ref:`sanet`. The
+maximum value is 15 seconds. When *TTL* is up the ``MessageLostException`` will
+be raised.
 
 
 ``Data length (11 bits)``
@@ -64,6 +75,7 @@ These are the *Segmentation*, *Final* and *Acknowledgment* flags for |SATP|.
 This is a length of *Payload* part in bytes. The *Message* can be empty
 (without *Payload*). In this situation when ``Data length=0x0`` *Payload* part
 is not presented in the *Message*.
+
 
 ``Data (0-14336 bits)``
 ^^^^^^^^^^^^^^^^^^^^^^^
