@@ -14,7 +14,7 @@ extern "C" {
 #endif
 
 void osmStateAcknowledgeOutPacket();
-void osmConfigurePinMode();
+void osmStateConfigurePinMode();
 void osmStateReadDigitalPin();
 void osmStateWriteDigitalPin();
 

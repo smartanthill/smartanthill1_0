@@ -28,8 +28,8 @@
 typedef struct
 {
     uint8_t cdc;
-    uint8_t sourceId;
-    uint8_t destinationId;
+    uint8_t source;
+    uint8_t destination;
     uint8_t satpFlags;
     uint8_t dataLength;
     uint8_t data[8];

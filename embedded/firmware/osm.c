@@ -16,7 +16,7 @@ static const OperationalState osmStates[] =
 {
 
 #ifdef OSM_STATE_CONFIGUREPINMODE
-    {OSM_STATE_CONFIGUREPINMODE, &osmConfigurePinMode},
+    {OSM_STATE_CONFIGUREPINMODE, &osmStateConfigurePinMode},
 #endif
 
 #ifdef OSM_STATE_READDIGITALPIN

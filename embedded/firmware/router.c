@@ -26,7 +26,7 @@ void routerLoop()
     while (!_newInRPReady && (_rxByte = UARTReceiveByte()) != -1)
         _routerOnByteReceived(_rxByte);
 
-    if (_newInRPReady && _inRP.destinationId == DEVICE_ID \
+    if (_newInRPReady && _inRP.destination == DEVICE_ID \
          && _inRP.satpFlags & SATP_FLAG_ACK)
         _routerAcknowledgeInPacket();
 }
@@ -45,8 +45,8 @@ void routerSendPacket(RouterPacket* outRP)
 {
     UARTTransmitByte(PACKET_SOP_CODE);
     UARTTransmitByte(outRP->cdc);
-    UARTTransmitByte(outRP->sourceId);
-    UARTTransmitByte(outRP->destinationId);
+    UARTTransmitByte(outRP->source);
+    UARTTransmitByte(outRP->destination);
 
     uint8_t _flags = (outRP->satpFlags << 5) | outRP->dataLength;
     UARTTransmitByte(_flags);
@@ -57,8 +57,8 @@ void routerSendPacket(RouterPacket* outRP)
 
     /* calc CRC */
     outRP->crc = crc_update(0, &outRP->cdc, 1);
-    outRP->crc = crc_update(outRP->crc, &outRP->sourceId, 1);
-    outRP->crc = crc_update(outRP->crc, &outRP->destinationId, 1);
+    outRP->crc = crc_update(outRP->crc, &outRP->source, 1);
+    outRP->crc = crc_update(outRP->crc, &outRP->destination, 1);
     outRP->crc = crc_update(outRP->crc, &_flags, 1);
     outRP->crc = crc_update(outRP->crc, outRP->data, outRP->dataLength);
     UARTTransmitByte(outRP->crc >> 8);
@@ -88,8 +88,8 @@ void routerAcknowledgeOutPacket(RouterPacket* outRP)
     for (i = 0; i < BUFFER_OUT_LEN; i++)
     {
         if (!_outRPStack[i].sentNums ||
-            _outRPStack[i].rp.destinationId != outRP->sourceId ||
-            _outRPStack[i].rp.sourceId != outRP->destinationId ||
+            _outRPStack[i].rp.destination != outRP->source ||
+            _outRPStack[i].rp.source != outRP->destination ||
             _outRPStack[i].rp.crc != (outRP->data[0] << 8 | outRP->data[1]))
             continue;
 
@@ -155,8 +155,8 @@ static void _routerParseInBufferPacket(uint8_t sopIndex)
         _inRP.data[i] = _inBuffer[sopIndex + PACKET_HEADER_LEN + i + 1];
 
     _inRP.cdc = _inBuffer[sopIndex + 1];
-    _inRP.sourceId = _inBuffer[sopIndex + 2];
-    _inRP.destinationId = _inBuffer[sopIndex + 3];
+    _inRP.source = _inBuffer[sopIndex + 2];
+    _inRP.destination = _inBuffer[sopIndex + 3];
     _inRP.satpFlags = _inBuffer[sopIndex + 4] >> 5;
 }
 
@@ -164,8 +164,8 @@ static void _routerAcknowledgeInPacket()
 {
     RouterPacket outRP;
     outRP.cdc = 0x0A;
-    outRP.sourceId = _inRP.destinationId;
-    outRP.destinationId = _inRP.sourceId;
+    outRP.source = _inRP.destination;
+    outRP.destination = _inRP.source;
     outRP.satpFlags = SATP_FLAG_FIN;
     outRP.dataLength = 2;
     outRP.data[0] = _inRP.crc >> 8;

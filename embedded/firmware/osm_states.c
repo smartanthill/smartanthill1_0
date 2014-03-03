@@ -11,18 +11,31 @@ void osmStateAcknowledgeOutPacket()
     osm.makeTransition(IDLE_STATE);
 }
 
-void osmConfigurePinMode()
+void osmStateConfigurePinMode()
 {
     RouterPacket *inPacket = routerGetInPacket();
+    RouterPacket outPacket;
+    outPacket.cdc = 0xCA;
+    outPacket.source = inPacket->destination;
+    outPacket.destination = inPacket->source;
+    outPacket.satpFlags = inPacket->satpFlags;
+    outPacket.dataLength = 0;
 
     static uint8_t prevLowestByte = 0;  /* The lowest byte from previous Packet */
     uint8_t i = 0;
+    uint8_t pin = 0;
 
-    if (inPacket->satpFlags & SATP_FLAG_SEG &&
-            inPacket->dataLength == PACKET_MAXDATA_LEN)
+    if (inPacket->satpFlags & SATP_FLAG_SEG)
     {
-        i = 1;
-        prevLowestByte = 0;
+        /* reuse segment order */
+        outPacket.data[0] = inPacket->data[0];
+        outPacket.dataLength++;
+
+        if (inPacket->dataLength == PACKET_MAXDATA_LEN)
+        {
+            i = 1;
+            prevLowestByte = 0;
+        }
     }
 
     if (inPacket->dataLength >= i+2)
@@ -30,9 +43,15 @@ void osmConfigurePinMode()
         for (; i < inPacket->dataLength-1; i+=2)
         {
             if (i == 0 && prevLowestByte)
-                configurePinMode(prevLowestByte, inPacket->data[i+1]);
+                pin = prevLowestByte;
             else
-                configurePinMode(inPacket->data[i], inPacket->data[i+1]);
+                pin = inPacket->data[i];
+
+            configurePinMode(pin, inPacket->data[i+1]);
+
+            /* collects result pins */
+            outPacket.data[outPacket.dataLength] = pin;
+            outPacket.dataLength++;
         }
     }
 
@@ -40,17 +59,18 @@ void osmConfigurePinMode()
             inPacket->dataLength == PACKET_MAXDATA_LEN)
         prevLowestByte = inPacket->data[PACKET_MAXDATA_LEN-1];
 
+    routerSendPacket(&outPacket);
     osm.makeTransition(IDLE_STATE);
 }
 
 void osmStateReadDigitalPin()
 {
     RouterPacket *inPacket = routerGetInPacket();
-    RouterPacket outPacket;
 
+    RouterPacket outPacket;
     outPacket.cdc = 0xCB;
-    outPacket.sourceId = inPacket->destinationId;
-    outPacket.destinationId = inPacket->sourceId;
+    outPacket.source = inPacket->destination;
+    outPacket.destination = inPacket->source;
     outPacket.satpFlags = SATP_FLAG_FIN | SATP_FLAG_ACK;
     outPacket.dataLength = inPacket->dataLength;
 
@@ -59,22 +79,34 @@ void osmStateReadDigitalPin()
         outPacket.data[i] = readDigitalPin(inPacket->data[i]);
 
     routerSendPacket(&outPacket);
-
     osm.makeTransition(IDLE_STATE);
 }
 
 void osmStateWriteDigitalPin()
 {
     RouterPacket *inPacket = routerGetInPacket();
+    RouterPacket outPacket;
+    outPacket.cdc = 0xCC;
+    outPacket.source = inPacket->destination;
+    outPacket.destination = inPacket->source;
+    outPacket.satpFlags = inPacket->satpFlags;
+    outPacket.dataLength = 0;
 
     static uint8_t prevLowestByte = 0;  /* The lowest byte from previous Packet */
     uint8_t i = 0;
+    uint8_t pin = 0;
 
-    if (inPacket->satpFlags & SATP_FLAG_SEG &&
-            inPacket->dataLength == PACKET_MAXDATA_LEN)
+    if (inPacket->satpFlags & SATP_FLAG_SEG)
     {
-        i = 1;
-        prevLowestByte = 0;
+        /* reuse segment order */
+        outPacket.data[0] = inPacket->data[0];
+        outPacket.dataLength++;
+
+        if (inPacket->dataLength == PACKET_MAXDATA_LEN)
+        {
+            i = 1;
+            prevLowestByte = 0;
+        }
     }
 
     if (inPacket->dataLength >= i+2)
@@ -82,9 +114,15 @@ void osmStateWriteDigitalPin()
         for (; i < inPacket->dataLength-1; i+=2)
         {
             if (i == 0 && prevLowestByte)
-                writeDigitalPin(prevLowestByte, inPacket->data[i+1]);
+                pin = prevLowestByte;
             else
-                writeDigitalPin(inPacket->data[i], inPacket->data[i+1]);
+                pin = inPacket->data[i];
+
+            writeDigitalPin(pin, inPacket->data[i+1]);
+
+            /* collects result pins */
+            outPacket.data[outPacket.dataLength] = pin;
+            outPacket.dataLength++;
         }
     }
 
@@ -92,5 +130,6 @@ void osmStateWriteDigitalPin()
             inPacket->dataLength == PACKET_MAXDATA_LEN)
         prevLowestByte = inPacket->data[PACKET_MAXDATA_LEN-1];
 
+    routerSendPacket(&outPacket);
     osm.makeTransition(IDLE_STATE);
 }
