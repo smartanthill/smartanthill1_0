@@ -71,7 +71,7 @@ void osmStateReadDigitalPin()
     outPacket.cdc = 0xCB;
     outPacket.source = inPacket->destination;
     outPacket.destination = inPacket->source;
-    outPacket.satpFlags = SATP_FLAG_FIN | SATP_FLAG_ACK;
+    outPacket.satpFlags = inPacket->satpFlags;
     outPacket.dataLength = inPacket->dataLength;
 
     uint8_t i;
