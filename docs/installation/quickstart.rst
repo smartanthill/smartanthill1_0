@@ -7,7 +7,7 @@ Quick-Start
 Requirements
 ------------
 
-* Python >= 2.6, http://python.org
+* Python >=2.6,<=2.7, http://python.org
 * Twisted >= 11.1, http://twistedmatrix.com/trac/
 * PySerial, http://pyserial.sourceforge.net
 
@@ -25,6 +25,11 @@ To install the latest release via
 .. code-block:: bash
 
     $ pip install smartanthill
+
+.. note::
+    If your computer does not recognize ``pip`` command, try to install it
+    first using
+    `these instructions <http://www.pip-installer.org/en/latest/installing.html>`_.
 
 To install the development version:
 
