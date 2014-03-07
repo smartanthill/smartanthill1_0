@@ -22,6 +22,9 @@ uint32_t getTimeMillis();
 void configurePinMode(uint8_t pinNum, uint8_t value);
 uint8_t readDigitalPin(uint8_t pinNum);
 void writeDigitalPin(uint8_t pinNum, uint8_t value);
+void configureAnalogReference(uint8_t mode);
+uint16_t readAnalogPin(uint8_t pinNum);
+void writeAnalogPin(uint8_t pinNum, uint8_t value);
 
 #ifdef __cplusplus
 }

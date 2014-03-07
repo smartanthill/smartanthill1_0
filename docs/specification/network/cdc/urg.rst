@@ -11,12 +11,42 @@ The channel with the highest priority. It uses for the critical
 tasks or operations.
 
 
+.. _cdc_urg_0x00:
+
+Ping
+----
+
+Uses to test the reachability of *Network Device*. If device is reachable you
+will receive :ref:`cdc_urg_0x0A` *Segment*.
+
+The *Message* by |SACP| should have the next structure:
+
++---------+--------------------+---------------+-------------------------------+
+| Part    | Field name         | Length (bits) | Value                         |
++=========+====================+===============+===============================+
+| Header  | Channel            | 2             | 0x00                          |
++         +--------------------+---------------+-------------------------------+
+|         | Data Classifier    | 6             | 0x00                          |
++         +--------------------+---------------+-------------------------------+
+|         | SARP               | 16            | |SARP| address information    |
++         +--------------------+---------------+-------------------------------+
+|         | ACK                | 1             | Should be 0x01                |
++         +--------------------+---------------+-------------------------------+
+|         | TTL                | 4             | Time to live                  |
++         +--------------------+---------------+-------------------------------+
+|         | Data length        | 11            | 0x0                           |
++---------+--------------------+---------------+-------------------------------+
+| Payload | Data               | 0             | Without *Payload* part        |
++---------+--------------------+---------------+-------------------------------+
+
+
 .. _cdc_urg_0x0A:
 
-Segment Acknowledgment
-----------------------
+SegmentAcknowledgment
+---------------------
 
 Uses for acknowledge that *Segment* from sender was received and verified.
+
 The *Segment* by |SATP| should have the next structure:
 
 +---------+--------------------+---------------+-------------------------------+

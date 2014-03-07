@@ -14,9 +14,13 @@ extern "C" {
 #endif
 
 void osmStateAcknowledgeOutPacket();
+void osmStateListOperationalStates();
 void osmStateConfigurePinMode();
 void osmStateReadDigitalPin();
 void osmStateWriteDigitalPin();
+void osmStateConfigureAnalogReference();
+void osmStateReadAnalogPin();
+void osmStateWriteAnalogPin();
 
 #ifdef __cplusplus
 }

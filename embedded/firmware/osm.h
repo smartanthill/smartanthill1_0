@@ -33,6 +33,8 @@ extern OperationalStateMachine osm;
 extern "C" {
 #endif
 
+uint8_t osmGetStateNums();
+uint8_t osmGetStateCDCByIndex(uint8_t index);
 static void _osmMakeTransition(const OperationalState*);
 static void _osmUpdateState();
 static const OperationalState* _osmFindStateByCDC(uint8_t);
