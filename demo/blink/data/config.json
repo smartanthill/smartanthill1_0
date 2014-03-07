@@ -1,0 +1,21 @@
+{
+  "services":
+  {
+    "network":
+    {
+      "enabled": true,
+      "options":
+      {
+        "routers":
+        [
+          {
+            "type": "serial",
+            "port": "/dev/tty.SLAB_USBtoUART",
+            "baudrate": 9600,
+            "deviceids": [128]
+          }
+        ]
+      }
+    }
+  }
+}
