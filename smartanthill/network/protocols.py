@@ -29,11 +29,9 @@ class ControlMessage(object):
         assert len(self.data) <= 1792
 
     def __repr__(self):
-        return ("ControlMessage: cdc=0x%X, source=0x%X, destination=0x%X, "
-                "ttl=%d, ack=%s, data=%s" % (self.cdc, self.source,
-                                             self.destination, self.ttl,
-                                             self.ack, self.data))
-
+        return ("ControlMessage: cdc=0x%X, source=%d, destination=%d, ttl=%d, "
+                "ack=%s, data=%s" % (self.cdc, self.source, self.destination,
+                                     self.ttl, self.ack, self.data))
 
 class ControlProtocol(protocol.Protocol):
 
