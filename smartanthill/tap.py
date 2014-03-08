@@ -32,9 +32,10 @@ class SmartAnthillService(MultiService):
         self.log.info("SmartAnthill %s (%s) starting up." % (__version__,
                                                              self.datadir))
 
+        # from smartanthill.network.protocols import ControlMessage
         # self.litemq.produce("network", "client->control",
-        #                     {"cdc": 0x8C, "source": 0, "destination": 128,
-        #                      "data": [13,1], "ack": True})
+        #                     ControlMessage(cdc=0x8C, source=0, destination=128,
+        #                                    data=[13,1], ack=True))
 
     def start_sas_services(self, services):
         for k, v in services.iteritems():

@@ -12,40 +12,52 @@ from smartanthill.network.cdc import CHANNEL_URGENT
 from smartanthill.util import calc_crc16
 
 
+class ControlMessage(object):
+
+    def __init__(self, cdc, source, destination, ttl=1, ack=False, data=None):
+        self.cdc = cdc
+        self.source = source
+        self.destination = destination
+        self.ttl = ttl
+        self.ack = ack
+        self.data = data or []
+
+        assert (self.cdc <= 255 and self.source <= 255 and
+                self.destination <= 255)
+        assert self.source != self.destination
+        assert self.ttl <= 15, "TTL should be between 1-15"
+        assert len(self.data) <= 1792
+
+    def __repr__(self):
+        return ("ControlMessage: cdc=0x%X, source=0x%X, destination=0x%X, "
+                "ttl=%d, ack=%s, data=%s" % (self.cdc, self.source,
+                                             self.destination, self.ttl,
+                                             self.ack, self.data))
+
+
 class ControlProtocol(protocol.Protocol):
 
     def client_message_received(self, message):
         pass
 
     def send_client_message(self, message):
-        defmessage = dict(ack=False, ttl=1, data=[])
-        defmessage.update(message)
-        message = defmessage
-
-        assert ("cdc" in message and "source" in message and "destination" in
-                message)
-        assert (message['ttl'] and message['ttl'] <= 15,
-                "TTL should be between 1-15")
-        assert len(message['data']) <= 1792
-
-        flagsandlen = 0x80 if message["ack"] else 0
-        flagsandlen |= (message["ttl"]) << 3
-        flagsandlen |= len(message['data']) >> 8  # high 3 bits
-        rawmessage = pack("BBBBB", message["cdc"], message["source"],
-                          message["destination"], flagsandlen,
-                          len(message['data']) & 0xF)
-        if len(message["data"]):
-            rawmessage += pack("B"*len(message["data"]), *message["data"])
-
+        assert isinstance(message, ControlMessage)
+        flagsandlen = 0x80 if message.ack else 0
+        flagsandlen |= (message.ttl) << 3
+        flagsandlen |= len(message.data) >> 8  # high 3 bits
+        rawmessage = pack("BBBBB", message.cdc, message.source,
+                          message.destination, flagsandlen,
+                          len(message.data) & 0xF)
+        if len(message.data):
+            rawmessage += pack("B"*len(message.data), *message.data)
         self.transport.write(rawmessage)
 
     def dataReceived(self, data):
         data = map(ord, data)
-        message = dict(cdc=data[0], source=data[1], destination=data[2],
-                       ack=data[3] & 0x80 > 0, ttl=(data[3] & 0x78) >> 3)
-        message['data'] = []
-        if data[4]:
-            message['data'] = data[5:]
+        message = ControlMessage(cdc=data[0], source=data[1],
+                                 destination=data[2], ack=data[3] & 0x80 > 0,
+                                 ttl=(data[3] & 0x78) >> 3,
+                                 data=data[5:] if data[4] else None)
         self.client_message_received(message)
 
 

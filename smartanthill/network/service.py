@@ -50,12 +50,12 @@ class ControlService(Service):
         self.protocol.dataReceived(message)
 
     def outmessage_mqcallback(self, message, properties):
-        self.log.debug("Received outgoing message=%s and properties=%s" %
+        self.log.debug("Received outgoing %s and properties=%s" %
                        (message, properties))
         self.protocol.send_client_message(message)
 
     def climessage_protocallback(self, message):
-        self.log.debug("Received incoming client message %s" % message)
+        self.log.debug("Received incoming client %s" % message)
         self.sas.litemq.produce("network", "control->client", message)
 
 
