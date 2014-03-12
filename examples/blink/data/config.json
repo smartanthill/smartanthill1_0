@@ -16,6 +16,28 @@
           }
         ]
       }
+    },
+
+    "device":
+    {
+      "enabled": true,
+      "options":
+      {
+        "128":
+        {
+          "board": "arduino_pro5v",
+          "operations":
+          [
+            "ping",
+            "listoperationalstates",
+            "configurepinmode",
+            "readdigitalpin",
+            "writedigitalpin",
+            "configureanalogreference",
+            "readanalogpin"
+          ]
+        }
+      }
     }
   }
 }

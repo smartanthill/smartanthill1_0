@@ -16,12 +16,19 @@ BASECONF_PATH = sibpath(__file__, "config_base.json")
 
 class SmartAnthillService(MultiService):
 
+    INSTANCE = None
+
     def __init__(self, user_options):
+        SmartAnthillService.INSTANCE = self
         MultiService.__init__(self)
         self.setName("sas")
         self.datadir = user_options['data']
         self.config = Config(BASECONF_PATH, user_options)
         self.log = Logger(self)
+
+    @staticmethod
+    def instance():
+        return SmartAnthillService.INSTANCE
 
     def startService(self):
         self.log.debug("Initial configuration: %s." % self.config)
@@ -31,11 +38,9 @@ class SmartAnthillService(MultiService):
         MultiService.startService(self)
         self.log.info("SmartAnthill %s (%s) starting up." % (__version__,
                                                              self.datadir))
-
-        # from smartanthill.network.protocols import ControlMessage
-        # self.litemq.produce("network", "client->control",
-        #                     ControlMessage(cdc=0x8C, source=0, destination=128,
-        #                                    data=[13,1], ack=True))
+        # r = self.device.get_device(
+        #     128).launch_operation("readanalogpin", "A0", "A1", "A2", "A3")
+        # r.addCallback(lambda r: self.log.info(r))
 
     def start_sas_services(self, services):
         for k, v in services.iteritems():
