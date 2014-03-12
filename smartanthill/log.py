@@ -8,7 +8,7 @@ from twisted.application.service import Service
 from twisted.python import log
 
 from smartanthill.configparser import Config
-from smartanthill.exceptions import ConfigKeyError
+from smartanthill.exception import ConfigKeyError
 
 
 class Logger(object):

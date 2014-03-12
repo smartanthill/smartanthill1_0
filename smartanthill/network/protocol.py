@@ -7,7 +7,7 @@ from twisted.internet import protocol, reactor
 from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
 
-from smartanthill.exceptions import SATPMessageLost
+from smartanthill.exception import SATPMessageLost
 from smartanthill.network.cdc import CHANNEL_URGENT
 from smartanthill.util import calc_crc16
 
@@ -28,17 +28,46 @@ class ControlMessage(object):
         assert self.ttl <= 15, "TTL should be between 1-15"
         assert len(self.data) <= 1792
 
+    def get_channel(self):
+        return self.cdc >> 6
+
+    def get_dataclassifier(self):
+        return self.cdc & 0x3F
+
+    def is_bdcrequest(self):
+        return self.get_channel() == 0x2
+
+    def is_bdcresponse(self):
+        return self.get_channel() == 0x3
+
     def __repr__(self):
         return ("ControlMessage: cdc=0x%X, source=%d, destination=%d, ttl=%d, "
                 "ack=%s, data=%s" % (self.cdc, self.source, self.destination,
                                      self.ttl, self.ack, self.data))
 
+    def __eq__(self, other):
+        for attr in ("cdc", "source", "destination", "ttl", "ack", "data"):
+           if getattr(self, attr) != getattr(other, attr):
+               return False
+        return True
+
+
 class ControlProtocol(protocol.Protocol):
 
-    def client_message_received(self, message):
+    @staticmethod
+    def rawmessage_to_message(rawmsg):
+        rawmsg = map(ord, rawmsg)
+        message = ControlMessage(cdc=rawmsg[0], source=rawmsg[1],
+                                 destination=rawmsg[2],
+                                 ack=rawmsg[3] & 0x80 > 0,
+                                 ttl=(rawmsg[3] & 0x78) >> 3,
+                                 data=rawmsg[5:] if rawmsg[4] else None)
+        return message
+
+    def message_received(self, message):
         pass
 
-    def send_client_message(self, message):
+    def send_message(self, message):
         assert isinstance(message, ControlMessage)
         flagsandlen = 0x80 if message.ack else 0
         flagsandlen |= (message.ttl) << 3
@@ -51,12 +80,7 @@ class ControlProtocol(protocol.Protocol):
         self.transport.write(rawmessage)
 
     def dataReceived(self, data):
-        data = map(ord, data)
-        message = ControlMessage(cdc=data[0], source=data[1],
-                                 destination=data[2], ack=data[3] & 0x80 > 0,
-                                 ttl=(data[3] & 0x78) >> 3,
-                                 data=data[5:] if data[4] else None)
-        self.client_message_received(message)
+        self.message_received(self.rawmessage_to_message(data))
 
 
 class TransportProtocol(protocol.Protocol):
@@ -203,7 +227,7 @@ class TransportProtocol(protocol.Protocol):
         if not message in self._outmsgbuffer:
             return
         self._outmsgbuffer[message]["d"].errback(Failure(
-            SATPMessageLost("Message has been lost ")))
+            SATPMessageLost(message)))
         del self._outmsgbuffer[message]
 
     def _inbufsegments_to_message(self, key):
@@ -304,6 +328,15 @@ class RoutingProtocol(protocol.Protocol):
         return _crc == calc_crc16(map(ord, _header_and_data))
 
 
+class ControlProtocolWrapping(ControlProtocol):
+
+    def __init__(self, climessage_callback):
+        self.climesage_callback = climessage_callback
+
+    def message_received(self, message):
+        self.climesage_callback(message)
+
+
 class TransportProtocolWrapping(TransportProtocol):
 
     def __init__(self, inmessage_callback):
@@ -322,12 +355,3 @@ class RoutingProtocolWrapping(RoutingProtocol):
 
     def packet_received(self, packet):
         self.inpacket_callback(packet)
-
-
-class ControlProtocolWrapping(ControlProtocol):
-
-    def __init__(self, climessage_callback):
-        self.climesage_callback = climessage_callback
-
-    def client_message_received(self, message):
-        self.climesage_callback(message)

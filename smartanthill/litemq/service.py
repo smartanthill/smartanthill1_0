@@ -5,7 +5,7 @@ from binascii import hexlify
 
 from twisted.application.service import MultiService
 
-from smartanthill.litemq.exchange import ExchangeTypesFactory
+from smartanthill.litemq.exchange import ExchangeFactory
 from smartanthill.log import Logger
 
 
@@ -33,7 +33,7 @@ class LiteMQService(MultiService):
         if name in self._exchanges:
             return
 
-        self._exchanges[name] = ExchangeTypesFactory().newExchange(name, type_)
+        self._exchanges[name] = ExchangeFactory().newExchange(name, type_)
         self.log.debug("Declared new exchange '%s' with type '%s'" % (
             name, type_))
 

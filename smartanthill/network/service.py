@@ -8,12 +8,9 @@ from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks, maybeDeferred, returnValue
 from twisted.internet.serialport import SerialPort
 
-from smartanthill.exceptions import NetworkRouterConnectFailure
+import smartanthill.network.protocol as p
+from smartanthill.exception import NetworkRouterConnectFailure
 from smartanthill.log import Logger
-from smartanthill.network.protocols import (ControlProtocolWrapping,
-                                            RoutingProtocol,
-                                            RoutingProtocolWrapping,
-                                            TransportProtocolWrapping)
 
 
 class ControlService(Service):
@@ -22,7 +19,7 @@ class ControlService(Service):
         self.setName("network.control")
         self.log = Logger(self)
         self.sas = sas
-        self.protocol = ControlProtocolWrapping(self.climessage_protocallback)
+        self.protocol = p.ControlProtocolWrapping(self.climessage_protocallback)
 
     def startService(self):
         self.protocol.makeConnection(self)
@@ -52,7 +49,7 @@ class ControlService(Service):
     def outmessage_mqcallback(self, message, properties):
         self.log.debug("Received outgoing %s and properties=%s" %
                        (message, properties))
-        self.protocol.send_client_message(message)
+        self.protocol.send_message(message)
 
     def climessage_protocallback(self, message):
         self.log.debug("Received incoming client %s" % message)
@@ -65,7 +62,8 @@ class TransportService(Service):
         self.setName("network.transport")
         self.log = Logger(self)
         self.sas = sas
-        self.protocol = TransportProtocolWrapping(self.inmessage_protocallback)
+        self.protocol = p.TransportProtocolWrapping(
+            self.inmessage_protocallback)
 
     def startService(self):
         self.protocol.makeConnection(self)
@@ -102,11 +100,11 @@ class TransportService(Service):
     @inlineCallbacks
     def outmessage_mqcallback(self, message, properties):
         self.log.debug("Received outgoing message %s" % hexlify(message))
+        ctrlmsg = p.ControlProtocol.rawmessage_to_message(message)
         d = maybeDeferred(self.protocol.send_message, message)
         result = yield d
-        if result:
-            self.sas.litemq.produce("network", "transport.ack", message,
-                                    properties)
+        if result and ctrlmsg.ack:
+            self.sas.litemq.produce("network", "acknowledged->client", ctrlmsg)
         returnValue(result)
 
 
@@ -121,7 +119,7 @@ class RouterService(Service):
         self.log = Logger(self)
         self.sas = sas
         self.options = options
-        self.protocol = RoutingProtocolWrapping(self.inpacket_protocallback)
+        self.protocol = p.RoutingProtocolWrapping(self.inpacket_protocallback)
         self._reconnect_nums = 0
 
     def startService(self):
@@ -130,8 +128,7 @@ class RouterService(Service):
                 SerialPort(self.protocol, self.options['port'], reactor,
                            baudrate=int(self.options['baudrate']))
         except Exception, e:
-            self.log.error(NetworkRouterConnectFailure(
-                "Couldn't connect to router with options=%s" % self.options))
+            self.log.error(NetworkRouterConnectFailure(self.options))
             self._reconnect_nums += 1
             reactor.callLater(self._reconnect_nums * self.RECONNECT_DELAY,
                               self.startService)
@@ -153,7 +150,7 @@ class RouterService(Service):
     def inpacket_protocallback(self, packet):
         self.log.debug("Received incoming packet %s" % hexlify(packet))
         self.sas.litemq.produce("network", "routing->transport",
-                                RoutingProtocol.packet_to_segment(packet),
+                                p.RoutingProtocol.packet_to_segment(packet),
                                 dict(binary=True))
 
     def outsegment_mqcallback(self, message, properties):

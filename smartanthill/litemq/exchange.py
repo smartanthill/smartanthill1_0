@@ -7,11 +7,11 @@ from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
 from twisted.python.reflect import namedAny
 
-from smartanthill.exceptions import LiteMQACKFailed, NotImplemnetedYet
+from smartanthill.exception import LiteMQACKFailed, NotImplemnetedYet
 from smartanthill.log import Logger
 
 
-class ExchangeTypesFactory(object):
+class ExchangeFactory(object):
 
     @staticmethod
     def newExchange(name, type_):

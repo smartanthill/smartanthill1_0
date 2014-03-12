@@ -6,7 +6,7 @@ import sys
 
 from twisted.python.filepath import FilePath
 
-from smartanthill.exceptions import ConfigKeyError
+from smartanthill.exception import ConfigKeyError
 from smartanthill.util import load_config, merge_nested_dicts, singleton
 
 
