@@ -123,7 +123,7 @@ WriteDigitalPin
 
 The result of request from :ref:`cdc_bdcreq` channel and :ref:`cdc_bdcreq_0x0C`.
 The *Payload* part will contain the list of pins that was successfully
-updated with specified values.
+updated with specified levels.
 
 The *Message* by |SACP| will have the next structure:
 

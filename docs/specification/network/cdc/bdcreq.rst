@@ -43,10 +43,10 @@ ConfigurePinMode
 
 Configure the specified pin to behave either as an:
 
-* ``0x0`` INPUT
-* ``0x1`` OUTPUT
-* ``0x2`` INPUT_PULLUP
-* ``0x3`` INPUT_PULLDOWN
+* ``INPUT``
+* ``OUTPUT``
+* ``INPUT_PULLUP``
+* ``INPUT_PULLDOWN``
 
 As for result please read :ref:`cdc_bdcres_0x0A` from :ref:`cdc_bdcres` channel.
 
@@ -118,7 +118,7 @@ The *Message* by |SACP| should have the next structure:
 WriteDigitalPin
 ---------------
 
-Write a ``0x1`` (high level) or a ``0x0`` (low level) value to a digital pin.
+Write a ``LOW`` or a ``HIGH`` level to a digital pin.
 As for result please read :ref:`cdc_bdcres_0x0C` from :ref:`cdc_bdcres` channel.
 
 The *Message* by |SACP| should have the next structure:
@@ -140,8 +140,8 @@ The *Message* by |SACP| should have the next structure:
 +---------+--------------------+---------------+-------------------------------+
 | Payload | Data               | 8             | The number of the pin         |
 +         +                    +---------------+-------------------------------+
-|         |                    | 8             | The value (``0x1`` or         |
-|         |                    |               | ``0x0``)                      |
+|         |                    | 8             | The level (``0x1=HIGH`` or    |
+|         |                    |               | ``0x0=LOW``)                  |
 +---------+--------------------+---------------+-------------------------------+
 
 .. note::
@@ -157,13 +157,13 @@ ConfigureAnalogReference
 
 Configure the reference voltage used for analog input. The modes are:
 
-* ``0x0`` DEFAULT
-* ``0x1`` INTERNAL
-* ``0x2`` INTERNAL1V1
-* ``0x3`` INTERNAL2V56
-* ``0x4`` INTERNAL1V5
-* ``0x5``                           INTERNAL2V5
-* ``0x6`` EXTERNAL
+* ``DEFAULT``
+* ``INTERNAL``
+* ``INTERNAL1V1``
+* ``INTERNAL2V56``
+* ``INTERNAL1V5``
+* ``INTERNAL2V5``
+* ``EXTERNAL``
 
 As for result please read :ref:`cdc_bdcres_0x0D` from :ref:`cdc_bdcres` channel.
 
