@@ -2,14 +2,13 @@
 # See LICENSE for details.
 
 from smartanthill.device.board import BoardFactory
-from smartanthill.log import Logger
 from smartanthill.exception import UnknownDeviceOperation
+from smartanthill.log import Logger
 
 
 class Device(object):
 
-    def __init__(self, sas, id_, options):
-        self.sas = sas
+    def __init__(self, id_, options):
         self.log = Logger("device.%d" % id_)
         self.id_ = id_
         self.options = options

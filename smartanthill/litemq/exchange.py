@@ -41,7 +41,7 @@ class Queue(object):
         assert self._callbacks
 
         # check "resent" nums
-        if ("_resentnums" in properties and
+        if (properties and "_resentnums" in properties and
                 properties["_resentnums"] > self.MESSAGE_MAX_RESEND):
             return
 

@@ -3,8 +3,6 @@
 
 from json import load as json_load
 
-from twisted.python.reflect import namedAny
-
 
 def singleton(cls):
     """ From PEP-318 http://www.python.org/dev/peps/pep-0318/#examples """
@@ -15,11 +13,6 @@ def singleton(cls):
             _instances[cls] = cls(*args, **kwargs)
         return _instances[cls]
     return get_instance
-
-
-def load_service(sas, module, options):
-    module = 'smartanthill.%s.service' % module
-    return namedAny(module).makeService(sas, options)
 
 
 def load_config(path):

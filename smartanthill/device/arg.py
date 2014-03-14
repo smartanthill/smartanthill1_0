@@ -30,6 +30,7 @@ class ArgBase(object):
 class IntArgBase(ArgBase):
 
     def __init__(self, min_=None, max_=None, range_=None):
+        ArgBase.__init__(self)
         if range_:
             assert len(range_) and (min_ and max_) == None
         else:
@@ -100,4 +101,3 @@ class PinAnalogRefArg(IntRangeWithAliasArgBase):
 
     def __init__(self, allowed, alias=None):
         IntRangeWithAliasArgBase.__init__(self, allowed, alias or [])
-

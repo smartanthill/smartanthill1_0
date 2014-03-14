@@ -3,31 +3,15 @@
 
 from binascii import hexlify
 
-from twisted.application.service import MultiService
-
 from smartanthill.litemq.exchange import ExchangeFactory
-from smartanthill.log import Logger
+from smartanthill.service import SAMultiService
 
 
-class LiteMQService(MultiService):
+class LiteMQService(SAMultiService):
 
-    def __init__(self, sas, options):
-        MultiService.__init__(self)
-        self.setName("litemq")
-        self.log = Logger(self)
-        self.sas = sas
-        self.options = options
-
+    def __init__(self, name, options):
+        SAMultiService.__init__(self, name, options)
         self._exchanges = {}
-
-    def startService(self):
-        MultiService.startService(self)
-        self.log.info("Service has been started with options '%s'" %
-                      self.options)
-
-    def stopService(self):
-        MultiService.stopService(self)
-        self.log.info("Service has been stopped.")
 
     def declare_exchange(self, name, type_="direct"):
         if name in self._exchanges:
@@ -44,15 +28,13 @@ class LiteMQService(MultiService):
         del self._exchanges[name]
         self.log.debug("Undeclared exchange '%s'" % name)
 
-    def produce(self, exchange, routing_key, message, properties=dict()):
+    def produce(self, exchange, routing_key, message, properties=None):
         assert exchange in self._exchanges
         self._exchanges[exchange].publish(routing_key, message, properties)
-        self.log.debug("Produced new message '%s' with routing_key '%s' "
-                       "to exchange '%s'" % (hexlify(message) if "binary" in
-                                             properties and properties["binary"]
-                                             else message,
-                                             routing_key, exchange))
-
+        self.log.debug(
+          "Produced new message '%s' with routing_key '%s' " "to exchange '%s'"
+          % (hexlify(message) if properties and "binary" in properties and
+             properties["binary"] else message, routing_key, exchange))
     def consume(self, exchange, queue, routing_key, callback, ack=False):
         assert exchange in self._exchanges
         self._exchanges[exchange].bind_queue(queue, routing_key, callback, ack)
@@ -67,5 +49,5 @@ class LiteMQService(MultiService):
                        "and queue=%s" % (exchange, queue))
 
 
-def makeService(sas, options):
-    return LiteMQService(sas, options)
+def makeService(name, options):
+    return LiteMQService(name, options)

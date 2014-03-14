@@ -64,5 +64,3 @@ class OperArgInvalid(SABaseException):
 class OperArgNumsExceeded(SABaseException):
 
     message = "Took %d arguments(max=%d) for '%s' operation"
-
-

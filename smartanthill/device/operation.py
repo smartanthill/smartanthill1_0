@@ -1,26 +1,25 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from twisted.internet.defer import Deferred, inlineCallbacks,  returnValue
+from twisted.internet.defer import inlineCallbacks, returnValue
 
 import smartanthill.network.cdc as cdc
 from smartanthill.network.zvd import ZeroVirtualDevice
+from smartanthill.device.arg import DeviceIDArg
 
 
 class OperationBase(object):
 
-    CDC =  None
+    CDC = None
     TTL = 1
     ACK = True
 
-    def __init__(self):
-        self._devid = 0
-
-    def get_devid(self):
-        return self.devid
+    def __init__(self, devidarg):
+        assert isinstance(devidarg, DeviceIDArg)
+        self._devid = devidarg.get_value()
 
     def get_data(self):
-        return None
+        return []
 
     def on_result(self, result):
         return result
@@ -28,20 +27,21 @@ class OperationBase(object):
     @inlineCallbacks
     def launch(self):
         zvd = ZeroVirtualDevice()
-        result = yield zvd.request(self.CDC, self.get_devid(), self.TTL, self.ACK,
-                             self.get_data())
+        result = yield zvd.request(self.CDC, self._devid, self.TTL,
+                                   self.ACK, self.get_data())
         returnValue(self.on_result(result))
 
 
 class EmptyArgsBase(OperationBase):
 
     def __init__(self, devidarg):
-        self.devid = devidarg.get_value()
+        OperationBase.__init__(self, devidarg)
 
 
 class InfiniteArgsBase(OperationBase):
 
-    def __init__(self, *args):
+    def __init__(self, devidarg, *args):
+        OperationBase.__init__(self, devidarg)
         self._args = args
 
     def get_data(self):
@@ -50,18 +50,16 @@ class InfiniteArgsBase(OperationBase):
 
 class InfiniteSingleArgsBase(InfiniteArgsBase):
 
-    def __init__(self, *args):
-        assert len(args) >= 2
-        self.devid = args[0].get_value()
-        self._args = args[1:]
+    def __init__(self, devidarg, *args):
+        assert len(args) >= 1
+        InfiniteArgsBase.__init__(self, devidarg, *args)
 
 
 class InfinitePairArgsBase(InfiniteArgsBase):
 
-    def __init__(self, *args):
-        assert len(args) >= 3 and len(args) % 2 != 0
-        self.devid = args[0].get_value()
-        self._args = args[1:]
+    def __init__(self, devidarg, *args):
+        assert len(args) >= 2 and len(args) % 2 == 0
+        InfiniteArgsBase.__init__(self, devidarg, *args)
 
 
 class Ping(EmptyArgsBase):
@@ -94,11 +92,7 @@ class ConfigureAnalogReference(InfiniteSingleArgsBase):
     CDC = cdc.CHANNEL_BDCREQUEST.CONFIGURE_ANALOG_REFERENCE
 
     def __init__(self, devidarg, arefarg):
-        self.devid = devidarg.get_value()
-        self._aref = arefarg.get_value()
-
-    def get_data(self):
-        return [self._aref]
+        InfiniteSingleArgsBase.__init__(self, devidarg, arefarg)
 
 
 class ReadAnalogPin(InfiniteSingleArgsBase):

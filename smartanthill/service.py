@@ -4,50 +4,72 @@
 from twisted.application.service import MultiService
 from twisted.python import usage
 from twisted.python.filepath import FilePath
+from twisted.python.reflect import namedAny
 from twisted.python.util import sibpath
 
 from smartanthill import __banner__, __version__
 from smartanthill.configparser import Config
 from smartanthill.log import Logger
-from smartanthill.util import load_config, load_service
+from smartanthill.util import load_config
 
 BASECONF_PATH = sibpath(__file__, "config_base.json")
 
 
-class SmartAnthillService(MultiService):
+class SAMultiService(MultiService):
+
+    def __init__(self, name, options=None):
+        MultiService.__init__(self)
+        self.setName(name)
+        self.log = Logger(name)
+        self.options = options
+
+    def startService(self):
+        MultiService.startService(self)
+        if self.name != "sas":
+            self.log.info("Service has been started with options '%s'" %
+                          self.options)
+
+    def stopService(self):
+        MultiService.stopService(self)
+        self.log.info("Service has been stopped.")
+
+
+class SmartAnthillService(SAMultiService):
 
     INSTANCE = None
 
-    def __init__(self, user_options):
+    def __init__(self, name, options):
+        self.config = Config(BASECONF_PATH, options)
+        SAMultiService.__init__(self, name, options)
         SmartAnthillService.INSTANCE = self
-        MultiService.__init__(self)
-        self.setName("sas")
-        self.datadir = user_options['data']
-        self.config = Config(BASECONF_PATH, user_options)
-        self.log = Logger(self)
+        self.datadir = options['data']
 
     @staticmethod
     def instance():
         return SmartAnthillService.INSTANCE
 
     def startService(self):
+        self.log.info(__banner__)
         self.log.debug("Initial configuration: %s." % self.config)
 
-        self.start_sas_services(self.config['services'])
+        self.preload_subservices(self.config['services'])
 
-        MultiService.startService(self)
+        SAMultiService.startService(self)
         self.log.info("SmartAnthill %s (%s) starting up." % (__version__,
                                                              self.datadir))
-        # r = self.device.get_device(
-        #     128).launch_operation("readanalogpin", "A0", "A1", "A2", "A3")
-        # r.addCallback(lambda r: self.log.info(r))
+        r = self.getServiceNamed("device").get_device(128).launch_operation(
+            "readanalogpin", "A0")
+        r.addCallback(lambda r: self.log.info(r))
 
-    def start_sas_services(self, services):
-        for k, v in services.iteritems():
-            if not v['enabled']:
+    def preload_subservices(self, services):
+        services = sorted(services.items(), key=lambda s: s[1]['priority'])
+        for (name, sopt) in services:
+            if not sopt['enabled']:
                 continue
-            setattr(self, k, load_service(self, k, v['options']))
-            self.addService(getattr(self, k))
+
+            path = "smartanthill.%s.service" % name
+            service = namedAny(path).makeService(name, sopt['options'])
+            service.setServiceParent(self)
 
 
 class Options(usage.Options):
@@ -89,6 +111,4 @@ class Options(usage.Options):
 
 
 def makeService(options):
-    print __banner__
-
-    return SmartAnthillService(options)
+    return SmartAnthillService("sas", options)

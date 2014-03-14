@@ -3,9 +3,9 @@
 
 from twisted.internet.defer import Deferred
 
-from smartanthill.tap import SmartAnthillService
-from smartanthill.util import singleton
 from smartanthill.network.protocol import ControlMessage
+from smartanthill.service import SmartAnthillService
+from smartanthill.util import singleton
 
 
 @singleton
@@ -14,21 +14,17 @@ class ZeroVirtualDevice(object):
     ID = 0x0
 
     def __init__(self):
-        self.sas = SmartAnthillService.instance()
-        assert isinstance(self.sas, SmartAnthillService)
-
-        self.sas.litemq.consume("network", "msgqueue",
-                                "control->client",
-                                self.onmessage_mqcallback)
-        self.sas.litemq.consume("network", "ackqueue",
-                                "acknowledged->client",
-                                self.onack_mqcallback)
+        self._litemq = SmartAnthillService.instance().getServiceNamed("litemq")
+        self._litemq.consume("network", "msgqueue", "control->client",
+                             self.onmessage_mqcallback)
+        self._litemq.consume("network", "ackqueue", "acknowledged->client",
+                             self.onack_mqcallback)
         self._resqueue = []
         self._ackqueue = []
 
     def request(self, cdc, destination, ttl, ack, data):
         cm = ControlMessage(cdc, self.ID, destination, ttl, ack, data)
-        self.sas.litemq.produce("network", "client->control", cm)
+        self._litemq.produce("network", "client->control", cm)
         return self._defer_result(cm)
 
     def _defer_result(self, message):

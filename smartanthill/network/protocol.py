@@ -47,8 +47,8 @@ class ControlMessage(object):
 
     def __eq__(self, other):
         for attr in ("cdc", "source", "destination", "ttl", "ack", "data"):
-           if getattr(self, attr) != getattr(other, attr):
-               return False
+            if getattr(self, attr) != getattr(other, attr):
+                return False
         return True
 
 

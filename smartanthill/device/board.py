@@ -7,8 +7,8 @@ from twisted.python.reflect import namedAny
 
 import smartanthill.device.arg as arg
 import smartanthill.device.operation as op
-from smartanthill.exception import (OperArgNumsExceeded, UnknownDeviceBoard,
-                                    UnknownBoardOperation)
+from smartanthill.exception import (OperArgNumsExceeded, UnknownBoardOperation,
+                                    UnknownDeviceBoard)
 
 
 class BoardFactory(object):

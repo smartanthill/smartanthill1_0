@@ -4,7 +4,6 @@
 import sys
 import traceback
 
-from twisted.application.service import Service
 from twisted.python import log
 
 from smartanthill.configparser import Config
@@ -22,7 +21,7 @@ class Logger(object):
     }
 
     def __init__(self, system="-"):
-        self.system = system.name if isinstance(system, Service) else system
+        self.system = system
         try:
             self._current_level = self.LEVELS[Config()['logger.level']]
         except (ConfigKeyError, KeyError):
@@ -38,9 +37,8 @@ class Logger(object):
         if kwargs['_anthill_loglevel'] > self._current_level:
             return
         elif kwargs['_anthill_loglevel'] != 3:
-            _system = "%s.%s" % (
-                self._levelid_to_str(kwargs['_anthill_loglevel']).lower(),
-                _system)
+            _system = "%s#%s" % (_system, self._levelid_to_str(
+                kwargs['_anthill_loglevel']).lower())
 
         params = dict(system=_system)
         params.update(kwargs)

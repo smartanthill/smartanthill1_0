@@ -3,11 +3,30 @@
   {
     "level": "INFO"
   },
+
   "services":
   {
     "litemq":
     {
       "enabled": true,
+      "priority": 1,
+      "options": []
+    },
+
+    "network":
+    {
+      "priority": 2
+    },
+
+    "device":
+    {
+      "priority": 3
+    },
+
+    "web":
+    {
+      "enabled": true,
+      "priority": 4,
       "options": []
     }
   }
