@@ -15,9 +15,9 @@ Bi-Directional Communication (Response)
 ListOperationalStates
 ---------------------
 
-The result of request from :ref:`cdc_bdcreq` channel and :ref:`cdc_bdcreq_0x09`.
-The *Payload* part will contain the list of activated *Operational States*.
-Where each byte will be equal to :ref:`cdc` *ID*.
+The result of the request from :ref:`cdc_bdcreq` channel and
+:ref:`cdc_bdcreq_0x09`. The *Payload* part will contain the list of activated
+*Operational States*. Where each byte will be equal to :ref:`cdc` *ID*.
 
 The *Message* by |SACP| will have the next structure:
 
@@ -40,7 +40,7 @@ The *Message* by |SACP| will have the next structure:
 +---------+--------------------+---------------+-------------------------------+
 
 .. note::
-    If device has more then one activated *Operational State* then the
+    If device has more than one activated *Operational State* then the
     *Payload* part of *Message* will have the next sequence of bytes ->
     ``cdcID1, cdcID2, ..., cdcIDN``
 
@@ -50,9 +50,9 @@ The *Message* by |SACP| will have the next structure:
 ConfigurePinMode
 ----------------
 
-The result of request from :ref:`cdc_bdcreq` channel and :ref:`cdc_bdcreq_0x0A`.
-The *Payload* part will contain the list of pins that was successfully
-configured with specified mode.
+The result of the request from :ref:`cdc_bdcreq` channel and
+:ref:`cdc_bdcreq_0x0A`. The *Payload* part will contain the list of pins that
+was successfully configured with specified mode.
 
 The *Message* by |SACP| will have the next structure:
 
@@ -75,7 +75,7 @@ The *Message* by |SACP| will have the next structure:
 +---------+--------------------+---------------+-------------------------------+
 
 .. note::
-    If you specified more then one Pin using single *Message* then the
+    If you specified more than one Pin using single *Message* then the
     *Payload* part of *Message* will have the next sequence of bytes ->
     ``pin1, pin2, ..., pinN``
 
@@ -85,9 +85,10 @@ The *Message* by |SACP| will have the next structure:
 ReadDigitalPin
 --------------
 
-The result of request from :ref:`cdc_bdcreq` channel and :ref:`cdc_bdcreq_0x0B`.
-The *Payload* part will contain the result from requested pins. The result
-value can be as ``0x1`` (high level) or ``0x0`` (low level).
+The result of the request from :ref:`cdc_bdcreq` channel and
+:ref:`cdc_bdcreq_0x0B`. The *Payload* part will contain the result from
+requested pins. The result value can be as ``0x1`` (high level) or ``0x0``
+(low level).
 
 The *Message* by |SACP| will have the next structure:
 
@@ -111,7 +112,7 @@ The *Message* by |SACP| will have the next structure:
 +---------+--------------------+---------------+-------------------------------+
 
 .. note::
-    If you specified more then one Pin using single *Message* then the
+    If you specified more than one Pin using single *Message* then the
     *Payload* part of *Message* will have the next sequence of bytes ->
     ``value1, value2, ..., valueN``
 
@@ -121,9 +122,9 @@ The *Message* by |SACP| will have the next structure:
 WriteDigitalPin
 ---------------
 
-The result of request from :ref:`cdc_bdcreq` channel and :ref:`cdc_bdcreq_0x0C`.
-The *Payload* part will contain the list of pins that was successfully
-updated with specified levels.
+The result of the request from :ref:`cdc_bdcreq` channel and
+:ref:`cdc_bdcreq_0x0C`. The *Payload* part will contain the list of pins that
+was successfully updated with specified levels.
 
 The *Message* by |SACP| will have the next structure:
 
@@ -146,7 +147,7 @@ The *Message* by |SACP| will have the next structure:
 +---------+--------------------+---------------+-------------------------------+
 
 .. note::
-    If you specified more then one Pin using single *Message* then the
+    If you specified more than one Pin using single *Message* then the
     *Payload* part of *Message* will have the next sequence of bytes ->
     ``pin1, pin2, ..., pinN``
 
@@ -156,9 +157,9 @@ The *Message* by |SACP| will have the next structure:
 ConfigureAnalogReference
 ------------------------
 
-The result of request from :ref:`cdc_bdcreq` channel and :ref:`cdc_bdcreq_0x0D`.
-The first byte of *Payload* part will contain ``0x01`` if the reference
-voltage was successfully configured, otherwise ``0x00``.
+The result of the request from :ref:`cdc_bdcreq` channel and
+:ref:`cdc_bdcreq_0x0D`. The first byte of *Payload* part will contain ``0x01``
+if the reference voltage was successfully configured, otherwise ``0x00``.
 
 The *Message* by |SACP| will have the next structure:
 
@@ -187,10 +188,10 @@ The *Message* by |SACP| will have the next structure:
 ReadAnalogPin
 -------------
 
-The result of request from :ref:`cdc_bdcreq` channel and :ref:`cdc_bdcreq_0x0E`.
-The *Payload* part will contain the result from requested pins. The result
-value can be between 0-1023 (for 10-bit ADC_) or between 0-4095 (for
-12-bit ADC_).
+The result of the request from :ref:`cdc_bdcreq` channel and
+:ref:`cdc_bdcreq_0x0E`. The *Payload* part will contain the result from
+requested pins. The result value can be between 0-1023 (for 10-bit ADC_) or
+between 0-4095 (for 12-bit ADC_).
 
 The *Message* by |SACP| will have the next structure:
 
@@ -215,7 +216,7 @@ The *Message* by |SACP| will have the next structure:
 +---------+--------------------+---------------+-------------------------------+
 
 .. note::
-    If you specified more then one Pin using single *Message* then the
+    If you specified more than one Pin using single *Message* then the
     *Payload* part of *Message* will have the next sequence of bytes ->
     ``MSB_value1, LSB_value1, MSB_value2, LSB_value2, ..., MSB_valueN,
     LSB_valueN``

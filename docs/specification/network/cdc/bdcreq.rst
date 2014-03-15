@@ -13,7 +13,7 @@ ListOperationalStates
 ---------------------
 
 Retrieve a list with activated *Operational States* for specified device.
-As for result please read :ref:`cdc_bdcres_0x09` from :ref:`cdc_bdcres` channel.
+For the result please read :ref:`cdc_bdcres_0x09` from :ref:`cdc_bdcres` channel.
 
 The *Message* by |SACP| should have the next structure:
 
@@ -48,7 +48,7 @@ Configure the specified pin to behave either as an:
 * ``INPUT_PULLUP``
 * ``INPUT_PULLDOWN``
 
-As for result please read :ref:`cdc_bdcres_0x0A` from :ref:`cdc_bdcres` channel.
+For the result please read :ref:`cdc_bdcres_0x0A` from :ref:`cdc_bdcres` channel.
 
 The *Message* by |SACP| should have the next structure:
 
@@ -74,7 +74,7 @@ The *Message* by |SACP| should have the next structure:
 +---------+--------------------+---------------+-------------------------------+
 
 .. note::
-    You can configure more then one Pin using single *Message*. Please use the
+    You can configure more than one Pin using single *Message*. Please use the
     next sequence of bytes in *Payload* part of *Message* -> ``pin1, mode1,
     pin2, mode2, ..., pinN, modeN``
 
@@ -84,7 +84,7 @@ The *Message* by |SACP| should have the next structure:
 ReadDigitalPin
 --------------
 
-Read the value from a specified digital pin. As for result please read
+Read the value from a specified digital pin. For the result please read
 :ref:`cdc_bdcres_0x0B` from :ref:`cdc_bdcres` channel.
 
 The *Message* by |SACP| should have the next structure:
@@ -108,7 +108,7 @@ The *Message* by |SACP| should have the next structure:
 +---------+--------------------+---------------+-------------------------------+
 
 .. note::
-    You can read more then one Pin using single *Message*. Please use the next
+    You can read more than one Pin using single *Message*. Please use the next
     sequence of bytes in *Payload* part of *Message* -> ``pin1, pin2, ...,
     pinN``
 
@@ -119,7 +119,7 @@ WriteDigitalPin
 ---------------
 
 Write a ``LOW`` or a ``HIGH`` level to a digital pin.
-As for result please read :ref:`cdc_bdcres_0x0C` from :ref:`cdc_bdcres` channel.
+For the result please read :ref:`cdc_bdcres_0x0C` from :ref:`cdc_bdcres` channel.
 
 The *Message* by |SACP| should have the next structure:
 
@@ -145,7 +145,7 @@ The *Message* by |SACP| should have the next structure:
 +---------+--------------------+---------------+-------------------------------+
 
 .. note::
-    You can write to more then one Pin using single *Message*. Please use the
+    You can write to more than one Pin using single *Message*. Please use the
     next sequence of bytes in *Payload* part of *Message* -> ``pin1, value1,
     pin2, value2, ..., pinN, valueN``
 
@@ -165,7 +165,7 @@ Configure the reference voltage used for analog input. The modes are:
 * ``INTERNAL2V5``
 * ``EXTERNAL``
 
-As for result please read :ref:`cdc_bdcres_0x0D` from :ref:`cdc_bdcres` channel.
+For the result please read :ref:`cdc_bdcres_0x0D` from :ref:`cdc_bdcres` channel.
 
 The *Message* by |SACP| should have the next structure:
 
@@ -193,7 +193,7 @@ The *Message* by |SACP| should have the next structure:
 ReadAnalogPin
 -------------
 
-Read the value from a specified analog pin. As for result please read
+Read the value from a specified analog pin. For the result please read
 :ref:`cdc_bdcres_0x0E` from :ref:`cdc_bdcres` channel.
 
 The *Message* by |SACP| should have the next structure:
@@ -217,6 +217,6 @@ The *Message* by |SACP| should have the next structure:
 +---------+--------------------+---------------+-------------------------------+
 
 .. note::
-    You can read more then one Pin using single *Message*. Please use the next
+    You can read more than one Pin using single *Message*. Please use the next
     sequence of bytes in *Payload* part of *Message* -> ``pin1, pin2, ...,
     pinN``
