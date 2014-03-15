@@ -28,4 +28,7 @@ inobuild:
 inoupload: inobuild
 	cd /tmp/inotmp/; ino upload
 
+debug-demo:
+	cd examples/blink/data; twistd -n smartanthill --logger.level=DEBUG
+
 
