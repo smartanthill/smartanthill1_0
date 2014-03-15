@@ -5,14 +5,10 @@ from twisted.application.service import MultiService
 from twisted.python import usage
 from twisted.python.filepath import FilePath
 from twisted.python.reflect import namedAny
-from twisted.python.util import sibpath
 
 from smartanthill import __banner__, __version__
-from smartanthill.configparser import Config
+from smartanthill.config import get_baseconf, Config
 from smartanthill.log import Logger
-from smartanthill.util import load_config
-
-BASECONF_PATH = sibpath(__file__, "config_base.json")
 
 
 class SAMultiService(MultiService):
@@ -20,14 +16,16 @@ class SAMultiService(MultiService):
     def __init__(self, name, options=None):
         MultiService.__init__(self)
         self.setName(name)
-        self.log = Logger(name)
         self.options = options
+        self.log = Logger(self.name)
 
     def startService(self):
         MultiService.startService(self)
-        if self.name != "sas":
-            self.log.info("Service has been started with options '%s'" %
-                          self.options)
+        infomsg = "Service has been started"
+        if not self.options or isinstance(self.options, usage.Options):
+            self.log.info(infomsg)
+        else:
+            self.log.info(infomsg + " with options '%s'" % self.options)
 
     def stopService(self):
         MultiService.stopService(self)
@@ -39,29 +37,27 @@ class SmartAnthillService(SAMultiService):
     INSTANCE = None
 
     def __init__(self, name, options):
-        self.config = Config(BASECONF_PATH, options)
-        SAMultiService.__init__(self, name, options)
         SmartAnthillService.INSTANCE = self
-        self.datadir = options['data']
+        self.datadir = options['datadir']
+        self.config = Config(self.datadir, options)
+        SAMultiService.__init__(self, name, options)
 
     @staticmethod
     def instance():
         return SmartAnthillService.INSTANCE
 
     def startService(self):
-        self.log.info(__banner__)
         self.log.debug("Initial configuration: %s." % self.config)
 
-        self.preload_subservices(self.config['services'])
+        self._preload_subservices(self.config['services'])
 
         SAMultiService.startService(self)
-        self.log.info("SmartAnthill %s (%s) starting up." % (__version__,
-                                                             self.datadir))
+        self.log.info(__banner__.replace("#data#", self.options['datadir']))
         r = self.getServiceNamed("device").get_device(128).launch_operation(
             "readanalogpin", "A0")
         r.addCallback(lambda r: self.log.info(r))
 
-    def preload_subservices(self, services):
+    def _preload_subservices(self, services):
         services = sorted(services.items(), key=lambda s: s[1]['priority'])
         for (name, sopt) in services:
             if not sopt['enabled']:
@@ -73,41 +69,43 @@ class SmartAnthillService(SAMultiService):
 
 
 class Options(usage.Options):
-    optParameters = [["data", "d", None, "The path to working data directory"]]
+    optParameters = [["datadir", "d", ".",
+                      "The path to working data directory"]]
 
-    compData = usage.Completions(optActions={"data": usage.CompleteDirs()})
+    compData = usage.Completions(optActions={"datadir": usage.CompleteDirs()})
 
-    longdesc = "SmartAnthill System is an intelligent micro-oriented "\
+    longdesc = "SmartAnthill is an intelligent micro-oriented "\
         "networking system (version %s)" % __version__
 
-    skip_defconf_opts = ('services',)
+    allowed_defconf_opts = ("logger.level",)
 
     def __init__(self):
-        self._gather_baseparams(load_config(BASECONF_PATH))
+        self._gather_baseparams(get_baseconf())
         usage.Options.__init__(self)
 
     def _gather_baseparams(self, baseconf, path=None):
         for k, v in baseconf.iteritems():
-            argname = path + '.' + k if path else k
+            argname = path + "." + k if path else k
             # print argname, v, type(v)
             if isinstance(v, dict):
                 self._gather_baseparams(v, argname)
             else:
-                if k in self.skip_defconf_opts:
+                if not argname in self.allowed_defconf_opts:
                     continue
                 self.optParameters.append([argname, None, v, None, type(v)])
 
     def postOptions(self):
-        if not self['data']:
-            raise usage.UsageError("Please specify the path(--data=)"
+        if not self['datadir']:
+            raise usage.UsageError("Please specify the path(--datadir=)"
                                    " to working directory")
-        data_path = FilePath(self['data'])
-        if not data_path.exists() or not data_path.isdir():
+        datadir_path = FilePath(self['datadir'])
+        if not datadir_path.exists() or not datadir_path.isdir():
             raise usage.UsageError("The path to the working data directory"
                                    " is invalid")
-        elif data_path.getPermissions().user.shorthand() != 'rwx':
+        elif datadir_path.getPermissions().user.shorthand() != 'rwx':
             raise usage.UsageError("You don't have 'read/write/execute'"
                                    " permissions to working data directory")
+        self['datadir'] = datadir_path.path
 
 
 def makeService(options):

@@ -45,9 +45,8 @@ To install the development version:
 Working Data Directory
 ----------------------
 
-The only one option that is required for starting |SA| is ``--data`` (the path
-to the working data directory, like "project directory"). |SA| will use this
-folder for:
+The only one requirement for starting |SA| is creation of
+*Working Data Directory*. |SA| will use this directory for:
 
 * finding user's specific start-up configuration options. They must be located
   in the ``config.json`` file. (Check the list of the available options at
@@ -55,6 +54,9 @@ folder for:
 * finding the *Addons* for |SASys|
 * storing the settings about micro-devices
 * storing the another working data.
+
+For a start please **create empty directory** (like "project directory").
+Later |SA| will fill this folder with proper data.
 
 .. warning::
     The *Working Data Directory* must have `Written Permission
@@ -78,7 +80,8 @@ command. The final |SA| command looks like:
 
 .. code-block:: bash
 
-    $ twistd smartanthill --data=/path/to/working/data/directory
+    $ cd /path/to/working/data/directory
+    $ twistd smartanthill
 
 The whole list of usage options for |SA| is accessible via:
 
@@ -93,7 +96,8 @@ The command for *Foreground Process*:
 
 .. code-block:: bash
 
-    $ twistd --nodaemon smartanthill --data=/path/to/working/data/directory
+    $ cd /path/to/working/data/directory
+    $ twistd --nodaemon smartanthill
 
 
 Check the :ref:`configuration` page for detailed configuration options.

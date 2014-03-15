@@ -5,42 +5,45 @@ import os.path
 import sys
 
 from twisted.python.filepath import FilePath
+from twisted.python.util import sibpath
 
 from smartanthill.exception import ConfigKeyError
 from smartanthill.util import load_config, merge_nested_dicts, singleton
 
 
+def get_baseconf():
+    return load_config(sibpath(__file__, "config_base.json"))
+
+
 @singleton
 class Config(object):
 
-    def __init__(self, baseconf_path, user_options):
-        # parse base conf
-        self._config = load_config(baseconf_path)
-
-        self.parse_datadir_conf(user_options['data'])
+    def __init__(self, datadir, user_options):
+        self._data = get_baseconf()
+        self.parse_datadir_conf(datadir)
         self.parse_user_options(user_options)
 
     def parse_datadir_conf(self, datadir_path):
         dataconf_path = FilePath(os.path.join(datadir_path, "config.json"))
         if not dataconf_path.exists() or not dataconf_path.isfile():
             return
-        self._config = merge_nested_dicts(self._config,
+        self._data = merge_nested_dicts(self._data,
                                           load_config(dataconf_path.path))
 
     def parse_user_options(self, options):
         baseopts = frozenset([v[0] for v in options.optParameters if v[0] !=
-                              "data"])
+                              "datadir"])
         useropts = frozenset([v.split("=")[0][2:] for v in sys.argv
                               if v[:2] == "--" and "=" in v])
         for k in useropts.intersection(baseopts):
             _dyndict = options[k]
             for p in reversed(k.split('.')):
                 _dyndict = {p: _dyndict}
-            self._config = merge_nested_dicts(self._config, _dyndict)
+            self._data = merge_nested_dicts(self._data, _dyndict)
 
     def get(self, key_path, default=None):
         try:
-            value = self._config
+            value = self._data
             for k in key_path.split("."):
                 value = value[k]
             return value
@@ -54,4 +57,4 @@ class Config(object):
         return self.get(key_path)
 
     def __str__(self):
-        return str(self._config)
+        return str(self._data)

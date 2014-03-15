@@ -6,7 +6,7 @@ import traceback
 
 from twisted.python import log
 
-from smartanthill.configparser import Config
+from smartanthill.config import Config
 from smartanthill.exception import ConfigKeyError
 
 

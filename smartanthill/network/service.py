@@ -127,7 +127,8 @@ class RouterService(SAMultiService):
 
     def stopService(self):
         SAMultiService.stopService(self)
-        self._litemq.unconsume("network", "routing.out")
+        if self._litemq:
+          self._litemq.unconsume("network", "routing.out")
 
     def inpacket_protocallback(self, packet):
         self.log.debug("Received incoming packet %s" % hexlify(packet))
