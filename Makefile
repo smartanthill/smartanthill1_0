@@ -1,12 +1,14 @@
-.PHONY: all docs clean clean-pyc pylint pushrtfd inobuild inoupload
+.PHONY: all docs clean clean-doc clean-pyc pylint pushrtfd inobuild inoupload debug-demo
 
 all: docs
-	@# do nothing yet
 
 docs:
 	$(MAKE) -C docs/ html
 
-clean: clean-pyc
+clean: clean-doc clean-pyc
+
+clean-doc:
+	rm -R docs/_build
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
