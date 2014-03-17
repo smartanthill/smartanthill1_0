@@ -50,7 +50,7 @@ class IntArgBase(ArgBase):
             elif self._max == None:
                 assert _value >= self._min
             else:
-                assert _value >= self._min and _value <= self._max
+                assert self._min <= _value <= self._max
 
             ArgBase.set_value(self, _value)
         except:

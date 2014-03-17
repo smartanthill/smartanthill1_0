@@ -22,8 +22,8 @@ class ControlMessage(object):
         self.ack = ack
         self.data = data or []
 
-        assert (self.cdc <= 255 and self.source <= 255 and
-                self.destination <= 255)
+        assert (self.cdc <= 255 and 0 <= self.source <= 255 and
+                0 <= self.destination <= 255)
         assert self.source != self.destination
         assert self.ttl <= 15, "TTL should be between 1-15"
         assert len(self.data) <= 1792
@@ -98,7 +98,7 @@ class TransportProtocol(protocol.Protocol):
 
         ack = ord(message[3]) & 0x80
         ttl = (ord(message[3]) & 0x78) >> 3
-        assert ttl and ttl <= 15, "TTL should be between 1-15"
+        assert 0 < ttl <= 15, "TTL should be between 1-15"
 
         if ack:
             self._outmsgbuffer[message] = dict(

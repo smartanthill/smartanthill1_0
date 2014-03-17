@@ -16,7 +16,7 @@ class DeviceService(SAMultiService):
 
         for devid, devoptions in self.options.items():
             devid = int(devid)
-            assert devid > 0 and devid <= 255
+            assert 0 < devid <= 255
             assert ("board" and "operations") in devoptions
 
             try:
