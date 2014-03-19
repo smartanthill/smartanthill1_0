@@ -7,8 +7,8 @@ from twisted.python.reflect import namedAny
 
 import smartanthill.device.arg as arg
 import smartanthill.device.operation as op
-from smartanthill.exception import (OperArgNumsExceeded, UnknownBoardOperation,
-                                    UnknownDeviceBoard)
+from smartanthill.exception import (BoardUnknownOperation, DeviceUnknownBoard,
+                                    OperArgNumsExceeded)
 
 
 class BoardFactory(object):
@@ -19,7 +19,7 @@ class BoardFactory(object):
         try:
             obj = namedAny(obj_path)()
         except AttributeError:
-            raise UnknownDeviceBoard(name)
+            raise DeviceUnknownBoard(name)
         assert isinstance(obj, BoardBase)
         return obj
 

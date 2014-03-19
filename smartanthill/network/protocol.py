@@ -5,9 +5,8 @@ from struct import pack
 
 from twisted.internet import protocol, reactor
 from twisted.internet.defer import Deferred
-from twisted.python.failure import Failure
 
-from smartanthill.exception import SATPMessageLost
+from smartanthill.exception import NetworkSATPMessageLost
 from smartanthill.network.cdc import CHANNEL_URGENT
 from smartanthill.util import calc_crc16
 
@@ -226,8 +225,8 @@ class TransportProtocol(protocol.Protocol):
     def _messagelost_callback(self, message):
         if not message in self._outmsgbuffer:
             return
-        self._outmsgbuffer[message]["d"].errback(Failure(
-            SATPMessageLost(message)))
+        self._outmsgbuffer[message]["d"].errback(
+            NetworkSATPMessageLost(message))
         del self._outmsgbuffer[message]
 
     def _inbufsegments_to_message(self, key):

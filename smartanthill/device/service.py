@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 from smartanthill.device.device import Device
-from smartanthill.exception import UnknownDeviceBoard, UnknownDeviceId
+from smartanthill.exception import DeviceUnknownBoard, DeviceUnknownId
 from smartanthill.service import SAMultiService
 
 
@@ -22,14 +22,14 @@ class DeviceService(SAMultiService):
             try:
                 devobj = Device(devid, devoptions)
                 self._devices[devid] = devobj
-            except UnknownDeviceBoard, e:
+            except DeviceUnknownBoard, e:
                 self.log.error(e)
 
         SAMultiService.startService(self)
 
     def get_device(self, id_):
         if not id_ in self._devices:
-            raise UnknownDeviceId(id_)
+            raise DeviceUnknownId(id_)
         return self._devices[id_]
 
 

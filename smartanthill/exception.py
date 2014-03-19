@@ -4,18 +4,18 @@
 
 class SABaseException(Exception):
 
-    message = None
+    MESSAGE = None
 
     def __str__(self):
-        if self.message:
-            return self.message % self.args
+        if self.MESSAGE:
+            return self.MESSAGE % self.args
         else:
             return Exception.__str__(self)
 
 
 class ConfigKeyError(SABaseException, KeyError):
 
-    message = "Invalid config data path '%s'"
+    MESSAGE = "Invalid config data path '%s'"
 
 
 class NotImplemnetedYet(SABaseException):
@@ -26,41 +26,52 @@ class LiteMQACKFailed(SABaseException):
     pass
 
 
-class SATPMessageLost(SABaseException):
+class LiteMQResendFailed(SABaseException):
+    pass
 
-    message = "Message has been lost: %s"
+
+class NetworkSATPMessageLost(SABaseException):
+
+    MESSAGE = "Message has been lost: %s"
 
 
 class NetworkRouterConnectFailure(SABaseException):
 
-    message = "Couldn't connect to router with options=%s"
+    MESSAGE = "Couldn't connect to router with options=%s"
 
 
-class UnknownBoardOperation(SABaseException):
+class BoardUnknownOperation(SABaseException):
 
-    message = "Unknown operation '%s' for %s"
-
-
-class UnknownDeviceId(SABaseException):
-
-    message = "Unknown device with ID=%d"
+    MESSAGE = "Unknown operation '%s' for %s"
 
 
-class UnknownDeviceBoard(SABaseException):
+class DeviceUnknownId(SABaseException):
 
-    message = "Unknown device board '%s'"
+    MESSAGE = "Unknown device with ID=%s"
 
 
-class UnknownDeviceOperation(SABaseException):
+class DeviceUnknownBoard(SABaseException):
 
-    message = "Unknown operation '%s' for device #%d"
+    MESSAGE = "Unknown device board '%s'"
+
+
+class DeviceUnknownOperation(SABaseException):
+
+    MESSAGE = "Unknown operation '%s' for device #%d"
+
+
+class DeviceNotResponding(SABaseException):
+
+    MESSAGE = "Device #%d is not responding (tried %s times)"
 
 
 class OperArgInvalid(SABaseException):
 
-    message = "%s%s: Invalid value '%s'"
+    MESSAGE = "%s%s: Invalid value '%s'"
 
 
 class OperArgNumsExceeded(SABaseException):
 
-    message = "Took %d arguments(max=%d) for '%s' operation"
+    MESSAGE = "Took %d arguments(max=%d) for '%s' operation"
+
+
