@@ -4,8 +4,9 @@
 from twisted.internet.defer import Deferred
 
 from smartanthill.network.protocol import ControlMessage
-from smartanthill.service import SmartAnthillService
+from smartanthill.service import  SmartAnthillService
 from smartanthill.util import singleton
+from smartanthill.exception import DeviceNotResponding
 
 
 @singleton
@@ -16,9 +17,11 @@ class ZeroVirtualDevice(object):
     def __init__(self):
         self._litemq = SmartAnthillService.instance().getServiceNamed("litemq")
         self._litemq.consume("network", "msgqueue", "control->client",
-                             self.onmessage_mqcallback)
-        self._litemq.consume("network", "ackqueue", "acknowledged->client",
+                             self.onresult_mqcallback)
+        self._litemq.consume("network", "ackqueue", "transport->ack",
                              self.onack_mqcallback)
+        self._litemq.consume("network", "errqueue", "transport->err",
+                             self.onerr_mqcallback)
         self._resqueue = []
         self._ackqueue = []
 
@@ -32,10 +35,10 @@ class ZeroVirtualDevice(object):
         if message.is_bdcrequest():
             self._resqueue.append((d, message))
         else:
-            self._ackqueue.append((d, message))
+            self._ackqueue.append([d, message, 0])
         return d
 
-    def onmessage_mqcallback(self, message, properties):
+    def onresult_mqcallback(self, message, properties):
         if not message.is_bdcresponse():
             return
 
@@ -43,13 +46,24 @@ class ZeroVirtualDevice(object):
             if (item[1].get_dataclassifier() == message.get_dataclassifier()
                     and item[1].source == message.destination
                     and item[1].destination == message.source):
-                item[0].callback(message.data)
                 self._resqueue.remove(item)
+                item[0].callback(message.data)
                 return True
 
     def onack_mqcallback(self, message, properties):
         for item in self._ackqueue:
             if item[1] == message:
-                item[0].callback(True)
                 self._ackqueue.remove(item)
-                return True
+                item[0].callback(True)
+                break
+
+    def onerr_mqcallback(self, message, properties):
+        for item in self._ackqueue:
+            if item[1] == message:
+                if item[2] == self._litemq.options['resend_max']:
+                    self._ackqueue.remove(item)
+                    item[0].errback(DeviceNotResponding(message.destination,
+                                                        item[2]))
+                else:
+                    item[2] += 1
+                break

@@ -91,10 +91,16 @@ class TransportService(SAMultiService):
     def outmessage_mqcallback(self, message, properties):
         self.log.debug("Received outgoing message %s" % hexlify(message))
         ctrlmsg = p.ControlProtocol.rawmessage_to_message(message)
+
+        def _on_err(failure):
+            self._litemq.produce("network", "transport->err", ctrlmsg)
+            failure.raiseException()
+
         d = maybeDeferred(self._protocol.send_message, message)
+        d.addErrback(_on_err)
         result = yield d
         if result and ctrlmsg.ack:
-            self._litemq.produce("network", "acknowledged->client", ctrlmsg)
+            self._litemq.produce("network", "transport->ack", ctrlmsg)
         returnValue(result)
 
 
