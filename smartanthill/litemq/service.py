@@ -18,7 +18,7 @@ class LiteMQService(SAMultiService):
             return
 
         self._exchanges[name] = ExchangeFactory().newExchange(name, type_)
-        self.log.debug("Declared new exchange '%s' with type '%s'" % (
+        self.log.info("Declared new exchange '%s' with type '%s'" % (
             name, type_))
 
     def undeclare_exchange(self, name):
@@ -26,26 +26,27 @@ class LiteMQService(SAMultiService):
             return
 
         del self._exchanges[name]
-        self.log.debug("Undeclared exchange '%s'" % name)
+        self.log.info("Undeclared exchange '%s'" % name)
 
     def produce(self, exchange, routing_key, message, properties=None):
         assert exchange in self._exchanges
-        self._exchanges[exchange].publish(routing_key, message, properties)
         self.log.debug(
-          "Produced new message '%s' with routing_key '%s' " "to exchange '%s'"
+          "Produce new message '%s' with routing_key '%s' " "to exchange '%s'"
           % (hexlify(message) if properties and "binary" in properties and
              properties["binary"] else message, routing_key, exchange))
+        self._exchanges[exchange].publish(routing_key, message, properties)
+
     def consume(self, exchange, queue, routing_key, callback, ack=False):
         assert exchange in self._exchanges
         self._exchanges[exchange].bind_queue(queue, routing_key, callback, ack)
-        self.log.debug("Registered consumer with exchange=%s, queue=%s, "
+        self.log.info("Registered consumer with exchange=%s, queue=%s, "
                        "routing_key=%s, ack=%s" % (
                            exchange, queue, routing_key, ack))
 
     def unconsume(self, exchange, queue):
         assert exchange in self._exchanges
         self._exchanges[exchange].unbind_queue(queue)
-        self.log.debug("Unregistered consumer with exchange=%s "
+        self.log.info("Unregistered consumer with exchange=%s "
                        "and queue=%s" % (exchange, queue))
 
 

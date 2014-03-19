@@ -1,33 +1,49 @@
 {
-  "logger":
-  {
-    "level": "INFO"
-  },
-
-  "services":
-  {
-    "litemq":
+    "logger":
     {
-      "enabled": true,
-      "priority": 1,
-      "options": []
+        "level": "INFO"
     },
 
-    "network":
+    "services":
     {
-      "priority": 2
-    },
+        "api":
+        {
+            "enabled": true,
+            "priority": 1,
+            "options": {}
+        },
 
-    "device":
-    {
-      "priority": 3
-    },
+        "litemq":
+        {
+            "enabled": true,
+            "priority": 2,
+            "options": {
+                "resend_delay": 1,
+                "resend_max": 10
+            }
+        },
 
-    "web":
-    {
-      "enabled": true,
-      "priority": 4,
-      "options": []
+        "network":
+        {
+            "enabled": false,
+            "priority": 3,
+            "options": {}
+        },
+
+        "device":
+        {
+            "enabled": false,
+            "priority": 4,
+            "options": {}
+        },
+
+        "web":
+        {
+            "enabled": true,
+            "priority": 5,
+            "options": {
+                "port": 8080
+          }
+        }
     }
-  }
 }

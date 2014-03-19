@@ -1,14 +1,15 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-
 from twisted.internet import reactor
 from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
 from twisted.python.reflect import namedAny
 
-from smartanthill.exception import LiteMQACKFailed, NotImplemnetedYet
+from smartanthill.exception import (LiteMQACKFailed, LiteMQResendFailed,
+                                    NotImplemnetedYet)
 from smartanthill.log import Logger
+from smartanthill.service import SmartAnthillService
 
 
 class ExchangeFactory(object):
@@ -23,14 +24,14 @@ class ExchangeFactory(object):
 
 class Queue(object):
 
-    MESSAGE_RESEND_DELAY = 1  # in seconds
-    MESSAGE_MAX_RESEND = 10  # the number of maximum resending
-
     def __init__(self, name, routing_key):
         self.log = Logger("litemq.queue")
         self.name = name
         self.routing_key = routing_key
 
+        _litemq = SmartAnthillService.instance().getServiceNamed("litemq")
+        self._resend_delay = _litemq.options['resend_delay']
+        self._resend_max = _litemq.options['resend_max']
         self._callbacks = []
 
     def attach_callback(self, callback, ack=False):
@@ -39,12 +40,6 @@ class Queue(object):
 
     def put(self, message, properties):
         assert self._callbacks
-
-        # check "resent" nums
-        if (properties and "_resentnums" in properties and
-                properties["_resentnums"] > self.MESSAGE_MAX_RESEND):
-            return
-
         d = Deferred()
         for c in self._callbacks:
             d.addCallback(lambda r, c, m, p: c(m, p), c[0], message, properties)
@@ -59,7 +54,11 @@ class Queue(object):
         if not "_resentnums" in properties:
             properties["_resentnums"] = 0
         properties["_resentnums"] += 1
-        reactor.callLater(self.MESSAGE_RESEND_DELAY * properties["_resentnums"],
+
+        if properties["_resentnums"] > self._resend_max:
+            raise LiteMQResendFailed
+
+        reactor.callLater(self._resend_delay * properties["_resentnums"],
                           self.put, message, properties)
 
 
