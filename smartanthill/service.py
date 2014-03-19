@@ -19,17 +19,31 @@ class SAMultiService(MultiService):
         self.options = options
         self.log = Logger(self.name)
 
+        self._started = False
+        self._onstarted = []
+
     def startService(self):
         MultiService.startService(self)
+
         infomsg = "Service has been started"
         if not self.options or isinstance(self.options, usage.Options):
             self.log.info(infomsg)
         else:
             self.log.info(infomsg + " with options '%s'" % self.options)
 
+        self._started = True
+        for callback in self._onstarted:
+            callback()
+
     def stopService(self):
         MultiService.stopService(self)
         self.log.info("Service has been stopped.")
+
+    def on_started(self, callback):
+        if self._started:
+            callback()
+        else:
+            self._onstarted.append(callback)
 
 
 class SmartAnthillService(SAMultiService):
