@@ -30,6 +30,7 @@ class BoardBase(object):
     PINS_ALIAS = None
     PINS = None
     ANALOG_PINS = None
+    PWM_PINS = None
 
 
     OPERATION_SETTINGS = [
@@ -61,6 +62,11 @@ class BoardBase(object):
             op.ReadAnalogPin,
             (arg.PinArg, [lambda s: s.ANALOG_PINS, lambda s: s.PINS_ALIAS])
         ),
+        (
+            op.WriteAnalogPin,
+            (arg.PinArg, [lambda s: s.PWM_PINS, lambda s: s.PINS_ALIAS]),
+            (arg.PinPWMValueArg, ())
+        )
     ]
 
     def get_operset(self, type_):
@@ -145,6 +151,7 @@ class BoardArduino(BoardBase):
         A7=21
     )
     ANALOG_PINS = range(14, 22)
+    PWM_PINS = (3, 5, 6, 9, 10, 11)
 
     def get_pinmodeargset(self):
         return ((0, 1, 2), dict(INPUT=0, OUTPUT=1, INPUT_PULLUP=2))

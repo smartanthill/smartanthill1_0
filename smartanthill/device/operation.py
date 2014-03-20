@@ -147,3 +147,8 @@ class ReadAnalogPin(InfiniteSingleArgsBase):
             del result[0:2]
             newres.append(msb << 8 | lsb)
         return newres
+
+
+class WriteAnalogPin(InfinitePairArgsBase):
+
+    TYPE = OperationType.WRITE_ANALOG_PIN

@@ -101,3 +101,9 @@ class PinAnalogRefArg(IntRangeWithAliasArgBase):
 
     def __init__(self, allowed, alias=None):
         IntRangeWithAliasArgBase.__init__(self, allowed, alias or [])
+
+
+class PinPWMValueArg(IntArgBase):
+
+    def __init__(self):
+        IntArgBase.__init__(self, 0, 255)
