@@ -1,6 +1,8 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+from time import time
+
 from twisted.internet.defer import inlineCallbacks, returnValue
 
 import smartanthill.network.cdc as cdc
@@ -65,6 +67,12 @@ class InfinitePairArgsBase(InfiniteArgsBase):
 class Ping(EmptyArgsBase):
 
     CDC = cdc.CHANNEL_URGENT.PING
+    def __init__(self, *args, **kwargs):
+        EmptyArgsBase.__init__(self, *args, **kwargs)
+        self._start = time()
+
+    def on_result(self, result):
+        return time() - self._start
 
 
 class ListOperationalStates(EmptyArgsBase):
