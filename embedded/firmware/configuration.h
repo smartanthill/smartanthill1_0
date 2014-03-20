@@ -9,15 +9,17 @@ SmartAnthill System */
 #ifndef __CONFIGURATION__
 #define __CONFIGURATION__
 
-#define DEVICE_ID                           0x80
+#define DEVICE_ID                            128
 
-#define OSM_STATE_CONFIGUREPINMODE          0x8A
-#define OSM_STATE_READDIGITALPIN            0x8B
-#define OSM_STATE_WRITEDIGITALPIN           0x8C
-#define OSM_STATE_CONFIGUREANALOGREFERENCE  0x8D
-#define OSM_STATE_READANALOGPIN             0x8E
-#define OSM_STATE_WRITEANALOGPIN            0x8F
+#define OPERTYPE_PING                        0x00
+#define OPERTYPE_LIST_OPERATIONS             0x89
+#define OPERTYPE_CONFIGURE_PIN_MODE          0x8A
+#define OPERTYPE_READ_DIGITAL_PIN            0x8B
+#define OPERTYPE_WRITE_DIGITAL_PIN           0x8C
+#define OPERTYPE_CONFIGURE_ANALOG_REFERENCE  0x8D
+#define OPERTYPE_READ_ANALOG_PIN             0x8E
+#define OPERTYPE_WRITE_ANALOG_PIN            0x8F
 
-#define ROUTER_UART_SPEED                   9600
+#define ROUTER_UART_SPEED                    9600
 
 #endif

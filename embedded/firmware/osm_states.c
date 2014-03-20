@@ -11,7 +11,7 @@ void osmStateAcknowledgeOutPacket()
     osm.makeTransition(IDLE_STATE);
 }
 
-void osmStateListOperationalStates()
+void osmStateListOperations()
 {
 
     RouterPacket *inPacket = routerGetInPacket();
@@ -23,12 +23,12 @@ void osmStateListOperationalStates()
                             SATP_FLAG_ACK : 0);
     outPacket.dataLength = 0;
 
-    uint8_t nums = osmGetStateNums();
+    uint8_t nums = osmGetStateNums() - 1 /* skip SEGMENT_ACKNOWLEDGMENT */;
 
     if (nums > 8)
     {
         outPacket.satpFlags |= SATP_FLAG_SEG;
-        outPacket.data[0] =0;
+        outPacket.data[0] = 0;
         outPacket.dataLength = 1;
     }
 

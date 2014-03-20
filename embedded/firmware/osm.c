@@ -14,32 +14,34 @@ OperationalStateMachine osm = {
 
 static const OperationalState osmStates[] =
 {
-
-#ifdef OSM_STATE_CONFIGUREPINMODE
-    {OSM_STATE_CONFIGUREPINMODE, &osmStateConfigurePinMode},
+#ifdef OPERTYPE_LIST_OPERATIONS
+    {OPERTYPE_LIST_OPERATIONS, &osmStateListOperations},
 #endif
 
-#ifdef OSM_STATE_READDIGITALPIN
-    {OSM_STATE_READDIGITALPIN, &osmStateReadDigitalPin},
+#ifdef OPERTYPE_CONFIGURE_PIN_MODE
+    {OPERTYPE_CONFIGURE_PIN_MODE, &osmStateConfigurePinMode},
 #endif
 
-#ifdef OSM_STATE_WRITEDIGITALPIN
-    {OSM_STATE_WRITEDIGITALPIN, &osmStateWriteDigitalPin},
+#ifdef OPERTYPE_READ_DIGITAL_PIN
+    {OPERTYPE_READ_DIGITAL_PIN, &osmStateReadDigitalPin},
 #endif
 
-#ifdef OSM_STATE_CONFIGUREANALOGREFERENCE
-    {OSM_STATE_CONFIGUREANALOGREFERENCE, &osmStateConfigureAnalogReference},
+#ifdef OPERTYPE_WRITE_DIGITAL_PIN
+    {OPERTYPE_WRITE_DIGITAL_PIN, &osmStateWriteDigitalPin},
 #endif
 
-#ifdef OSM_STATE_READANALOGPIN
-    {OSM_STATE_READANALOGPIN, &osmStateReadAnalogPin},
+#ifdef OPERTYPE_CONFIGURE_ANALOG_REFERENCE
+    {OPERTYPE_CONFIGURE_ANALOG_REFERENCE, &osmStateConfigureAnalogReference},
 #endif
 
-#ifdef OSM_STATE_WRITEANALOGPIN
-    {OSM_STATE_WRITEANALOGPIN, &osmStateWriteAnalogPin},
+#ifdef OPERTYPE_READ_ANALOG_PIN
+    {OPERTYPE_READ_ANALOG_PIN, &osmStateReadAnalogPin},
 #endif
 
-    {0x89, &osmStateListOperationalStates},
+#ifdef OPERTYPE_WRITE_ANALOG_PIN
+    {OPERTYPE_WRITE_ANALOG_PIN, &osmStateWriteAnalogPin},
+#endif
+
     {0x0A, &osmStateAcknowledgeOutPacket}
 };
 
