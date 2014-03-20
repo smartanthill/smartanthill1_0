@@ -106,4 +106,4 @@ class ExchangeTopic(ExchangeBase):
 
     def match(self, routing_key, routing_pattern):
         # TODO
-        pass
+        raise NotImplementedError

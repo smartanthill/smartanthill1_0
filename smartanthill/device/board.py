@@ -76,10 +76,10 @@ class BoardBase(object):
         raise BoardUnknownOperation(type_.name, self.__class__.__name__)
 
     def get_pinmodeargset(self):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_pinanalogrefargset(self):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def launch_device_operation(self, devid, type_, *args):
         operset = self.get_operset(type_)
@@ -163,4 +163,3 @@ class BoardArduino(BoardBase):
 class BoardArduino_Pro5V(BoardArduino):
 
     INFO_URL = "http://arduino.cc/en/Main/ArduinoBoardProMini"
-
