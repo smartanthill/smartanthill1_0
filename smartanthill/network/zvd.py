@@ -3,10 +3,10 @@
 
 from twisted.internet.defer import Deferred
 
-from smartanthill.network.protocol import ControlMessage
-from smartanthill.service import  SmartAnthillService
-from smartanthill.util import singleton
 from smartanthill.exception import DeviceNotResponding
+from smartanthill.network.protocol import ControlMessage
+from smartanthill.service import SmartAnthillService
+from smartanthill.util import singleton
 
 
 @singleton

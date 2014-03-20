@@ -143,8 +143,8 @@ class RouterService(SAMultiService):
                              dict(binary=True))
 
     def outsegment_mqcallback(self, message, properties):
-        # check destination ID
-        if not ord(message[2]) in self.options['deviceids']:
+        # check destination ID  @TODO
+        if ord(message[2]) not in self.options['deviceids']:
             return False
         self.log.debug("Received outgoing segment %s" % hexlify(message))
         self._protocol.send_segment(message)

@@ -7,7 +7,7 @@ from twisted.python.filepath import FilePath
 from twisted.python.reflect import namedAny
 
 from smartanthill import __banner__, __version__
-from smartanthill.config import get_baseconf, Config
+from smartanthill.config import Config, get_baseconf
 from smartanthill.log import Logger
 
 
@@ -66,10 +66,6 @@ class SmartAnthillService(SAMultiService):
         self._preload_subservices(self.config['services'])
 
         SAMultiService.startService(self)
-        self.log.info(__banner__.replace("#data#", self.options['datadir']))
-        r = self.getServiceNamed("device").get_device(128).launch_operation(
-            "readanalogpin", "A0")
-        r.addCallback(lambda r: self.log.info(r))
 
     def _preload_subservices(self, services):
         services = sorted(services.items(), key=lambda s: s[1]['priority'])

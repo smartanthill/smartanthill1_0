@@ -8,7 +8,8 @@ from twisted.python.reflect import namedAny
 import smartanthill.device.arg as arg
 import smartanthill.device.operation as op
 from smartanthill.exception import (BoardUnknownOperation, DeviceUnknownBoard,
-                                    OperArgNumsExceeded)
+                                    OperArgNumsExceeded, OperArgNumsNeed,
+                                    OperArgNumsPairedNeed)
 
 
 class BoardFactory(object):
@@ -31,63 +32,53 @@ class BoardBase(object):
     ANALOG_PINS = None
 
 
-    OPERATION_SETTINGS = {
-        "ping": (
+    OPERATION_SETTINGS = [
+        (
             op.Ping,
         ),
-
-        "listoperationalstates": (
-            op.ListOperationalStates,
+        (
+            op.ListOperations,
         ),
-
-        "configurepinmode": (
+        (
             op.ConfigurePinMode,
             (arg.PinArg, [lambda s: s.PINS, lambda s: s.PINS_ALIAS]),
-            [arg.PinModeArg, None],
-            "infinite"
+            [arg.PinModeArg, lambda s: s.get_pinmodeargset()]
         ),
-
-        "readdigitalpin": (
+        (
             op.ReadDigitalPin,
-            (arg.PinArg, [lambda s: s.PINS, lambda s: s.PINS_ALIAS]),
-            "infinite"
+            (arg.PinArg, [lambda s: s.PINS, lambda s: s.PINS_ALIAS])
         ),
-
-        "writedigitalpin": (
+        (
             op.WriteDigitalPin,
             (arg.PinArg, [lambda s: s.PINS, lambda s: s.PINS_ALIAS]),
-            (arg.PinLevelArg, ()),
-            "infinite"
+            (arg.PinLevelArg, ())
         ),
-
-        "configureanalogreference": (
+        (
             op.ConfigureAnalogReference,
-            [arg.PinAnalogRefArg, None]
+            [arg.PinAnalogRefArg, lambda s: s.get_pinanalogrefargset()]
         ),
-
-        "readanalogpin": (
+        (
             op.ReadAnalogPin,
-            (arg.PinArg, [lambda s: s.ANALOG_PINS, lambda s: s.PINS_ALIAS]),
-            "infinite"
-        )
-    }
+            (arg.PinArg, [lambda s: s.ANALOG_PINS, lambda s: s.PINS_ALIAS])
+        ),
+    ]
 
-    def launch_device_operation(self, devid, name, *args):
-        try:
-            operset = self.OPERATION_SETTINGS[name.lower()]
-        except:
-            raise UnknownBoardOperation(name, self.__class__.__name__)
+    def get_operset(self, type_):
+        for operset in self.OPERATION_SETTINGS:
+            if operset[0].TYPE == type_:
+                return operset
+        raise BoardUnknownOperation(type_.name, self.__class__.__name__)
 
-        if operset[-1] != "infinite" and len(args) != len(operset)-1:
-            raise OperArgNumsExceeded(len(args), len(operset)-1, name)
+    def get_pinmodeargset(self):
+        raise NotImplementedError()
 
-        # process lambdas for args
-        for _index, _item in enumerate(operset):
-            if type(_item) != tuple or len(_item) != 2:
-                continue
-            for _argindex, _argarg in enumerate(_item[1]):
-                if isfunction(_argarg):
-                    operset[_index][1][_argindex] = _argarg(self)
+    def get_pinanalogrefargset(self):
+        raise NotImplementedError()
+
+    def launch_device_operation(self, devid, type_, *args):
+        operset = self.get_operset(type_)
+        self._operset_validate_cliargs(operset, args)
+        operset = self._operset_process_lambdas(operset)
 
         # the first argument for operation should be DeviceIDArg
         classargs = [arg.DeviceIDArg()]
@@ -101,16 +92,39 @@ class BoardBase(object):
             _argobj.set_value(_argvalue)
             classargs.append(_argobj)
 
-            if _index+1 < len(operset) and operset[_index+1] == "infinite":
+            if (_index+1 == len(operset) and
+                    issubclass(operset[0], op.InfiniteArgsBase)):
                 _index = 1
             else:
                 _index += 1
-
         return operset[0](*classargs).launch()
 
+    def _operset_validate_cliargs(self, operset, args):
+        type_name = operset[0].TYPE.name
+        if issubclass(operset[0], op.InfiniteArgsBase):
+            if len(args) < len(operset)-1:
+                raise OperArgNumsNeed(len(operset)-1, type_name, len(args))
+            elif (issubclass(operset[0], op.InfinitePairArgsBase)
+                  and len(args) % 2 != 0):
+                raise OperArgNumsPairedNeed(type_name, len(args))
+        elif len(args) != len(operset)-1:
+            raise OperArgNumsExceeded(len(args), type_name, len(operset)-1)
+
+    def _operset_process_lambdas(self, operset):
+        for _index, _item in enumerate(operset):
+            if _index == 0 or len(_item) != 2:
+                continue
+            elif isfunction(_item[1]):
+                operset[_index][1] = _item[1](self)
+            else:
+                for _argindex, _argarg in enumerate(_item[1]):
+                    if isfunction(_argarg):
+                        operset[_index][1][_argindex] = _argarg(self)
+        return operset
 
 class BoardArduino(BoardBase):
 
+    PINS = range(1, 22)
     PINS_ALIAS = dict(
         SS=10,
         MOSI=11,
@@ -130,21 +144,16 @@ class BoardArduino(BoardBase):
         A6=20,
         A7=21
     )
+    ANALOG_PINS = range(14, 22)
 
-    def __init__(self):
-        # define allowed modes
-        self.OPERATION_SETTINGS['configurepinmode'][2][1] = (
-            (0, 1, 2),
-            dict(INPUT=0, OUTPUT=1, INPUT_PULLUP=2)
-        )
-        # define allowed analog references
-        self.OPERATION_SETTINGS['configureanalogreference'][1][1] = (
-            range(0, 3),
-            dict(DEFAULT=0, EXTERNAL=1, INTERNAL=2)
-        )
+    def get_pinmodeargset(self):
+        return ((0, 1, 2), dict(INPUT=0, OUTPUT=1, INPUT_PULLUP=2))
+
+    def get_pinanalogrefargset(self):
+        return (range(0, 3), dict(DEFAULT=0, EXTERNAL=1, INTERNAL=2))
 
 
 class BoardArduino_Pro5V(BoardArduino):
 
-    PINS = range(1, 22)
-    ANALOG_PINS = range(14, 22)
+    INFO_URL = "http://arduino.cc/en/Main/ArduinoBoardProMini"
+
