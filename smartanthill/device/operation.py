@@ -4,15 +4,36 @@
 from time import time
 
 from twisted.internet.defer import inlineCallbacks, returnValue
+from twisted.python.constants import ValueConstant, Values
 
 import smartanthill.network.cdc as cdc
-from smartanthill.network.zvd import ZeroVirtualDevice
 from smartanthill.device.arg import DeviceIDArg
+from smartanthill.network.zvd import ZeroVirtualDevice
+
+
+class OperationType(Values):
+
+    PING = ValueConstant(
+        cdc.CHANNEL_URGENT.PING.value)
+    LIST_OPERATIONS = ValueConstant(
+        cdc.CHANNEL_BDCREQUEST.LIST_OPERATIONS.value)
+    CONFIGURE_PIN_MODE = ValueConstant(
+        cdc.CHANNEL_BDCREQUEST.CONFIGURE_PIN_MODE.value)
+    READ_DIGITAL_PIN = ValueConstant(
+        cdc.CHANNEL_BDCREQUEST.READ_DIGITAL_PIN.value)
+    WRITE_DIGITAL_PIN = ValueConstant(
+        cdc.CHANNEL_BDCREQUEST.WRITE_DIGITAL_PIN.value)
+    CONFIGURE_ANALOG_REFERENCE = ValueConstant(
+        cdc.CHANNEL_BDCREQUEST.CONFIGURE_ANALOG_REFERENCE.value)
+    READ_ANALOG_PIN = ValueConstant(
+        cdc.CHANNEL_BDCREQUEST.READ_ANALOG_PIN.value)
+    WRITE_ANALOG_PIN = ValueConstant(
+        cdc.CHANNEL_BDCREQUEST.WRITE_ANALOG_PIN.value)
 
 
 class OperationBase(object):
 
-    CDC = None
+    TYPE = None
     TTL = 1
     ACK = True
 
@@ -29,7 +50,7 @@ class OperationBase(object):
     @inlineCallbacks
     def launch(self):
         zvd = ZeroVirtualDevice()
-        result = yield zvd.request(self.CDC, self._devid, self.TTL,
+        result = yield zvd.request(self.TYPE.value, self._devid, self.TTL,
                                    self.ACK, self.get_data())
         returnValue(self.on_result(result))
 
@@ -38,6 +59,16 @@ class EmptyArgsBase(OperationBase):
 
     def __init__(self, devidarg):
         OperationBase.__init__(self, devidarg)
+
+
+class FiniteArgsBase(OperationBase):
+
+    def __init__(self, devidarg, *args):
+        OperationBase.__init__(self, devidarg)
+        self._args = args
+
+    def get_data(self):
+        return [arg.get_value() for arg in self._args]
 
 
 class InfiniteArgsBase(OperationBase):
@@ -66,7 +97,8 @@ class InfinitePairArgsBase(InfiniteArgsBase):
 
 class Ping(EmptyArgsBase):
 
-    CDC = cdc.CHANNEL_URGENT.PING
+    TYPE = OperationType.PING
+
     def __init__(self, *args, **kwargs):
         EmptyArgsBase.__init__(self, *args, **kwargs)
         self._start = time()
@@ -75,37 +107,37 @@ class Ping(EmptyArgsBase):
         return time() - self._start
 
 
-class ListOperationalStates(EmptyArgsBase):
+class ListOperations(EmptyArgsBase):
 
-    CDC = cdc.CHANNEL_BDCREQUEST.LIST_OPERATIONAL_STATES
+    TYPE = OperationType.LIST_OPERATIONS
 
 
 class ConfigurePinMode(InfinitePairArgsBase):
 
-    CDC = cdc.CHANNEL_BDCREQUEST.CONFIGURE_PIN_MODE
+    TYPE = OperationType.CONFIGURE_PIN_MODE
 
 
 class ReadDigitalPin(InfiniteSingleArgsBase):
 
-    CDC = cdc.CHANNEL_BDCREQUEST.READ_DIGITAL_PIN
+    TYPE = OperationType.READ_DIGITAL_PIN
 
 
 class WriteDigitalPin(InfinitePairArgsBase):
 
-    CDC = cdc.CHANNEL_BDCREQUEST.WRITE_DIGITAL_PIN
+    TYPE = OperationType. WRITE_DIGITAL_PIN
 
 
-class ConfigureAnalogReference(InfiniteSingleArgsBase):
+class ConfigureAnalogReference(FiniteArgsBase):
 
-    CDC = cdc.CHANNEL_BDCREQUEST.CONFIGURE_ANALOG_REFERENCE
+    TYPE = OperationType.CONFIGURE_ANALOG_REFERENCE
 
     def __init__(self, devidarg, arefarg):
-        InfiniteSingleArgsBase.__init__(self, devidarg, arefarg)
+        FiniteArgsBase.__init__(self, devidarg, arefarg)
 
 
 class ReadAnalogPin(InfiniteSingleArgsBase):
 
-    CDC = cdc.CHANNEL_BDCREQUEST.READ_ANALOG_PIN
+    TYPE = OperationType.READ_ANALOG_PIN
 
     def on_result(self, result):
         assert len(result) % 2 == 0

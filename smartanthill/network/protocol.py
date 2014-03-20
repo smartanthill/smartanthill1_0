@@ -124,7 +124,7 @@ class TransportProtocol(protocol.Protocol):
         flags = ord(data[3]) >> 5
 
         # docs/specification/network/cdc/urg.html#cdc-urg-0x0a
-        if ord(data[0]) == CHANNEL_URGENT.SEGMENT_ACKNOWLEDGMENT:
+        if ord(data[0]) == CHANNEL_URGENT.SEGMENT_ACKNOWLEDGMENT.value:
             return self._acknowledge_received(data)
         elif flags & self.SEGMENT_FLAG_ACK:
             self._send_acknowledge(data)
@@ -196,7 +196,7 @@ class TransportProtocol(protocol.Protocol):
         return segments
 
     def _send_acknowledge(self, segment):
-        acksegment = pack("B", CHANNEL_URGENT.SEGMENT_ACKNOWLEDGMENT)
+        acksegment = pack("B", CHANNEL_URGENT.SEGMENT_ACKNOWLEDGMENT.value)
         acksegment += segment[2]
         acksegment += segment[1]
         acksegment += pack("B", self.SEGMENT_FLAG_FIN << 5 | 2)
