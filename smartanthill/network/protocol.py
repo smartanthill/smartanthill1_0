@@ -138,9 +138,9 @@ class TransportProtocol(protocol.Protocol):
         order = ord(data[4])
         assert order <= 255
 
-        if not key in self._inmsgbuffer:
+        if key not in self._inmsgbuffer:
             self._inmsgbuffer[key] = {}
-        if not order in self._inmsgbuffer[key]:
+        if order not in self._inmsgbuffer[key]:
             self._inmsgbuffer[key][order] = data[3:-2]
 
         message = self._inbufsegments_to_message(key)
@@ -223,7 +223,7 @@ class TransportProtocol(protocol.Protocol):
                 return
 
     def _messagelost_callback(self, message):
-        if not message in self._outmsgbuffer:
+        if message not in self._outmsgbuffer:
             return
         self._outmsgbuffer[message]["d"].errback(
             NetworkSATPMessageLost(message))

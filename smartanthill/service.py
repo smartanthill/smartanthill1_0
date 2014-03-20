@@ -74,9 +74,8 @@ class SmartAnthillService(SAMultiService):
     def _preload_subservices(self, services):
         services = sorted(services.items(), key=lambda s: s[1]['priority'])
         for (name, sopt) in services:
-            if not sopt['enabled']:
+            if "enabled" not in sopt or not sopt['enabled']:
                 continue
-
             path = "smartanthill.%s.service" % name
             service = namedAny(path).makeService(name, sopt['options'])
             service.setServiceParent(self)
@@ -104,7 +103,7 @@ class Options(usage.Options):
             if isinstance(v, dict):
                 self._gather_baseparams(v, argname)
             else:
-                if not argname in self.allowed_defconf_opts:
+                if argname not in self.allowed_defconf_opts:
                     continue
                 self.optParameters.append([argname, None, v, None, type(v)])
 

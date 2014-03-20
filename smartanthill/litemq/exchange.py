@@ -51,7 +51,7 @@ class Queue(object):
 
     def _d_errback_callback(self, failure, message, properties):
         self.log.warn(failure, message, properties)
-        if not "_resentnums" in properties:
+        if "_resentnums" not in properties:
             properties["_resentnums"] = 0
         properties["_resentnums"] += 1
 
@@ -69,7 +69,7 @@ class ExchangeBase(object):
         self._queues = {}
 
     def bind_queue(self, name, routing_key, callback, ack):
-        if not name in self._queues:
+        if name not in self._queues:
             self._queues[name] = Queue(name, routing_key)
         self._queues[name].attach_callback(callback, ack)
 

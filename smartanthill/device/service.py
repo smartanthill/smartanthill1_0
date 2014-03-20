@@ -28,7 +28,7 @@ class DeviceService(SAMultiService):
         SAMultiService.startService(self)
 
     def get_device(self, id_):
-        if not id_ in self._devices:
+        if id_ not in self._devices:
             raise DeviceUnknownId(id_)
         return self._devices[id_]
 

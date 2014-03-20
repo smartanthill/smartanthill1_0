@@ -22,7 +22,7 @@ class LiteMQService(SAMultiService):
             name, type_))
 
     def undeclare_exchange(self, name):
-        if not name in self._exchanges:
+        if name not in self._exchanges:
             return
 
         del self._exchanges[name]

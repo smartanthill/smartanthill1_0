@@ -22,7 +22,7 @@ def load_config(path):
 
 def merge_nested_dicts(d1, d2):
     for k1, v1 in d1.iteritems():
-        if not k1 in d2:
+        if k1 not in d2:
             d2[k1] = v1
         elif isinstance(v1, dict):
             merge_nested_dicts(v1, d2[k1])
