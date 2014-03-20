@@ -1,43 +1,33 @@
 {
-  "services":
-  {
-    "network":
+    "services":
     {
-      "enabled": true,
-      "options":
-      {
-        "routers":
-        [
-          {
-            "type": "serial",
-            "port": "/dev/tty.SLAB_USBtoUART",
-            "baudrate": 9600,
-            "deviceids": [128]
-          }
-        ]
-      }
-    },
-
-    "device":
-    {
-      "enabled": true,
-      "options":
-      {
-        "128":
+        "network":
         {
-          "board": "arduino_pro5v",
-          "operations":
-          [
-            "ping",
-            "listoperationalstates",
-            "configurepinmode",
-            "readdigitalpin",
-            "writedigitalpin",
-            "configureanalogreference",
-            "readanalogpin"
-          ]
+            "enabled": true,
+            "options":
+            {
+                "routers":
+                [
+                    {
+                        "type": "serial",
+                        "port": "/dev/tty.SLAB_USBtoUART",
+                        "baudrate": 9600,
+                        "deviceids": [128]
+                    }
+                ]
+            }
+        },
+
+        "device":
+        {
+            "enabled": true,
+            "options":
+            {
+                "128":
+                {
+                    "board": "arduino_pro5v"
+                }
+            }
         }
-      }
     }
-  }
 }
