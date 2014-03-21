@@ -6,17 +6,10 @@
 
     "services":
     {
-        "api":
-        {
-            "enabled": true,
-            "priority": 1,
-            "options": {}
-        },
-
         "litemq":
         {
             "enabled": true,
-            "priority": 2,
+            "priority": 1,
             "options": {
                 "resend_delay": 1,
                 "resend_max": 10
@@ -26,23 +19,32 @@
         "network":
         {
             "enabled": false,
-            "priority": 3,
+            "priority": 2,
             "options": {}
         },
 
         "device":
         {
             "enabled": false,
-            "priority": 4,
+            "priority": 3,
             "options": {}
         },
 
-        "web":
+        "api":
+        {
+            "enabled": true,
+            "priority": 4,
+            "options":
+            {
+            }
+        },
+
+        "portal":
         {
             "enabled": true,
             "priority": 5,
             "options": {
-                "port": 8080
+                "port": 8138
           }
         }
     }

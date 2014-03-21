@@ -70,21 +70,11 @@ class OperArgInvalid(SABaseException):
     MESSAGE = "%s%s: Invalid value '%s'"
 
 
-class OperArgNumsPairedNeed(SABaseException):
-
-    MESSAGE = "Need paired arguments for '%s' operation (took %d arguments)"
-
-
-class OperArgNumsNeed(SABaseException):
-
-    MESSAGE = "Need minimum %d arguments for '%s' operation (took %d)"
-
-
-class OperArgNumsExceeded(SABaseException):
-
-    MESSAGE = "Took %d arguments for '%s' operation (maximum allowed %d)"
-
-
 class APIUnknownRequest(SABaseException):
 
     MESSAGE = "Unknown '%s' action with key '%s'"
+
+
+class APIRequiredParams(SABaseException):
+
+    MESSAGE = "These parameters '%s' are required for '%s' action"
