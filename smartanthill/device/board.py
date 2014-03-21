@@ -1,15 +1,10 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from inspect import isfunction
-
 from twisted.python.reflect import namedAny
 
-import smartanthill.device.arg as arg
-import smartanthill.device.operation as op
-from smartanthill.exception import (BoardUnknownOperation, DeviceUnknownBoard,
-                                    OperArgNumsExceeded, OperArgNumsNeed,
-                                    OperArgNumsPairedNeed)
+from smartanthill.device.operation.base import get_operclass, OperationType
+from smartanthill.exception import BoardUnknownOperation, DeviceUnknownBoard
 
 
 class BoardFactory(object):
@@ -31,102 +26,40 @@ class BoardBase(object):
     PINS = None
     ANALOG_PINS = None
     PWM_PINS = None
-
-
-    OPERATION_SETTINGS = [
-        (
-            op.Ping,
-        ),
-        (
-            op.ListOperations,
-        ),
-        (
-            op.ConfigurePinMode,
-            (arg.PinArg, [lambda s: s.PINS, lambda s: s.PINS_ALIAS]),
-            [arg.PinModeArg, lambda s: s.get_pinmodeargset()]
-        ),
-        (
-            op.ReadDigitalPin,
-            (arg.PinArg, [lambda s: s.PINS, lambda s: s.PINS_ALIAS])
-        ),
-        (
-            op.WriteDigitalPin,
-            (arg.PinArg, [lambda s: s.PINS, lambda s: s.PINS_ALIAS]),
-            (arg.PinLevelArg, ())
-        ),
-        (
-            op.ConfigureAnalogReference,
-            [arg.PinAnalogRefArg, lambda s: s.get_pinanalogrefargset()]
-        ),
-        (
-            op.ReadAnalogPin,
-            (arg.PinArg, [lambda s: s.ANALOG_PINS, lambda s: s.PINS_ALIAS])
-        ),
-        (
-            op.WriteAnalogPin,
-            (arg.PinArg, [lambda s: s.PWM_PINS, lambda s: s.PINS_ALIAS]),
-            (arg.PinPWMValueArg, ())
-        )
+    OPERATIONS = [
+        OperationType.PING,
+        OperationType.LIST_OPERATIONS,
+        OperationType.CONFIGURE_PIN_MODE,
+        OperationType.READ_DIGITAL_PIN,
+        OperationType.WRITE_DIGITAL_PIN,
+        OperationType.READ_ANALOG_PIN,
+        OperationType.WRITE_ANALOG_PIN,
+        OperationType.CONFIGURE_ANALOG_REFERENCE
     ]
 
-    def get_operset(self, type_):
-        for operset in self.OPERATION_SETTINGS:
-            if operset[0].TYPE == type_:
-                return operset
-        raise BoardUnknownOperation(type_.name, self.__class__.__name__)
+    def get_pinarg_params(self):
+        return (self.PINS, self.PINS_ALIAS)
 
-    def get_pinmodeargset(self):
+    def get_analogpinarg_params(self):
+        return (self.ANALOG_PINS, self.PINS_ALIAS)
+
+    def get_pwmpinarg_params(self):
+        return (self.PWM_PINS, self.PINS_ALIAS)
+
+    def get_pinmodearg_params(self):
         raise NotImplementedError
 
-    def get_pinanalogrefargset(self):
+    def get_pinanalogrefarg_params(self):
         raise NotImplementedError
 
-    def launch_device_operation(self, devid, type_, *args):
-        operset = self.get_operset(type_)
-        self._operset_validate_cliargs(operset, args)
-        operset = self._operset_process_lambdas(operset)
+    def launch_device_operation(self, devid, type_, data):
+        try:
+            assert type_ in self.OPERATIONS
+            operclass = get_operclass(type_)
+        except:
+            raise BoardUnknownOperation(type_.name, self.__class__.__name__)
+        return operclass(self, data).launch(devid)
 
-        # the first argument for operation should be DeviceIDArg
-        classargs = [arg.DeviceIDArg()]
-        classargs[0].set_value(devid)
-
-        # populate client's arguments
-        _index = 1
-        for _argvalue in args:
-            _argset = operset[_index]
-            _argobj = _argset[0](*_argset[1])
-            _argobj.set_value(_argvalue)
-            classargs.append(_argobj)
-
-            if (_index+1 == len(operset) and
-                    issubclass(operset[0], op.InfiniteArgsBase)):
-                _index = 1
-            else:
-                _index += 1
-        return operset[0](*classargs).launch()
-
-    def _operset_validate_cliargs(self, operset, args):
-        type_name = operset[0].TYPE.name
-        if issubclass(operset[0], op.InfiniteArgsBase):
-            if len(args) < len(operset)-1:
-                raise OperArgNumsNeed(len(operset)-1, type_name, len(args))
-            elif (issubclass(operset[0], op.InfinitePairArgsBase)
-                  and len(args) % 2 != 0):
-                raise OperArgNumsPairedNeed(type_name, len(args))
-        elif len(args) != len(operset)-1:
-            raise OperArgNumsExceeded(len(args), type_name, len(operset)-1)
-
-    def _operset_process_lambdas(self, operset):
-        for _index, _item in enumerate(operset):
-            if _index == 0 or len(_item) != 2:
-                continue
-            elif isfunction(_item[1]):
-                operset[_index][1] = _item[1](self)
-            else:
-                for _argindex, _argarg in enumerate(_item[1]):
-                    if isfunction(_argarg):
-                        operset[_index][1][_argindex] = _argarg(self)
-        return operset
 
 class BoardArduino(BoardBase):
 
@@ -153,10 +86,10 @@ class BoardArduino(BoardBase):
     ANALOG_PINS = range(14, 22)
     PWM_PINS = (3, 5, 6, 9, 10, 11)
 
-    def get_pinmodeargset(self):
+    def get_pinmodearg_params(self):
         return ((0, 1, 2), dict(INPUT=0, OUTPUT=1, INPUT_PULLUP=2))
 
-    def get_pinanalogrefargset(self):
+    def get_pinanalogrefarg_params(self):
         return (range(0, 3), dict(DEFAULT=0, EXTERNAL=1, INTERNAL=2))
 
 

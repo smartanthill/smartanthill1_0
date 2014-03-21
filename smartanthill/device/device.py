@@ -5,7 +5,7 @@ from twisted.internet.defer import inlineCallbacks
 from twisted.python.constants import ValueConstant
 
 from smartanthill.device.board import BoardFactory
-from smartanthill.device.operation import OperationType
+from smartanthill.device.operation.base import OperationType
 from smartanthill.exception import DeviceUnknownOperation
 from smartanthill.log import Logger
 from smartanthill.service import SmartAnthillService
@@ -22,10 +22,10 @@ class Device(object):
         self.board = BoardFactory.newBoard(options['board'])
         SmartAnthillService.instance().on_started(self.preload_operations)
 
-    def launch_operation(self, type_, *args):
+    def launch_operation(self, type_, data=None):
         assert isinstance(type_, ValueConstant)
         if type_ in self.operations:
-            return self.board.launch_device_operation(self.id_, type_, *args)
+            return self.board.launch_device_operation(self.id_, type_, data)
         raise DeviceUnknownOperation(type_.name, self.id_)
 
     @inlineCallbacks
