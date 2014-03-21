@@ -36,16 +36,12 @@
             "priority": 4,
             "options":
             {
+                "rest":
+                {
+                    "enabled": true,
+                    "port": 8131
+                }
             }
-        },
-
-        "portal":
-        {
-            "enabled": true,
-            "priority": 5,
-            "options": {
-                "port": 8138
-          }
         }
     }
 }
