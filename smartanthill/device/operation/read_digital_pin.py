@@ -24,7 +24,8 @@ class Operation(OperationBase):
 
     def process_data(self, data):
         args = []
-        for pin in data['pin']:
+        pins = data['pin'] if isinstance(data['pin'], list) else (data['pin'],)
+        for pin in pins:
             pinarg = PinArg(*self.board.get_pinarg_params())
             pinarg.set_value(pin)
             args.append(pinarg)
