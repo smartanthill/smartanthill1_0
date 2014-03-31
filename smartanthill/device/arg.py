@@ -32,9 +32,9 @@ class IntArgBase(ArgBase):
     def __init__(self, min_=None, max_=None, range_=None):
         ArgBase.__init__(self)
         if range_:
-            assert len(range_) and (min_ and max_) == None
+            assert len(range_) and (min_ and max_) is None
         else:
-            assert range_ == None and (min_ or max_) != None
+            assert range_ is None and (min_ or max_) is not None
         self._min = min_
         self._max = max_
         self._range = range_
@@ -45,9 +45,9 @@ class IntArgBase(ArgBase):
             _value = int(value)
             if self._range:
                 self._range.index(_value)
-            elif self._min == None:
+            elif self._min is None:
                 assert _value <= self._max
-            elif self._max == None:
+            elif self._max is None:
                 assert _value >= self._min
             else:
                 assert self._min <= _value <= self._max

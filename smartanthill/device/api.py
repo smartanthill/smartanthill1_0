@@ -6,16 +6,17 @@ from twisted.python.reflect import namedAny
 from smartanthill.api.handler import APIHandlerBase
 from smartanthill.device.arg import DeviceIDArg
 from smartanthill.device.operation.base import OperationType
-from smartanthill.service import SmartAnthillService
+from smartanthill.util import get_service_named
 
 
-class APIDeviceHandlerBase(APIHandlerBase):
+class APIDeviceHandlerBase(APIHandlerBase):  # pylint: disable=W0223
 
-    def launch_operation(self, devid, type_, data=None):
+    @staticmethod
+    def launch_operation(devid, type_, data=None):
         arg = DeviceIDArg()
         arg.set_value(devid)
         devid = arg.get_value()
-        device = SmartAnthillService.instance().getServiceNamed("device")
+        device = get_service_named("device")
         return device.get_device(devid).launch_operation(type_, data)
 
 

@@ -18,7 +18,7 @@ class Device(object):
         self.id_ = id_
         self.options = options
         self.operations = set([OperationType.PING,
-                           OperationType.LIST_OPERATIONS])
+                               OperationType.LIST_OPERATIONS])
         self.board = BoardFactory.newBoard(options['board'])
         SmartAnthillService.instance().on_started(self.preload_operations)
 

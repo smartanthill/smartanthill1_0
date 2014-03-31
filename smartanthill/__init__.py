@@ -1,10 +1,10 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-#pylint: disable=W1401
+# pylint: disable=W1401
 
 VERSION = (0, 0, 0)
-__version__ = ".".join(map(str, VERSION))
+__version__ = ".".join([str(s) for s in VERSION])
 __banner__ = """
       _________________________________________
      /                                        /\\     >< {title} ><

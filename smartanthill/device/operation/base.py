@@ -8,7 +8,6 @@ from twisted.python.reflect import namedAny
 import smartanthill.network.cdc as cdc
 from smartanthill.device.arg import DeviceIDArg
 from smartanthill.network.zvd import ZeroVirtualDevice
-from smartanthill.service import SmartAnthillService
 
 
 class OperationType(Values):
@@ -36,15 +35,16 @@ class OperationBase(object):
     TYPE = None
     TTL = 1
     ACK = True
+    REQUIRED_PARAMS = None
 
     def __init__(self, board, data):
         self.board = board
         self.data = data
 
-    def process_data(self, data):
+    def process_data(self, data):  # pylint: disable=W0613,R0201
         return []
 
-    def on_result(self, result):
+    def on_result(self, result):   # pylint: disable=R0201
         return result
 
     @inlineCallbacks
@@ -61,9 +61,7 @@ class OperationBase(object):
     def check_params(self, params):
         if not self.REQUIRED_PARAMS:
             return True
-        params = map(lambda s: s if "[" not in s else s[:s.find("[")]+"[]",
-                     params)
-        print params
+        params = [s if "[" not in s else s[:s.find("[")]+"[]" for s in params]
         return set(self.REQUIRED_PARAMS) <= set(params)
 
 

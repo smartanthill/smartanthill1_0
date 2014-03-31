@@ -1,6 +1,8 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+# pylint: disable=E0611
+
 from json import dumps as json_dumps
 
 from twisted.application.internet import TCPServer
@@ -20,8 +22,10 @@ class RESTSite(server.Site):
 
     def _openLogFile(self, path):
         log = Logger("api.rest.http")
+
         def wrapper(msg):
             log.debug(msg.strip())
+
         nf = NullFile()
         nf.write = wrapper
         return nf
@@ -39,6 +43,7 @@ class REST(Resource):
     )
 
     def __init__(self, restservice):
+        Resource.__init__(self)
         self._restservice = restservice
 
     def render(self, request):
@@ -54,11 +59,12 @@ class REST(Resource):
 
         self.args_to_data(request.args)
         d = maybeDeferred(self._restservice.parent.request,
-                          action,request_key, data)
+                          action, request_key, data)
         d.addBoth(self.delayed_render, request)
         return NOT_DONE_YET
 
-    def args_to_data(self, args):
+    @staticmethod
+    def args_to_data(args):
         for k, v in args.items():
             if isinstance(v, list) and len(v) == 1:
                 args[k] = v[0]
@@ -86,7 +92,8 @@ class REST(Resource):
             _json['data'] = result
         return json_dumps(_json)
 
-    def failure_to_errmsg(self, failure):
+    @staticmethod
+    def failure_to_errmsg(failure):
         return str(failure.value)
 
 
@@ -98,10 +105,9 @@ class APIRestService(SAMultiService):
     def startService(self):
         TCPServer(
             self.options['port'],
-            RESTSite(REST(self),logPath="/dev/null")).setServiceParent(self)
+            RESTSite(REST(self), logPath="/dev/null")).setServiceParent(self)
         SAMultiService.startService(self)
 
 
 def makeService(name, options):
     return APIRestService(name, options)
-

@@ -31,8 +31,8 @@ class LiteMQService(SAMultiService):
     def produce(self, exchange, routing_key, message, properties=None):
         assert exchange in self._exchanges
         self.log.debug(
-          "Produce new message '%s' with routing_key '%s' " "to exchange '%s'"
-          % (hexlify(message) if properties and "binary" in properties and
+            "Produce new message '%s' with routing_key '%s' to exchange '%s'" %
+            (hexlify(message) if properties and "binary" in properties and
              properties["binary"] else message, routing_key, exchange))
         self._exchanges[exchange].publish(routing_key, message, properties)
 
@@ -40,14 +40,14 @@ class LiteMQService(SAMultiService):
         assert exchange in self._exchanges
         self._exchanges[exchange].bind_queue(queue, routing_key, callback, ack)
         self.log.info("Registered consumer with exchange=%s, queue=%s, "
-                       "routing_key=%s, ack=%s" % (
-                           exchange, queue, routing_key, ack))
+                      "routing_key=%s, ack=%s" % (exchange, queue, routing_key,
+                                                  ack))
 
     def unconsume(self, exchange, queue):
         assert exchange in self._exchanges
         self._exchanges[exchange].unbind_queue(queue)
         self.log.info("Unregistered consumer with exchange=%s "
-                       "and queue=%s" % (exchange, queue))
+                      "and queue=%s" % (exchange, queue))
 
 
 def makeService(name, options):

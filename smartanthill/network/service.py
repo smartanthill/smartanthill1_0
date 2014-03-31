@@ -1,6 +1,8 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+# pylint: disable=W0613
+
 from binascii import hexlify
 
 from twisted.internet import reactor
@@ -10,6 +12,7 @@ from twisted.internet.serialport import SerialPort
 import smartanthill.network.protocol as p
 from smartanthill.exception import NetworkRouterConnectFailure
 from smartanthill.service import SAMultiService
+from smartanthill.util import get_service_named
 
 
 class ControlService(SAMultiService):
@@ -17,11 +20,11 @@ class ControlService(SAMultiService):
     def __init__(self, name):
         SAMultiService.__init__(self, name)
         self._protocol = p.ControlProtocolWrapping(
-          self.climessage_protocallback)
+            self.climessage_protocallback)
         self._litemq = None
 
     def startService(self):
-        self._litemq = self.parent.parent.getServiceNamed("litemq")
+        self._litemq = get_service_named("litemq")
         self._protocol.makeConnection(self)
         self._litemq.consume("network", "control.in", "transport->control",
                              self.inmessage_mqcallback)
@@ -61,7 +64,7 @@ class TransportService(SAMultiService):
         self._litemq = None
 
     def startService(self):
-        self._litemq = self.parent.parent.getServiceNamed("litemq")
+        self._litemq = get_service_named("litemq")
         self._protocol.makeConnection(self)
         self._litemq.consume("network", "transport.in", "routing->transport",
                              self.insegment_mqcallback)
@@ -126,7 +129,7 @@ class RouterService(SAMultiService):
                               self.startService)
             return
 
-        self._litemq = self.parent.parent.getServiceNamed("litemq")
+        self._litemq = get_service_named("litemq")
         self._litemq.consume("network", "routing.out", "transport->routing",
                              self.outsegment_mqcallback)
         SAMultiService.startService(self)
@@ -134,7 +137,7 @@ class RouterService(SAMultiService):
     def stopService(self):
         SAMultiService.stopService(self)
         if self._litemq:
-          self._litemq.unconsume("network", "routing.out")
+            self._litemq.unconsume("network", "routing.out")
 
     def inpacket_protocallback(self, packet):
         self.log.debug("Received incoming packet %s" % hexlify(packet))
@@ -143,7 +146,7 @@ class RouterService(SAMultiService):
                              dict(binary=True))
 
     def outsegment_mqcallback(self, message, properties):
-        # check destination ID  @TODO
+        # check destination ID  #TODO
         if ord(message[2]) not in self.options['deviceids']:
             return False
         self.log.debug("Received outgoing segment %s" % hexlify(message))
@@ -157,7 +160,7 @@ class NetworkService(SAMultiService):
         self._litemq = None
 
     def startService(self):
-        self._litemq = self.parent.getServiceNamed("litemq")
+        self._litemq = get_service_named("litemq")
         self._litemq.declare_exchange("network")
 
         ControlService("network.control").setServiceParent(self)
@@ -166,7 +169,8 @@ class NetworkService(SAMultiService):
         num = 0
         for opt in self.options['routers']:
             num += 1
-            RouterService("network.router.%d" % num, opt).setServiceParent(self)
+            RouterService("network.router.%d" % num,
+                          opt).setServiceParent(self)
 
         SAMultiService.startService(self)
 

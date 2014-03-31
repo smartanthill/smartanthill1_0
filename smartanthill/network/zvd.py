@@ -1,12 +1,13 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+# pylint: disable=W0613
+
 from twisted.internet.defer import Deferred
 
 from smartanthill.exception import DeviceNotResponding
 from smartanthill.network.protocol import ControlMessage
-from smartanthill.service import SmartAnthillService
-from smartanthill.util import singleton
+from smartanthill.util import get_service_named, singleton
 
 
 @singleton
@@ -15,7 +16,7 @@ class ZeroVirtualDevice(object):
     ID = 0x0
 
     def __init__(self):
-        self._litemq = SmartAnthillService.instance().getServiceNamed("litemq")
+        self._litemq = get_service_named("litemq")
         self._litemq.consume("network", "msgqueue", "control->client",
                              self.onresult_mqcallback)
         self._litemq.consume("network", "ackqueue", "transport->ack",

@@ -15,6 +15,12 @@ def singleton(cls):
     return get_instance
 
 
+def get_service_named(name):
+    """ Returns SmartAnthill Service's instance by specified name  """
+    from smartanthill.service import SmartAnthillService
+    return SmartAnthillService.instance().getServiceNamed(name)
+
+
 def load_config(path):
     with open(path) as fp:
         return json_load(fp)

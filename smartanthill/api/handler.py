@@ -28,8 +28,7 @@ class APIHandlerBase(object):
     def check_params(self, params):
         if not self.REQUIRED_PARAMS:
             return True
-        params = map(lambda s: s if "[" not in s else s[:s.find("[")]+"[]",
-                     params)
+        params = [s if "[" not in s else s[:s.find("[")]+"[]" for s in params]
         return set(self.REQUIRED_PARAMS) <= set(params)
 
     def handle(self, data):

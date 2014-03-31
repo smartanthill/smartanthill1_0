@@ -6,13 +6,12 @@ from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
 from twisted.python.reflect import namedAny
 
-from smartanthill.exception import (LiteMQACKFailed, LiteMQResendFailed,
-                                    NotImplemnetedYet)
+from smartanthill.exception import (LiteMQACKFailed, LiteMQResendFailed)
 from smartanthill.log import Logger
-from smartanthill.service import SmartAnthillService
+from smartanthill.util import get_service_named
 
 
-class ExchangeFactory(object):
+class ExchangeFactory(object):  # pylint: disable=R0903
 
     @staticmethod
     def newExchange(name, type_):
@@ -29,7 +28,7 @@ class Queue(object):
         self.name = name
         self.routing_key = routing_key
 
-        _litemq = SmartAnthillService.instance().getServiceNamed("litemq")
+        _litemq = get_service_named("litemq")
         self._resend_delay = _litemq.options['resend_delay']
         self._resend_max = _litemq.options['resend_max']
         self._callbacks = []
@@ -42,7 +41,8 @@ class Queue(object):
         assert self._callbacks
         d = Deferred()
         for c in self._callbacks:
-            d.addCallback(lambda r, c, m, p: c(m, p), c[0], message, properties)
+            d.addCallback(lambda r, c, m, p: c(m, p), c[0],
+                          message, properties)
             if c[1]:
                 d.addCallback(lambda r: True if isinstance(r, bool) and r else
                               Failure(LiteMQACKFailed()))
@@ -96,14 +96,10 @@ class ExchangeFanout(ExchangeBase):
             q.put(message, properties)
 
 
-class ExchangeTopic(ExchangeBase):
+# class ExchangeTopic(ExchangeBase):
 
-    def publish(self, routing_key, message, properties):
-        raise NotImplemnetedYet
-        for q in self._queues.itervalues():
-            if self.match(routing_key, q.routing_key):
-                q.put(message, properties)
+#     def publish(self, routing_key, message, properties):
+#         raise NotImplemnetedYet
 
-    def match(self, routing_key, routing_pattern):
-        # TODO
-        raise NotImplementedError
+#     def match(self, routing_key, routing_pattern):
+#         raise NotImplementedError

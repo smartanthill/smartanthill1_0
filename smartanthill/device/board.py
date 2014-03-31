@@ -7,7 +7,7 @@ from smartanthill.device.operation.base import get_operclass, OperationType
 from smartanthill.exception import BoardUnknownOperation, DeviceUnknownBoard
 
 
-class BoardFactory(object):
+class BoardFactory(object):  # pylint: disable=R0903
 
     @staticmethod
     def newBoard(name):
@@ -90,7 +90,7 @@ class BoardArduino(BoardBase):
         return ((0, 1, 2), dict(INPUT=0, OUTPUT=1, INPUT_PULLUP=2))
 
     def get_pinanalogrefarg_params(self):
-        return (range(0, 3), dict(DEFAULT=0, EXTERNAL=1, INTERNAL=2))
+        return ((0, 1, 2), dict(DEFAULT=0, EXTERNAL=1, INTERNAL=2))
 
 
 class BoardArduino_Pro5V(BoardArduino):

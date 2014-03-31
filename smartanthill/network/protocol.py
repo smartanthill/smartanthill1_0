@@ -55,7 +55,7 @@ class ControlProtocol(protocol.Protocol):
 
     @staticmethod
     def rawmessage_to_message(rawmsg):
-        rawmsg = map(ord, rawmsg)
+        rawmsg = [ord(b) for b in rawmsg]
         message = ControlMessage(cdc=rawmsg[0], source=rawmsg[1],
                                  destination=rawmsg[2],
                                  ack=rawmsg[3] & 0x80 > 0,
@@ -189,7 +189,7 @@ class TransportProtocol(protocol.Protocol):
             segment = cdc + sarp
             segment += pack("B", flags << 5 | len(_data_part))
             segment += "".join(_data_part)
-            _crc = calc_crc16(map(ord, segment))
+            _crc = calc_crc16([ord(b) for b in segment])
             segment += pack("BB", _crc >> 8, _crc & 0xFF)
             segments.append(segment)
 
@@ -201,7 +201,7 @@ class TransportProtocol(protocol.Protocol):
         acksegment += segment[1]
         acksegment += pack("B", self.SEGMENT_FLAG_FIN << 5 | 2)
         acksegment += segment[-2:]
-        _crc = calc_crc16(map(ord, acksegment))
+        _crc = calc_crc16([ord(b) for b in acksegment])
         acksegment += pack("BB", _crc >> 8, _crc & 0xFF)
         return self.send_segment(acksegment)
 
@@ -313,18 +313,18 @@ class RoutingProtocol(protocol.Protocol):
         _data_len = ord(self._inbuffer[sopindex+self.PACKET_HEADER_LEN]) & 0xF
 
         if (_data_len > self.PACKET_MAXDATA_LEN or
-            sopindex + self.PACKET_HEADER_LEN + _data_len +
-            self.PACKET_CRC_LEN + 2 != self.BUFFER_IN_LEN):
+                sopindex + self.PACKET_HEADER_LEN + _data_len +
+                self.PACKET_CRC_LEN + 2 != self.BUFFER_IN_LEN):
             return False
 
-        _crc = ord(self._inbuffer[self.BUFFER_IN_LEN-
+        _crc = ord(self._inbuffer[self.BUFFER_IN_LEN -
                                   self.PACKET_CRC_LEN-1]) << 8
         _crc |= ord(self._inbuffer[self.BUFFER_IN_LEN-self.PACKET_CRC_LEN])
 
         _header_and_data = self._inbuffer[
             sopindex+1:
             sopindex+1+self.PACKET_HEADER_LEN+_data_len]
-        return _crc == calc_crc16(map(ord, _header_and_data))
+        return _crc == calc_crc16([ord(b) for b in _header_and_data])
 
 
 class ControlProtocolWrapping(ControlProtocol):

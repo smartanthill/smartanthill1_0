@@ -28,7 +28,7 @@ class Config(object):
         if not dataconf_path.exists() or not dataconf_path.isfile():
             return
         self._data = merge_nested_dicts(self._data,
-                                          load_config(dataconf_path.path))
+                                        load_config(dataconf_path.path))
 
     def parse_user_options(self, options):
         baseopts = frozenset([v[0] for v in options.optParameters if v[0] !=
