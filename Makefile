@@ -1,11 +1,9 @@
-.PHONY: all docs clean clean-doc clean-pyc pylint pushrtfd inobuild inoupload debug-demo
+.PHONY: all docs clean-doc clean-pyc pushrtfd inobuild inoupload debug-demo coverage clean-coverage pylint clean
 
 all: docs
 
 docs:
 	$(MAKE) -C docs/ html
-
-clean: clean-doc clean-pyc
 
 clean-doc:
 	rm -R docs/_build
@@ -13,9 +11,6 @@ clean-doc:
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
-
-pylint:
-	@pylint --rcfile ./.pylintrc smartanthill
 
 pushrtfd:
 	curl -X POST http://readthedocs.org/build/smartanthill
@@ -33,4 +28,14 @@ inoupload: inobuild
 debug-demo:
 	cd examples/blink/data; twistd -n smartanthill --logger.level=DEBUG
 
+coverage:
+	coverage run ./smartanthill/main.py -n smartanthill -d ./examples/blink/data; coverage html
 
+clean-coverage:
+	rm -R htmlcov 
+	rm .coverage
+
+pylint:
+	pylint --rcfile ./.pylintrc smartanthill
+
+clean: clean-doc clean-pyc clean-coverage
