@@ -1,6 +1,10 @@
 SmartAnthill
 ============
 
+.. image:: https://travis-ci.org/ivankravets/smartanthill.svg?branch=develop
+    :target: https://travis-ci.org/ivankravets/smartanthill
+    :alt: Build Status
+
 `SmartAnthill <http://smartanthill.readthedocs.org/en/latest/index.html>`_ is an
 intelligent micro-oriented networking system. It opens the door for people that
 are not familiar with electronics and micro-controller programming, but earlier
