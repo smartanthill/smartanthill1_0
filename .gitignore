@@ -1,3 +1,6 @@
 *.pyc
+*.egg-info
+.coverage
+.tox/
 docs/_build
 dropin.cache
