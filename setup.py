@@ -1,6 +1,10 @@
+# Copyright (C) Ivan Kravets <me@ikravets.com>
+# See LICENSE for details.
+
 from setuptools import find_packages, setup
 
 from smartanthill import __version__
+
 
 setup(
     name="smartanthill",
@@ -11,8 +15,19 @@ setup(
     author_email="me@ikravets.com",
     url="http://www.ikravets.com/smartanthill",
     license="MIT Licence",
+    install_requires=[
+        "twisted>=11.1",
+        "pyserial"
+    ],
+    packages=find_packages()+["twisted.plugins"],
+    package_data={"smartanthill": ["*.json"]},
+    entry_points={
+        "console_scripts": [
+            "smartanthill = smartanthill.__main__:main"
+        ]
+    },
     classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 2 - Pre-Alpha",
         "Environment :: Console",
         "Environment :: Web Environment",
         "Framework :: Twisted",
@@ -33,17 +48,12 @@ setup(
         "Topic :: Internet",
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Human Machine Interfaces",
-        "Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator",
+        "Topic :: Scientific/Engineering :: Interface Engine/Protocol "
+        "Translator",
         "Topic :: Software Development :: Compilers",
         "Topic :: Software Development :: Embedded Systems",
         "Topic :: System :: Distributed Computing",
         "Topic :: System :: Networking",
         "Topic :: Terminals :: Serial"
-    ],
-    install_requires=map(lambda l: l.strip(),
-                         open("requirements.txt").readlines()),
-    packages=find_packages()+["twisted.plugins"],
-    package_data={"": ["*.json"],
-                  "twisted": ["plugins/smartanthill_plugin.py"]},
-    include_package_data=True
+    ]
 )
