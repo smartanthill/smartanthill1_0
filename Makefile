@@ -1,4 +1,4 @@
-.PHONY: all docs clean-doc clean-pyc pushrtfd inobuild inoupload debug-demo coverage clean-coverage pylint clean
+.PHONY: all docs clean-doc clean-pyc pushrtfd inobuild inoupload debug-demo clean
 
 all: docs
 
@@ -28,14 +28,4 @@ inoupload: inobuild
 debug-demo:
 	cd examples/blink/data; twistd -n smartanthill --logger.level=DEBUG
 
-coverage:
-	coverage run ./smartanthill/main.py -n smartanthill -d ./examples/blink/data; coverage html
-
-clean-coverage:
-	rm -R htmlcov 
-	rm .coverage
-
-pylint:
-	pylint --rcfile ./.pylintrc smartanthill
-
-clean: clean-doc clean-pyc clean-coverage
+clean: clean-doc clean-pyc
