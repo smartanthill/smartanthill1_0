@@ -68,6 +68,8 @@ class SmartAnthillService(SAMultiService):
         self._preload_subservices(self.config['services'])
 
         SAMultiService.startService(self)
+        self.log.info(__banner__.replace(
+            "#data#", self.options['datadir']))
 
     def _preload_subservices(self, services):
         services = sorted(services.items(), key=lambda s: s[1]['priority'])
