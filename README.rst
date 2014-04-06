@@ -37,7 +37,7 @@ Home Page
 ---------
 
 All information about this project you can find on special
-`SmartAnthill Home Page <http://smartanthill.ikravets.com`_.
+`SmartAnthill Home Page <http://smartanthill.ikravets.com>`_.
 
 Documentation
 -------------
