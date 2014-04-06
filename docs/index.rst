@@ -7,10 +7,11 @@ Welcome to SmartAnthill's Documentation
 :Release: |release|
 :Date:    |today|
 :Author:  `Ivan Kravets <http://www.ikravets.com/about-me>`_
+:Home:    http://smartanthill.ikravets.com
 
 .. warning::
     |SA| has not been released yet. The documentation is being updated. Please
-    `follow us <http://www.ikravets.com/smartanthill>`_ and you will be
+    `follow us <http://smartanthill.ikravets.com>`_ and you will be
     informed about all news.
 
 **SmartAnthill System** is an intelligent micro-oriented networking system.
