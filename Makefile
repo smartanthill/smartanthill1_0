@@ -1,4 +1,4 @@
-.PHONY: all docs clean-doc clean-pyc pushrtfd inobuild inoupload debug-demo clean
+.PHONY: all docs clean-doc clean-py pushrtfd inobuild inoupload debug-demo clean
 
 all: docs
 
@@ -8,9 +8,10 @@ docs:
 clean-doc:
 	rm -R docs/_build
 
-clean-pyc:
+clean-py:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
+	rm twisted/plugins/dropin.cache
 
 pushrtfd:
 	curl -X POST http://readthedocs.org/build/smartanthill
@@ -28,4 +29,4 @@ inoupload: inobuild
 debug-demo:
 	cd examples/blink/data; twistd -n smartanthill --logger.level=DEBUG
 
-clean: clean-doc clean-pyc
+clean: clean-doc clean-py
