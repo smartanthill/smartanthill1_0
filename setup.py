@@ -13,7 +13,7 @@ setup(
     long_description=open("README.rst").read(),
     author="Ivan Kravets",
     author_email="me@ikravets.com",
-    url="http://www.ikravets.com/smartanthill",
+    url="http://smartanthill.ikravets.com",
     license="MIT Licence",
     install_requires=[
         "twisted>=11.1",

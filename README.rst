@@ -37,10 +37,7 @@ Home Page
 ---------
 
 All information about this project you can find on special
-`SmartAnthill Home Page <http://www.ikravets.com/smartanthill>`_.
-
-Here I will publish articles about *"How we can use SmartAnthill in our life"*.
-
+`SmartAnthill Home Page <http://smartanthill.ikravets.com`_.
 
 Documentation
 -------------

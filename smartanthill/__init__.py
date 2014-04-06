@@ -17,7 +17,7 @@ __banner__ = """
  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \\           Portal: #portal#
 """.format(version=__version__,
            title="An intelligent micro-oriented networking system",
-           home="http://www.ikravets.com/smartanthill",
-           docs="http://smartanthill.readthedocs.org/en/latest/index.html",
+           home="http://smartanthill.ikravets.com",
+           docs="http://docs.smartanthill.ikravets.com/",
            issues="https://github.com/ivankravets/smartanthill/issues",
            license="Copyright (c) Ivan Kravets, MIT Licence")
