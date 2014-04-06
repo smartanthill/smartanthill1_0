@@ -364,7 +364,7 @@ fieldset {
 
 /*
  * 1. Corrects color not being inherited in IE6/7/8/9
- * 2. Corrects text not wrapping in FF3 
+ * 2. Corrects text not wrapping in FF3
  * 3. Corrects alignment displayed oddly in IE6/7
  */
 legend {
@@ -746,15 +746,15 @@ header p {
   background: linear-gradient(#ffe788, #ffe788);
   background-color: #ffeca0;
 }
-#banner .fork {
+#banner .menu {
   position: fixed;
   left: 50%;
-  margin-left: -325px;
-  padding: 10px 12px;
-  margin-top: 6px;
-  line-height: 14px;
-  font-size: 14px;
-  background-color: #FFE788;
+  margin-left: -340px;
+  /* padding: 10px 12px;*/
+  /* margin-top: 6px;*/
+  /* line-height: 14px;*/
+  /* font-size: 14px;*/
+  /* background-color: #FFE788;*/
 }
 #banner .downloads {
   float: right;
@@ -932,7 +932,7 @@ footer {
   #banner {
     top: 80px;
   }
-  #banner .fork {
+  #banner .menu {
     float: left;
     display: inline-block;
     margin-left: 0px;
@@ -1007,4 +1007,16 @@ footer {
     bottom: auto;
     width: auto;
   }
+}
+
+
+.badges ul {
+  list-style: none;
+  height: 40px;
+  padding: 0;
+  float: left;
+}
+.badges ul li {
+  display: inline;
+  margin-left: 10px;
 }

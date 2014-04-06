@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>SmartAnthill by ivankravets</title>
+    <title>SmartAnthill is an intelligent micro-oriented networking system</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -23,13 +23,18 @@
 
       <div id="banner">
         <span id="logo"></span>
-
-        <a href="https://github.com/ivankravets/smartanthill" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="menu">
+          <ul>
+            <li><a href="http://docs.smartanthill.ikravets.com" class="button"><strong>Docs</strong></a></li>
+            <li><a href="https://github.com/ivankravets/smartanthill" class="button"><strong>Code</strong></a></li>
+            <li><a href="https://github.com/ivankravets/smartanthill/issues" class="button"><strong>Issues</strong></a></li>
+            <li><a href="http://www.ikravets.com/category/computer-life/smartanthill" class="button"><strong>Blog</strong></a></li>
+        </div>
         <div class="downloads">
           <span>Downloads:</span>
           <ul>
-            <li><a href="https://github.com/ivankravets/smartanthill/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/ivankravets/smartanthill/tarball/master" class="button">TAR</a></li>
+            <li><a href="https://github.com/ivankravets/smartanthill/zipball/develop" class="button">ZIP</a></li>
+            <li><a href="https://github.com/ivankravets/smartanthill/tarball/develop" class="button">TAR</a></li>
           </ul>
         </div>
       </div><!-- end banner -->
@@ -39,9 +44,17 @@
         <ul></ul>
       </nav>
       <section>
-        <p><a href="https://travis-ci.org/ivankravets/smartanthill"><img src="https://travis-ci.org/ivankravets/smartanthill.svg?branch=develop" alt="Build Status"></a></p>
+        <div class="badges">
+          <ul>
+            <li><a href="https://travis-ci.org/ivankravets/smartanthill"><img src="https://travis-ci.org/ivankravets/smartanthill.svg?branch=develop" alt="Build Status"></a></li>
+            <li>
+              <a href="https://twitter.com/smartanthill" class="twitter-follow-button" data-show-count="false">Follow @smartanthill</a>
+              <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            </li>
+          </ul>
+        </div>
 
-<pre><code>                  _________________________________________
+<pre style="clear: both"><code>                  _________________________________________
                  /                                        /\
                 /        \/             \\             __/ /\
                /   ___  _@@    Smart    @@_  ___     /  \/
@@ -61,8 +74,8 @@ combine the independent micro-devices or micro-based networks into general
 <a href="http://smartanthill.readthedocs.org/en/latest/specification/network/index.html">SmartAnthill Network</a>.</p>
 
 <p>You do not need to learn micro-programming languages, you do not need to install
-any <a href="http://en.wikipedia.org/wiki/Integrated_development_environment">IDE</a>
-or <a href="http://en.wikipedia.org/wiki/Toolchain">Toolchain</a>. All you need is to
+any <strike>IDE</strike>
+or <strike>Toolchain</strike>. All you need is to
 connect micro-device to SmartAnthill, to select capabilities that device should
 have and "train it" to behave as the network device.</p>
 
@@ -95,7 +108,7 @@ to ask questions.</p>
 <p>Licenced under the MIT Licence.</p>
       </section>
       <footer>
-        <p>Project maintained by <a href="https://github.com/ivankravets">ivankravets</a></p>
+        <p>Project maintained <br /> by <a href="https://github.com/ivankravets">Ivan Kravets</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
       </footer>
     </div>
@@ -110,6 +123,27 @@ to ask questions.</p>
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
+<!-- AddThis Smart Layers BEGIN -->
+<!-- Go to http://www.addthis.com/get/smart-layers to customize -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5341b7bb26d4a852"></script>
+<script type="text/javascript">
+  addthis.layers({
+    'theme' : 'transparent',
+    'share' : {
+      'position' : 'right',
+      'numPreferredServices' : 5
+    }, 
+    'follow' : {
+      'services' : [
+        {'service': 'twitter', 'id': 'smartanthill'},
+        {'service': 'linkedin', 'id': 'ivankravets'},
+        {'service': 'rss', 'id': 'http://feeds.feedburner.com/ikravets/'}
+      ]
+    }   
+  });
+</script>
+<!-- AddThis Smart Layers END -->
 
   </body>
 </html>
