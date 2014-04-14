@@ -1021,6 +1021,7 @@ footer {
   list-style: none;
   height: 40px;
   padding: 0;
+  margin: 0;
   float: left;
 }
 .badges ul li {
