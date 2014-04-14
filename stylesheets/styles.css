@@ -883,6 +883,7 @@ footer {
 
   #banner {
     width: 100%;
+    position: absolute;
   }
   #banner .downloads {
     margin-right: 60px;
@@ -929,14 +930,21 @@ footer {
     display: none;
   }
 
+  .wrapper {
+      padding-top: 15px;
+  }
+
   #banner {
-    top: 80px;
+    top: 50px;
+  }
+  #banner #logo {
+      display: none;
   }
   #banner .menu {
     float: left;
     display: inline-block;
     margin-left: 0px;
-    position: fixed;
+    position: absolute;
     left: 20px;
   }
 
@@ -1009,7 +1017,6 @@ footer {
   }
 }
 
-
 .badges ul {
   list-style: none;
   height: 40px;
@@ -1019,4 +1026,10 @@ footer {
 .badges ul li {
   display: inline;
   margin-left: 10px;
+}
+
+.salogo {
+    background: #000 url(../images/smartanthill-translogo.png) center no-repeat;
+    height: 180px;
+    clear: both;
 }
