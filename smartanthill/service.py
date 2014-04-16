@@ -1,8 +1,6 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-# pylint: disable=R0904
-
 from twisted.application.service import MultiService
 from twisted.python import usage
 from twisted.python.filepath import FilePath

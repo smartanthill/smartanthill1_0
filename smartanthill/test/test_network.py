@@ -1,6 +1,8 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+# pylint: disable=W0212
+
 from inspect import getargspec
 
 from twisted.internet.defer import Deferred
