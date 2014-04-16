@@ -6,7 +6,7 @@ from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
 from twisted.python.reflect import namedAny
 
-from smartanthill.exception import (LiteMQACKFailed, LiteMQResendFailed)
+from smartanthill.exception import LiteMQACKFailed, LiteMQResendFailed
 from smartanthill.log import Logger
 from smartanthill.util import get_service_named
 
