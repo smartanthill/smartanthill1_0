@@ -21,10 +21,10 @@ class ControlMessage(object):
         self.ack = ack
         self.data = data or []
 
-        assert (self.cdc <= 255 and 0 <= self.source <= 255 and
+        assert (0 <= self.cdc <= 255 and 0 <= self.source <= 255 and
                 0 <= self.destination <= 255)
         assert self.source != self.destination
-        assert self.ttl <= 15, "TTL should be between 1-15"
+        assert 0 <= self.ttl <= 15, "TTL should be between 1-15"
         assert len(self.data) <= 1792
 
     def get_channel(self):
@@ -50,6 +50,9 @@ class ControlMessage(object):
                 return False
         return True
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 
 class ControlProtocol(protocol.Protocol):
 
@@ -64,7 +67,7 @@ class ControlProtocol(protocol.Protocol):
         return message
 
     def message_received(self, message):
-        pass
+        raise NotImplementedError
 
     def send_message(self, message):
         assert isinstance(message, ControlMessage)
@@ -93,7 +96,7 @@ class TransportProtocol(protocol.Protocol):
         self._outmsgbuffer = {}
 
     def send_message(self, message):
-        """ Converts Control Message to Segments and sends its """
+        """ Converts Control Message to Segments and sends their """
 
         ack = ord(message[3]) & 0x80
         ttl = (ord(message[3]) & 0x78) >> 3
@@ -116,8 +119,8 @@ class TransportProtocol(protocol.Protocol):
     def send_segment(self, segment):
         self.transport.write(segment)
 
-    def message_received(self, message):
-        pass
+    def rawmessage_received(self, message):
+        raise NotImplementedError
 
     def dataReceived(self, data):
         assert len(data) >= 6
@@ -131,7 +134,7 @@ class TransportProtocol(protocol.Protocol):
 
         # if message isn't segmented
         if not flags & self.SEGMENT_FLAG_SEG and flags & self.SEGMENT_FLAG_FIN:
-            return self.message_received(self.segment_to_message(data))
+            return self.rawmessage_received(self.segment_to_message(data))
 
         # else if segmented then need to wait for another segments
         key = data[0:3]
@@ -145,7 +148,7 @@ class TransportProtocol(protocol.Protocol):
 
         message = self._inbufsegments_to_message(key)
         if message:
-            self.message_received(message)
+            self.rawmessage_received(message)
 
     @staticmethod
     def segment_to_message(segment):
@@ -206,7 +209,7 @@ class TransportProtocol(protocol.Protocol):
         return self.send_segment(acksegment)
 
     def _acknowledge_received(self, segment):
-        if not self._outmsgbuffer:
+        if not self._outmsgbuffer:  # pragma: no cover
             return
 
         assert len(segment) == 8
@@ -223,7 +226,7 @@ class TransportProtocol(protocol.Protocol):
                 return
 
     def _messagelost_callback(self, message):
-        if message not in self._outmsgbuffer:
+        if message not in self._outmsgbuffer:  # pragma: no cover
             return
         self._outmsgbuffer[message]["d"].errback(
             NetworkSATPMessageLost(message))
@@ -273,7 +276,7 @@ class RoutingProtocol(protocol.Protocol):
         return packet[1:-1]
 
     def packet_received(self, packet):
-        pass
+        raise NotImplementedError
 
     def send_segment(self, segment):
         """ Converts Transport Segment to Routing Packet and sends it """
@@ -338,12 +341,12 @@ class ControlProtocolWrapping(ControlProtocol):
 
 class TransportProtocolWrapping(TransportProtocol):
 
-    def __init__(self, inmessage_callback):
+    def __init__(self, rawmessage_callback):
         TransportProtocol.__init__(self)
-        self.inmessage_callback = inmessage_callback
+        self.rawmessage_callback = rawmessage_callback
 
-    def message_received(self, message):
-        self.inmessage_callback(message)
+    def rawmessage_received(self, message):
+        self.rawmessage_callback(message)
 
 
 class RoutingProtocolWrapping(RoutingProtocol):

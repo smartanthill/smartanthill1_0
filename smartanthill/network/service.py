@@ -60,7 +60,7 @@ class TransportService(SAMultiService):
     def __init__(self, name):
         SAMultiService.__init__(self, name)
         self._protocol = p.TransportProtocolWrapping(
-            self.inmessage_protocallback)
+            self.rawmessage_protocallback)
         self._litemq = None
 
     def startService(self):
@@ -77,8 +77,8 @@ class TransportService(SAMultiService):
         self._litemq.unconsume("network", "transport.in")
         self._litemq.unconsume("network", "transport.out")
 
-    def inmessage_protocallback(self, message):
-        self.log.debug("Received incoming message %s" % hexlify(message))
+    def rawmessage_protocallback(self, message):
+        self.log.debug("Received incoming raw message %s" % hexlify(message))
         self._litemq.produce("network", "transport->control", message,
                              dict(binary=True))
 
