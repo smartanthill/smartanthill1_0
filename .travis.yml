@@ -4,6 +4,8 @@ python: 2.7
 env:
     - TOX_ENV=docs
     - TOX_ENV=lint
+    - TOX_ENV=py2.6
+    - TOX_ENV=coverage
 
 install:
     - pip install tox 

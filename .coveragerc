@@ -1,0 +1,12 @@
+# .coveragerc to control coverage.py
+[run]
+include = *smartanthill*
+omit = *smartanthill/*/__init__.py
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
