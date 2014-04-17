@@ -4,6 +4,14 @@ SmartAnthill
 .. image:: https://travis-ci.org/ivankravets/smartanthill.svg?branch=develop
     :target: https://travis-ci.org/ivankravets/smartanthill
     :alt: Build Status
+.. image:: https://coveralls.io/repos/ivankravets/smartanthill/badge.png?branch=develop
+    :target: https://coveralls.io/r/ivankravets/smartanthill?branch=develop
+.. image:: https://pypip.in/version/smartanthill/badge.png
+    :target: https://pypi.python.org/pypi/smartanthill/
+    :alt: Latest Version
+.. image:: https://pypip.in/license/smartanthill/badge.png
+    :target: https://pypi.python.org/pypi/smartanthill/
+    :alt:  License
 
 `SmartAnthill <http://smartanthill.ikravets.com/>`_ is an
 intelligent micro-oriented networking system. It opens the door for people that
