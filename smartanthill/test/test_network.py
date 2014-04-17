@@ -21,9 +21,9 @@ class NetworkProtocolCase(TestCase):
 
     def test_controlmessage(self):
         # check arguments
-        self.assertListEqual(getargspec(p.ControlMessage.__init__).args,
-                             ["self", "cdc", "source", "destination", "ttl",
-                              "ack", "data"])
+        self.assertEqual(getargspec(p.ControlMessage.__init__).args,
+                         ["self", "cdc", "source", "destination", "ttl",
+                          "ack", "data"])
         cm1 = p.ControlMessage(CHANNEL_BDCREQUEST.LIST_OPERATIONS.value,
                                0, 255)
         cm2 = p.ControlMessage(CHANNEL_BDCREQUEST.LIST_OPERATIONS.value,
@@ -78,7 +78,7 @@ class NetworkProtocolCase(TestCase):
             tp.transport.clear()
             cp.send_message(cm)
             tp.send_message(cp.transport.value())
-            self.assertDictEqual(tp._outmsgbuffer, {})
+            self.assertEqual(tp._outmsgbuffer, {})
             self.assertEqual(tp.transport.value(), segments)
 
     def test_transportprotocol_sending_ack(self):
@@ -108,7 +108,7 @@ class NetworkProtocolCase(TestCase):
             self.assertEqual(tp.transport.value(), segments)
             for acksegment in acksegments:
                 tp.dataReceived(acksegment)
-            self.assertDictEqual(tp._outmsgbuffer, {})
+            self.assertEqual(tp._outmsgbuffer, {})
 
     def test_transportprotocol_sending_acklost(self):
         cp, tp = p.ControlProtocol(), p.TransportProtocol()
