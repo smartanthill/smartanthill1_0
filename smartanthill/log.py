@@ -28,7 +28,7 @@ class Logger(object):
             self._current_level = self.LEVELS['INFO']
 
     def _levelid_to_str(self, id_):
-        for k, v in self.LEVELS.iteritems():
+        for k, v in self.LEVELS.items():
             if v == id_:
                 return k
 

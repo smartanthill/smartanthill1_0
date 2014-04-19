@@ -95,7 +95,7 @@ class Options(usage.Options):
         usage.Options.__init__(self)
 
     def _gather_baseparams(self, baseconf, path=None):
-        for k, v in baseconf.iteritems():
+        for k, v in baseconf.items():
             argname = path + "." + k if path else k
             # print argname, v, type(v)
             if isinstance(v, dict):

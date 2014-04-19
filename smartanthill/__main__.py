@@ -7,7 +7,7 @@ from twisted.scripts import twistd
 
 
 def main():
-    sys.argv = [sys.argv[0], "--nodaemon", "smartanthill"] + sys.argv[1:]
+    sys.argv[1:1] = ["--nodaemon", "smartanthill"]
     twistd.run()
 
 
