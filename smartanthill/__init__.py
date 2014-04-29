@@ -6,7 +6,7 @@
 VERSION = (0, 0, 0)
 __version__ = ".".join([str(s) for s in VERSION])
 
-__name__ = "smartanthill"
+__title__ = "smartanthill"
 __description__ = "An intelligent micro-oriented networking system"
 __url__ = "http://smartanthill.ikravets.com"
 

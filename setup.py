@@ -4,10 +4,10 @@
 from setuptools import find_packages, setup
 
 from smartanthill import (__author__, __description__, __email__, __license__,
-                          __name__, __url__, __version__)
+                          __title__, __url__, __version__)
 
 setup(
-    name=__name__,
+    name=__title__,
     version=__version__,
     description=__description__,
     long_description=open("README.rst").read(),
