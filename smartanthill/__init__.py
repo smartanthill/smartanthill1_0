@@ -5,9 +5,20 @@
 
 VERSION = (0, 0, 0)
 __version__ = ".".join([str(s) for s in VERSION])
+
+__name__ = "smartanthill"
+__description__ = "An intelligent micro-oriented networking system"
+__url__ = "http://smartanthill.ikravets.com"
+
+__author__ = "Ivan Kravets"
+__email__ = "me@ikravets.com"
+
+__license__ = "MIT Licence"
+__copyright__ = "Copyright (C) 2013-2014 Ivan Kravets"
+
 __banner__ = """
       _________________________________________
-     /                                        /\\     >< {title} ><
+     /                                        /\\     >< {description} ><
     /        \/             \\\\             __/ /\\    Home:    {home}
    /   ___  _@@    Smart    @@_  ___     /  \\/       Docs:    {docs}
   /   (___)(_)    Anthill    (_)(___)   /__          Issues:  {issues}
@@ -16,8 +27,8 @@ __banner__ = """
 \_______________________________________\/           Launched with data: #data#
  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \\           Portal: #portal#
 """.format(version=__version__,
-           title="An intelligent micro-oriented networking system",
-           home="http://smartanthill.ikravets.com",
+           description=__description__,
+           home=__url__,
            docs="http://docs.smartanthill.ikravets.com/",
            issues="https://github.com/ivankravets/smartanthill/issues",
-           license="Copyright (c) Ivan Kravets, MIT Licence")
+           license=__copyright__ + ", " + __license__)

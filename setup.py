@@ -3,18 +3,18 @@
 
 from setuptools import find_packages, setup
 
-from smartanthill import __version__
-
+from smartanthill import (__author__, __description__, __email__, __license__,
+                          __name__, __url__, __version__)
 
 setup(
-    name="smartanthill",
+    name=__name__,
     version=__version__,
-    description="An intelligent micro-oriented networking system",
+    description=__description__,
     long_description=open("README.rst").read(),
-    author="Ivan Kravets",
-    author_email="me@ikravets.com",
-    url="http://smartanthill.ikravets.com",
-    license="MIT Licence",
+    author=__author__,
+    author_email=__email__,
+    url=__url__,
+    license=__license__,
     install_requires=[
         "twisted>=11.1",
         "pyserial"
