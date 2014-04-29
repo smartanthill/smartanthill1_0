@@ -1,4 +1,4 @@
-.PHONY: all docs clean-doc clean-py pushrtfd inobuild inoupload debug-demo clean
+.PHONY: all docs clean-doc clean-py pushrtfd inobuild inoupload debug-demo test clean
 
 all: docs
 
@@ -28,5 +28,9 @@ inoupload: inobuild
 
 debug-demo:
 	cd examples/blink/data; twistd -n smartanthill --logger.level=DEBUG
+
+test:
+	tox -e docs,lint
+	trial --temp-directory=/tmp/_trial_temp smartanthill
 
 clean: clean-doc clean-py
