@@ -2,7 +2,6 @@
 # See LICENSE for details.
 
 import os.path
-import sys
 
 from twisted.python.filepath import FilePath
 from twisted.python.util import sibpath
@@ -33,11 +32,10 @@ class ConfigProcessor(dict):
                                         load_config(dataconf_path.path))
 
     def process_user_options(self, options):
-        useropts = frozenset([v.split("=")[0][2:] for v in sys.argv
-                              if v[:2] == "--" and "=" in v])
-        for k in useropts.intersection(frozenset(options)):
-            _dyndict = options[k]
-            for p in reversed(k.split('.')):
+        assert isinstance(options, dict)
+        for k, v in options.iteritems():
+            _dyndict = v
+            for p in reversed(k.split(".")):
                 _dyndict = {p: _dyndict}
             self._data = merge_nested_dicts(self._data, _dyndict)
 
