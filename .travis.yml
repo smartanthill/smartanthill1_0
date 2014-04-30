@@ -8,7 +8,10 @@ env:
     - TOX_ENV=coverage
 
 install:
-    - pip install tox 
+    - pip install tox python-coveralls
 
 script:
     - tox -e $TOX_ENV
+
+after_success:
+    coveralls --data_file=/tmp/.tox/coverage/tmp/.coverage
