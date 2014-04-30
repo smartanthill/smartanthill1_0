@@ -16,26 +16,26 @@ def get_baseconf():
 
 
 @singleton
-class Config(object):
+class ConfigProcessor(dict):
 
     def __init__(self, datadir, user_options):
         self._data = get_baseconf()
-        self.parse_datadir_conf(datadir)
-        self.parse_user_options(user_options)
+        self.process_datadir_conf(datadir)
+        self.process_user_options(user_options)
 
-    def parse_datadir_conf(self, datadir_path):
+        dict.__init__(self, self._data)
+
+    def process_datadir_conf(self, datadir_path):
         dataconf_path = FilePath(os.path.join(datadir_path, "config.json"))
         if not dataconf_path.exists() or not dataconf_path.isfile():
             return
         self._data = merge_nested_dicts(self._data,
                                         load_config(dataconf_path.path))
 
-    def parse_user_options(self, options):
-        baseopts = frozenset([v[0] for v in options.optParameters if v[0] !=
-                              "datadir"])
+    def process_user_options(self, options):
         useropts = frozenset([v.split("=")[0][2:] for v in sys.argv
                               if v[:2] == "--" and "=" in v])
-        for k in useropts.intersection(baseopts):
+        for k in useropts.intersection(frozenset(options)):
             _dyndict = options[k]
             for p in reversed(k.split('.')):
                 _dyndict = {p: _dyndict}
@@ -43,7 +43,7 @@ class Config(object):
 
     def get(self, key_path, default=None):
         try:
-            value = self._data
+            value = self
             for k in key_path.split("."):
                 value = value[k]
             return value
@@ -52,9 +52,3 @@ class Config(object):
                 return default
             else:
                 raise ConfigKeyError(key_path)
-
-    def __getitem__(self, key_path):
-        return self.get(key_path)
-
-    def __str__(self):
-        return str(self._data)

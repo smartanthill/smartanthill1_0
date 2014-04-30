@@ -5,7 +5,7 @@ from twisted.python.constants import FlagConstant
 from twisted.python.reflect import namedAny
 
 from smartanthill.api.handler import APIHandlerBase
-from smartanthill.config import Config
+from smartanthill.configprocessor import ConfigProcessor
 from smartanthill.exception import APIRequiredParams, APIUnknownRequest
 from smartanthill.service import SAMultiService
 
@@ -34,7 +34,7 @@ class APIService(SAMultiService):
         self._handlers.append(handler)
 
     def autoload_handlers(self):
-        services = Config()['services']
+        services = ConfigProcessor().get("services")
         services = sorted(services.items(), key=lambda s: s[1]['priority'])
         for (name, sopt) in services:
             if "enabled" not in sopt or not sopt['enabled']:

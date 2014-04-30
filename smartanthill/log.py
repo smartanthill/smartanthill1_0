@@ -6,7 +6,7 @@ import traceback
 
 from twisted.python import log
 
-from smartanthill.config import Config
+from smartanthill.configprocessor import ConfigProcessor
 from smartanthill.exception import ConfigKeyError
 
 
@@ -23,7 +23,8 @@ class Logger(object):
     def __init__(self, system="-"):
         self.system = system
         try:
-            self._current_level = self.LEVELS[Config()['logger.level']]
+            self._current_level = self.LEVELS[
+                ConfigProcessor().get("logger.level")]
         except (ConfigKeyError, KeyError):
             self._current_level = self.LEVELS['INFO']
 

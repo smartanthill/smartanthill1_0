@@ -1,13 +1,15 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+from sys import argv as sys_argv
+
 from twisted.application.service import MultiService
 from twisted.python import usage
 from twisted.python.filepath import FilePath
 from twisted.python.reflect import namedAny
 
 from smartanthill import __banner__, __version__
-from smartanthill.config import Config, get_baseconf
+from smartanthill.configprocessor import ConfigProcessor, get_baseconf
 from smartanthill.log import Logger
 
 
@@ -26,10 +28,7 @@ class SAMultiService(MultiService):
         MultiService.startService(self)
 
         infomsg = "Service has been started"
-        if not self.options or isinstance(self.options, usage.Options):
-            self.log.info(infomsg)
-        else:
-            self.log.info(infomsg + " with options '%s'" % self.options)
+        self.log.info(infomsg + " with options '%s'" % self.options)
 
         self._started = True
         for callback in self._onstarted:
@@ -53,7 +52,7 @@ class SmartAnthillService(SAMultiService):
     def __init__(self, name, options):
         SmartAnthillService.INSTANCE = self
         self.datadir = options['datadir']
-        self.config = Config(self.datadir, options)
+        self.config = ConfigProcessor(self.datadir, options)
         SAMultiService.__init__(self, name, options)
 
     @staticmethod
@@ -120,4 +119,10 @@ class Options(usage.Options):
 
 
 def makeService(options):
-    return SmartAnthillService("sas", options)
+    user_options = {p[0]: options[p[0]] for p in options.optParameters}
+    cmdopts = frozenset([v.split("=")[0][2:] for v in sys_argv
+                         if v[:2] == "--" and "=" in v])
+    for k in cmdopts.intersection(frozenset(user_options.keys())):
+        user_options[k] = options[k]
+
+    return SmartAnthillService("sas", user_options)
