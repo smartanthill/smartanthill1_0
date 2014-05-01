@@ -274,4 +274,4 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 
 # A timeout value, in seconds, for the linkcheck builder
 # http://sphinx-doc.org/config.html#confval-linkcheck_timeout
-linkcheck_timeout = 1
+linkcheck_timeout = 30
