@@ -26,7 +26,8 @@ class ConfigProcessor(dict):
 
     def process_datadir_conf(self, datadir_path):
         dataconf_path = FilePath(os.path.join(datadir_path, "config.json"))
-        if not dataconf_path.exists() or not dataconf_path.isfile():
+        if (not dataconf_path.exists()
+                or not dataconf_path.isfile()):  # pragma: no cover
             return
         self._data = merge_nested_dicts(self._data,
                                         load_config(dataconf_path.path))
