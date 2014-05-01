@@ -1,6 +1,7 @@
 # .coveragerc to control coverage.py
 [run]
 include = *smartanthill*
+source = smartanthill
 omit = *smartanthill/*/__init__.py
 
 [report]
