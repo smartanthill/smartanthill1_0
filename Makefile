@@ -27,10 +27,9 @@ inoupload: inobuild
 	cd /tmp/inotmp/; ino upload
 
 debug-demo:
-	cd examples/blink/data; twistd -n smartanthill --logger.level=DEBUG
+	smartanthill --datadir=examples/blink/data --logger.level=DEBUG
 
 test:
-	tox -e docs,lint
-	trial --temp-directory=/tmp/_trial_temp smartanthill
+	tox
 
 clean: clean-doc clean-py
