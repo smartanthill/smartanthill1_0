@@ -16,7 +16,6 @@ class LiteMQService(SAMultiService):
     def declare_exchange(self, name, type_="direct"):
         if name in self._exchanges:
             return
-
         self._exchanges[name] = ExchangeFactory().newExchange(name, type_)
         self.log.info("Declared new exchange '%s' with type '%s'" % (
             name, type_))
@@ -24,7 +23,6 @@ class LiteMQService(SAMultiService):
     def undeclare_exchange(self, name):
         if name not in self._exchanges:
             return
-
         del self._exchanges[name]
         self.log.info("Undeclared exchange '%s'" % name)
 
@@ -34,7 +32,8 @@ class LiteMQService(SAMultiService):
             "Produce new message '%s' with routing_key '%s' to exchange '%s'" %
             (hexlify(message) if properties and "binary" in properties and
              properties["binary"] else message, routing_key, exchange))
-        self._exchanges[exchange].publish(routing_key, message, properties)
+        return self._exchanges[exchange].publish(routing_key, message,
+                                                 properties)
 
     def consume(self, exchange, queue, routing_key, callback, ack=False):
         assert exchange in self._exchanges

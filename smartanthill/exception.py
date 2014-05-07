@@ -6,7 +6,7 @@ class SABaseException(Exception):
 
     MESSAGE = None
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         if self.MESSAGE:
             return self.MESSAGE % self.args
         else:

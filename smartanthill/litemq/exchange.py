@@ -1,6 +1,8 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+# pylint: disable=R0903
+
 from twisted.internet import reactor
 from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
@@ -11,7 +13,7 @@ from smartanthill.log import Logger
 from smartanthill.util import get_service_named
 
 
-class ExchangeFactory(object):  # pylint: disable=R0903
+class ExchangeFactory(object):
 
     @staticmethod
     def newExchange(name, type_):
@@ -23,43 +25,57 @@ class ExchangeFactory(object):  # pylint: disable=R0903
 
 class Queue(object):
 
-    def __init__(self, name, routing_key):
+    def __init__(self, name, routing_key, callback, ack):
+        assert callable(callback)
         self.log = Logger("litemq.queue")
         self.name = name
         self.routing_key = routing_key
+        self.callback = callback
+        self.ack = ack
 
-        _litemq = get_service_named("litemq")
-        self._resend_delay = _litemq.options['resend_delay']
-        self._resend_max = _litemq.options['resend_max']
-        self._callbacks = []
+        # default options
+        options = {
+            "resend_delay": 1,
+            "resend_max": 10
+        }
 
-    def attach_callback(self, callback, ack=False):
-        assert callable(callback)
-        self._callbacks.append((callback, ack))
+        try:
+            options = get_service_named("litemq").options
+        except AttributeError:
+            pass
+        finally:
+            self._resend_delay = options['resend_delay']
+            self._resend_max = options['resend_max']
 
     def put(self, message, properties):
-        assert self._callbacks
         d = Deferred()
-        for c in self._callbacks:
-            d.addCallback(lambda r, c, m, p: c(m, p), c[0],
-                          message, properties)
-            if c[1]:
-                d.addCallback(lambda r: True if isinstance(r, bool) and r else
-                              Failure(LiteMQACKFailed()))
-        d.addErrback(self._d_errback_callback, message, properties)
-        reactor.callWhenRunning(d.callback, True)
+        self._defer_message(d, 0, message, properties)
+        return d
 
-    def _d_errback_callback(self, failure, message, properties):
-        self.log.warn(failure, message, properties)
-        if "_resentnums" not in properties:
-            properties["_resentnums"] = 0
-        properties["_resentnums"] += 1
+    def _defer_message(self, resdef, resentnums, message, properties):
+        d = Deferred()
+        d.addCallback(lambda r, m, p: self.callback(m, p),
+                      message, properties)
+        d.addCallback(self._d_rescallback, resdef)
+        d.addErrback(self._d_errback, resdef, resentnums, message, properties)
+        reactor.callLater(self._resend_delay * resentnums, d.callback, None)
 
-        if properties["_resentnums"] > self._resend_max:
-            raise LiteMQResendFailed
+    def _d_rescallback(self, result, resdef):
+        if not self.ack or (isinstance(result, bool) and result):
+            resdef.callback(result)
+        else:
+            return Failure(LiteMQACKFailed())
 
-        reactor.callLater(self._resend_delay * properties["_resentnums"],
-                          self.put, message, properties)
+    def _d_errback(self, failure, resdef, resentnums, message, properties):
+        self.log.warn(failure, resentnums, message, properties)
+
+        resentnums += 1
+        if not self.ack:
+            resdef.callback(False)
+        elif resentnums < self._resend_max:
+            self._defer_message(resdef, resentnums, message, properties)
+        else:
+            resdef.errback(LiteMQResendFailed())
 
 
 class ExchangeBase(object):
@@ -68,32 +84,35 @@ class ExchangeBase(object):
         self.name = name
         self._queues = {}
 
-    def bind_queue(self, name, routing_key, callback, ack):
-        if name not in self._queues:
-            self._queues[name] = Queue(name, routing_key)
-        self._queues[name].attach_callback(callback, ack)
+    def bind_queue(self, name, routing_key, callback, ack=False):
+        assert name not in self._queues
+        self._queues[name] = Queue(name, routing_key, callback, ack)
 
     def unbind_queue(self, name):
         if name in self._queues:
             del self._queues[name]
 
     def publish(self, routing_key, message, properties):
-        pass
+        raise NotImplementedError
 
 
 class ExchangeDirect(ExchangeBase):
 
     def publish(self, routing_key, message, properties):
+        result = []
         for q in self._queues.itervalues():
             if q.routing_key == routing_key:
-                q.put(message, properties)
+                result.append(q.put(message, properties))
+        return result
 
 
 class ExchangeFanout(ExchangeBase):
 
     def publish(self, routing_key, message, properties):
+        result = []
         for q in self._queues.itervalues():
-            q.put(message, properties)
+            result.append(q.put(message, properties))
+        return result
 
 
 # class ExchangeTopic(ExchangeBase):

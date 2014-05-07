@@ -119,7 +119,7 @@ class Options(usage.Options):
 
 
 def makeService(options):
-    user_options = {p[0]: options[p[0]] for p in options.optParameters}
+    user_options = dict((p[0], options[p[0]]) for p in options.optParameters)
     cmdopts = frozenset([v.split("=")[0][2:] for v in sys_argv
                          if v[:2] == "--" and "=" in v])
     for k in cmdopts.intersection(frozenset(user_options.keys())):
