@@ -6,6 +6,9 @@ SmartAnthill
     :alt: Build Status
 .. image:: https://coveralls.io/repos/ivankravets/smartanthill/badge.png?branch=develop
     :target: https://coveralls.io/r/ivankravets/smartanthill?branch=develop
+.. image:: https://gemnasium.com/ivankravets/smartanthill.svg
+    :target: https://gemnasium.com/ivankravets/smartanthill
+    :alt: Dependency Status
 .. image:: https://pypip.in/version/smartanthill/badge.png
     :target: https://pypi.python.org/pypi/smartanthill/
     :alt: Latest Version
