@@ -5,67 +5,72 @@ import sys
 import traceback
 
 from twisted.python import log
+from twisted.python.constants import FlagConstant, Flags
 
 from smartanthill.configprocessor import ConfigProcessor
-from smartanthill.exception import ConfigKeyError
+
+
+class Level(Flags):
+
+    FATAL = FlagConstant()
+    ERROR = FlagConstant()
+    WARN = FlagConstant()
+    INFO = FlagConstant()
+    DEBUG = FlagConstant()
 
 
 class Logger(object):
 
-    LEVELS = {
-        'FATAL': 0,
-        'ERROR': 1,
-        'WARN': 2,
-        'INFO': 3,
-        'DEBUG': 4
-    }
-
     def __init__(self, system="-"):
         self.system = system
+        self._level = Level.INFO
+
         try:
-            self._current_level = self.LEVELS[
-                ConfigProcessor().get("logger.level")]
-        except (ConfigKeyError, KeyError):
-            self._current_level = self.LEVELS['INFO']
+            self.set_level(Level.lookupByName(
+                ConfigProcessor().get("logger.level")))
+        except ValueError:  # pragma: no cover
+            pass
 
-    def _levelid_to_str(self, id_):
-        for k, v in self.LEVELS.items():
-            if v == id_:
-                return k
+    def set_level(self, level):
+        assert isinstance(level, FlagConstant)
+        self._level = level
 
-    def _msg(self, *msg, **kwargs):
+    def fatal(self, *msg, **kwargs):
+        kwargs['_salevel'] = Level.FATAL
+        self._emit(*msg, **kwargs)
+        sys.exit()
+
+    def error(self, *msg, **kwargs):
+        kwargs['_salevel'] = Level.ERROR
+        self._emit(*msg, **kwargs)
+
+    def warn(self, *msg, **kwargs):
+        kwargs['_salevel'] = Level.WARN
+        self._emit(*msg, **kwargs)
+
+    def info(self, *msg, **kwargs):
+        kwargs['_salevel'] = Level.INFO
+        self._emit(*msg, **kwargs)
+
+    def debug(self, *msg, **kwargs):
+        kwargs['_salevel'] = Level.DEBUG
+        self._emit(*msg, **kwargs)
+
+    def _emit(self, *msg, **kwargs):
         _system = self.system
-        if kwargs['_anthill_loglevel'] > self._current_level:
+        if kwargs['_salevel'] > self._level:
             return
-        elif kwargs['_anthill_loglevel'] != 3:
-            _system = "%s#%s" % (_system, self._levelid_to_str(
-                kwargs['_anthill_loglevel']).lower())
+        elif kwargs['_salevel'] != Level.INFO:
+            _system = "%s#%s" % (_system, kwargs['_salevel'].name.lower())
 
         params = dict(system=_system)
         params.update(kwargs)
-        if kwargs['_anthill_loglevel'] == 0:
+        if kwargs['_salevel'] == Level.FATAL:
             log.err(*msg, **params)
-            traceback.print_stack()
+            if ("_satraceback" not in kwargs or
+                    kwargs['_satraceback']):  # pragma: no cover
+                traceback.print_stack()
+        elif kwargs['_salevel'] == Level.ERROR:
+            log.err(*msg, **params)
         else:
             log.msg(*msg, **params)
-
-    def debug(self, *msg, **kwargs):
-        kwargs['_anthill_loglevel'] = self.LEVELS['DEBUG']
-        self._msg(*msg, **kwargs)
-
-    def info(self, *msg, **kwargs):
-        kwargs['_anthill_loglevel'] = self.LEVELS['INFO']
-        self._msg(*msg, **kwargs)
-
-    def warn(self, *msg, **kwargs):
-        kwargs['_anthill_loglevel'] = self.LEVELS['WARN']
-        self._msg(*msg, **kwargs)
-
-    def error(self, *msg, **kwargs):
-        kwargs['_anthill_loglevel'] = self.LEVELS['ERROR']
-        self._msg(*msg, **kwargs)
-
-    def fatal(self, *msg, **kwargs):
-        kwargs['_anthill_loglevel'] = self.LEVELS['FATAL']
-        self._msg(*msg, **kwargs)
-        sys.exit()
