@@ -25,6 +25,9 @@ class ExchangeFactory(object):
 
 class Queue(object):
 
+    RESEND_DELAY = 1  # in seconds
+    RESEND_MAX = 10  # tries
+
     def __init__(self, name, routing_key, callback, ack):
         assert callable(callback)
         self.log = Logger("litemq.queue")
@@ -33,19 +36,12 @@ class Queue(object):
         self.callback = callback
         self.ack = ack
 
-        # default options
-        options = {
-            "resend_delay": 1,
-            "resend_max": 10
-        }
-
         try:
             options = get_service_named("litemq").options
+            self.RESEND_DELAY = options['resend_delay']  # pragma: no cover
+            self.RESEND_MAX = options['resend_max']  # pragma: no cover
         except AttributeError:
             pass
-        finally:
-            self._resend_delay = options['resend_delay']
-            self._resend_max = options['resend_max']
 
     def put(self, message, properties):
         d = Deferred()
@@ -58,7 +54,7 @@ class Queue(object):
                       message, properties)
         d.addCallback(self._d_rescallback, resdef)
         d.addErrback(self._d_errback, resdef, resentnums, message, properties)
-        reactor.callLater(self._resend_delay * resentnums, d.callback, None)
+        reactor.callLater(self.RESEND_DELAY * resentnums, d.callback, None)
 
     def _d_rescallback(self, result, resdef):
         if not self.ack or (isinstance(result, bool) and result):
@@ -72,7 +68,7 @@ class Queue(object):
         resentnums += 1
         if not self.ack:
             resdef.callback(False)
-        elif resentnums < self._resend_max:
+        elif resentnums < self.RESEND_MAX:
             self._defer_message(resdef, resentnums, message, properties)
         else:
             resdef.errback(LiteMQResendFailed())

@@ -3,6 +3,7 @@
 
 # pylint: disable=W0212,W0613
 
+from twisted.internet.defer import Deferred, DeferredList
 from twisted.python.failure import Failure
 from twisted.trial.unittest import TestCase
 
@@ -28,7 +29,7 @@ class LiteMQCase(TestCase):
                                                      "unknown-type")
         )
 
-    def test_exchange_direct_ack_success(self):
+    def test_queue_ack_success(self):
         message, properties = "Test message", {"foo": "bar"}
 
         def _callback(m, p):
@@ -36,27 +37,17 @@ class LiteMQCase(TestCase):
             self.assertEqual(p, properties)
             return True
 
-        myex = ex.ExchangeFactory().newExchange("exchange_name", "direct")
-        myex.bind_queue("queue_name", "routing_key", _callback, ack=True)
-
-        empty_result = myex.publish("invalid_routing_key", message, properties)
-        self.assertEqual(empty_result, [])
-
-        result = myex.publish("routing_key", message, properties)
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 1)
-        d = result[0]
-
         def _resback(result):
             self.assertIsInstance(result, bool)
             self.assertEqual(result, True)
-            myex.unbind_queue("queue_name")
-            self.assertEqual(len(myex._queues), 0)
 
+        q = ex.Queue("queue_name", "routing_key", _callback, ack=True)
+        d = q.put(message, properties)
+        self.assertIsInstance(d, Deferred)
         d.addCallbacks(_resback)
         return d
 
-    def test_exchange_direct_ack_problem(self):
+    def test_queue_ack_fails(self):
         self.g_resent_nums, resend_max = 0, 3
 
         def _callback(m, p):
@@ -73,20 +64,15 @@ class LiteMQCase(TestCase):
             self.assertTrue(result.check(LiteMQResendFailed))
             self.assertEqual(resend_max, self.g_resent_nums)
 
-        myex = ex.ExchangeFactory().newExchange("exchange_name", "direct")
-        myex.bind_queue("queue_name", "routing_key", _callback, ack=True)
-        myex._queues['queue_name']._resend_max = resend_max
-        myex._queues['queue_name']._resend_delay = 0
-        result = myex.publish("routing_key", "Test message", {"foo": "bar"})
-
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 1)
-        d = result[0]
-
+        q = ex.Queue("queue_name", "routing_key", _callback, ack=True)
+        q.RESEND_MAX = resend_max
+        q.RESEND_DELAY = 0
+        d = q.put("Test message", {"foo": "bar"})
+        self.assertIsInstance(d, Deferred)
         d.addBoth(_errback)
         return d
 
-    def test_exchange_direct_nonack(self):
+    def test_queue_nonack(self):
         self.g_resent_nums, resend_max = 0, 3
 
         def _callback(m, p):
@@ -97,16 +83,72 @@ class LiteMQCase(TestCase):
             self.assertNotIsInstance(result, Failure)
             self.assertIsInstance(result, bool)
             self.assertEqual(result, False)
+            self.assertEqual(self.g_resent_nums, 1)
+
+        q = ex.Queue("queue_name", "routing_key", _callback, ack=False)
+        q.RESEND_MAX = resend_max
+        q.RESEND_DELAY = 0
+        d = q.put("Test message", {"foo": "bar"})
+        self.assertIsInstance(d, Deferred)
+        d.addBoth(_errback)
+        return d
+
+    def test_exchange_direct(self):
+        message, properties = "Test message", {"foo": "bar"}
+
+        def _callback(m, p):
+            self.assertEqual(m, message)
+            self.assertEqual(p, properties)
 
         myex = ex.ExchangeFactory().newExchange("exchange_name", "direct")
-        myex.bind_queue("queue_name", "routing_key", _callback, ack=False)
-        myex._queues['queue_name']._resend_max = resend_max
-        myex._queues['queue_name']._resend_delay = 0
-        result = myex.publish("routing_key", "Test message", {"foo": "bar"})
+        myex.bind_queue("queue_name", "routing_key", _callback)
 
+        empty_result = myex.publish("invalid_routing_key", message, properties)
+        self.assertEqual(empty_result, [])
+
+        result = myex.publish("routing_key", message, properties)
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
         d = result[0]
 
-        d.addBoth(_errback)
+        def _resback(result):
+            self.assertEqual(result, None)
+            myex.unbind_queue("queue_name")
+            self.assertEqual(len(myex._queues), 0)
+
+        self.assertIsInstance(d, Deferred)
+        d.addCallbacks(_resback)
         return d
+
+    def test_exchange_fanout(self):
+        self.g_resent_nums = 0
+        message, properties = "Test message", {"foo": "bar"}
+
+        def _callback(m, p):
+            self.g_resent_nums += 1
+            self.assertEqual(m, message)
+            self.assertEqual(p, properties)
+
+        myex = ex.ExchangeFactory().newExchange("exchange_name", "fanout")
+        myex.bind_queue("queue_name", "routing_key", _callback)
+
+        result = myex.publish("invalid_routing_key", message, properties)
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        d1 = result[0]
+
+        result = myex.publish("routing_key", message, properties)
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        d2 = result[0]
+
+        self.assertIsInstance(d1, Deferred)
+        self.assertIsInstance(d2, Deferred)
+
+        dl = DeferredList([d1, d2])
+
+        def _resback(result):
+            self.assertEqual(result, [(True, None), (True, None)])
+
+        dl.addCallbacks(_resback)
+        return dl
