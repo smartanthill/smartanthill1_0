@@ -58,7 +58,7 @@ class Logger(object):
 
     def _emit(self, *msg, **kwargs):
         _system = self.system
-        if kwargs['_salevel'] > self._level:
+        if kwargs['_salevel'].value > self._level.value:
             return
         elif kwargs['_salevel'] != Level.INFO:
             _system = "%s#%s" % (_system, kwargs['_salevel'].name.lower())

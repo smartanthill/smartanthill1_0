@@ -1,18 +1,21 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from twisted.python.log import addObserver
+from twisted.python.log import addObserver, removeObserver
 from twisted.trial.unittest import TestCase
 
 from smartanthill.log import Level, Logger
 
 
-class ConfigProcessorCase(TestCase):
+class LogCase(TestCase):
 
     def setUp(self):
         addObserver(self._logobserver)
         self.log = Logger("test")
         self._lastlog = None
+
+    def tearDown(self):
+        removeObserver(self._logobserver)
 
     def _logobserver(self, data):
         self._lastlog = data
@@ -22,10 +25,9 @@ class ConfigProcessorCase(TestCase):
 
         for l in Level.iterconstants():
             _lname = l.name.lower()
-            callback = getattr(self.log, _lname)
 
             try:
-                callback("Message", _satraceback=False)
+                getattr(self.log, _lname)("Message", _satraceback=False)
             except SystemExit:
                 self.assertEqual(l, Level.FATAL)
 
