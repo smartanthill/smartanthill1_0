@@ -57,18 +57,18 @@ uint8_t osmGetStateCDCByIndex(uint8_t index)
     return index < OSM_STATE_NUMS? osmStates[index].cdc : 0;
 }
 
-static void _osmMakeTransition(const OperationalState* newState)
+void _osmMakeTransition(const OperationalState* newState)
 {
     osm.curState = newState;
 }
 
-static void _osmUpdateState()
+void _osmUpdateState()
 {
     if (osm.curState)
         osm.curState->update();
 }
 
-static const OperationalState* _osmFindStateByCDC(uint8_t cdc)
+const OperationalState* _osmFindStateByCDC(uint8_t cdc)
 {
     uint8_t i;
     for (i = 0; i < OSM_STATE_NUMS; i++)

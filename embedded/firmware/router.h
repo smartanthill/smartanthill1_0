@@ -51,8 +51,8 @@ extern "C" {
 
 void routerInit();
 void routerLoop();
-inline uint8_t routerHasInPacket();
-inline RouterPacket *routerGetInPacket();
+uint8_t routerHasInPacket();
+RouterPacket *routerGetInPacket();
 void routerSendPacket(RouterPacket* outRP);
 void routerAcknowledgeOutPacket(RouterPacket* outRP);
 
@@ -60,12 +60,12 @@ void routerAcknowledgeOutPacket(RouterPacket* outRP);
 }
 #endif
 
-static void _routerOnByteReceived(uint8_t inByte);
-static void _routerInBufferPushByte(uint8_t inByte);
-static uint8_t _routerInBufferContainsPacket(uint8_t sopIndex);
-static void _routerParseInBufferPacket(uint8_t sopIndex);
-static void _routerAcknowledgeInPacket();
-static void _routerShiftOutPacketStack();
-static void _routerResendOutPackets();
+void _routerOnByteReceived(uint8_t inByte);
+void _routerInBufferPushByte(uint8_t inByte);
+uint8_t _routerInBufferContainsPacket(uint8_t sopIndex);
+void _routerParseInBufferPacket(uint8_t sopIndex);
+void _routerAcknowledgeInPacket();
+void _routerShiftOutPacketStack();
+void _routerResendOutPackets();
 
 #endif

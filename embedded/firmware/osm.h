@@ -35,9 +35,9 @@ extern "C" {
 
 uint8_t osmGetStateNums();
 uint8_t osmGetStateCDCByIndex(uint8_t index);
-static void _osmMakeTransition(const OperationalState*);
-static void _osmUpdateState();
-static const OperationalState* _osmFindStateByCDC(uint8_t);
+void _osmMakeTransition(const OperationalState*);
+void _osmUpdateState();
+const OperationalState* _osmFindStateByCDC(uint8_t);
 
 #ifdef __cplusplus
 }

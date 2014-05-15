@@ -31,12 +31,12 @@ void routerLoop()
         _routerAcknowledgeInPacket();
 }
 
-inline uint8_t routerHasInPacket()
+uint8_t routerHasInPacket()
 {
     return _newInRPReady;
 }
 
-inline RouterPacket *routerGetInPacket()
+RouterPacket *routerGetInPacket()
 {
     return &_inRP;
 }
@@ -98,7 +98,7 @@ void routerAcknowledgeOutPacket(RouterPacket* outRP)
     }
 }
 
-static void _routerOnByteReceived(uint8_t inByte)
+void _routerOnByteReceived(uint8_t inByte)
 {
     _routerInBufferPushByte(inByte);
 
@@ -120,7 +120,7 @@ static void _routerOnByteReceived(uint8_t inByte)
     }
 }
 
-static void _routerInBufferPushByte(byte inByte)
+void _routerInBufferPushByte(byte inByte)
 {
     uint8_t i;
     for (i = 1; i < BUFFER_IN_LEN; i++)
@@ -129,7 +129,7 @@ static void _routerInBufferPushByte(byte inByte)
     _inBuffer[BUFFER_IN_LEN - 1] = inByte;
 }
 
-static uint8_t _routerInBufferContainsPacket(uint8_t sopIndex)
+uint8_t _routerInBufferContainsPacket(uint8_t sopIndex)
 {
     _inRP.dataLength = _inBuffer[sopIndex + PACKET_HEADER_LEN] & 0xF;
 
@@ -147,7 +147,7 @@ static uint8_t _routerInBufferContainsPacket(uint8_t sopIndex)
             PACKET_HEADER_LEN + _inRP.dataLength);
 }
 
-static void _routerParseInBufferPacket(uint8_t sopIndex)
+void _routerParseInBufferPacket(uint8_t sopIndex)
 {
     /* dataLen + crc already parsed in _routerInBufferContainsPacket */
     uint8_t i;
@@ -160,7 +160,7 @@ static void _routerParseInBufferPacket(uint8_t sopIndex)
     _inRP.satpFlags = _inBuffer[sopIndex + 4] >> 5;
 }
 
-static void _routerAcknowledgeInPacket()
+void _routerAcknowledgeInPacket()
 {
     RouterPacket outRP;
     outRP.cdc = 0x0A;
@@ -174,14 +174,14 @@ static void _routerAcknowledgeInPacket()
     routerSendPacket(&outRP);
 }
 
-static void _routerShiftOutPacketStack()
+void _routerShiftOutPacketStack()
 {
     uint8_t i;
     for (i = BUFFER_OUT_LEN-1; i > 0; i--)
         _outRPStack[i] = _outRPStack[i-1];
 }
 
-static void _routerResendOutPackets()
+void _routerResendOutPackets()
 {
     uint32_t now = getTimeMillis();
     uint8_t i;
