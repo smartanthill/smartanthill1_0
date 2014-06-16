@@ -22,7 +22,7 @@ void UARTTransmitByte(uint8_t _byte)
 int16_t UARTReceiveByte()
 {
 #ifdef ARDUINO
-    return Serial.read();
+    return Serial.available()? Serial.read() : -1;
 #endif
 }
 

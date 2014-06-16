@@ -3,8 +3,8 @@
  * See LICENSE for details.
  */
 
-#ifndef __SMARTANTHILL_H__
-#define __SMARTANTHILL_H__
+#ifndef __MAIN_H__
+#define __MAIN_H__
 
 #include "platform_tools.h"
 #include "osm.h"

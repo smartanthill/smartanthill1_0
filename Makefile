@@ -1,4 +1,4 @@
-.PHONY: all docs clean-doc clean-py pushrtfd inobuild inoupload debug-demo test clean
+.PHONY: all docs clean-doc clean-py pushrtfd buildfw debug-demo test clean
 
 all: docs
 
@@ -16,15 +16,8 @@ clean-py:
 pushrtfd:
 	curl -X POST http://readthedocs.org/build/smartanthill
 
-inobuild:
-	mkdir -p /tmp/{inotmp,inotmp/lib,inotmp/src}
-	cp -R embedded/firmware/ /tmp/inotmp/src/
-	mv /tmp/inotmp/src/smartanthill.c /tmp/inotmp/src/smartanthill.ino
-	#cd /tmp/inotmp/; ino build --verbose
-	cd /tmp/inotmp/; ino build
-
-inoupload: inobuild
-	cd /tmp/inotmp/; ino upload
+buildfw:
+	cd embedded/firmware; platformio run
 
 debug-demo:
 	smartanthill --datadir=examples/blink/data --logger.level=DEBUG

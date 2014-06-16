@@ -3,7 +3,7 @@
  * See LICENSE for details.
  */
 
-#include "smartanthill.h"
+#include "main.h"
 
 /* int freeRam () {*/
 /*   extern int __heap_start, *__brkval;*/
