@@ -7,7 +7,7 @@ Quick-Start
 Python & OS Support
 -------------------
 
-|SA| written in `Python <https://www.python.org>`_ and works with versions 2.6
+|SA| is written in `Python <https://www.python.org>`_ and works with versions 2.6
 and 2.7.
 
 |SA| works on Unix/Linux, OS X, and Windows.
