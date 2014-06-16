@@ -1,2 +1,2 @@
-twisted==13.2.0
+twisted==14.0.0
 pyserial==2.7
