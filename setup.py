@@ -16,8 +16,9 @@ setup(
     url=__url__,
     license=__license__,
     install_requires=[
-        "twisted>=11.1",
-        "pyserial"
+        "platformio",
+        "pyserial",
+        "twisted"
     ],
     packages=find_packages()+["twisted.plugins"],
     package_data={"smartanthill": ["*.json"]},
