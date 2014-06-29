@@ -27,14 +27,15 @@ or `Toolchain <http://en.wikipedia.org/wiki/Toolchain>`_. All you need is to
 connect micro-device to |SA|, to select capabilities that device should
 have and *"train it"* [#]_ to behave as the network device.
 
-Installation
-------------
+Getting Started
+---------------
 
 .. toctree::
     :maxdepth: 2
 
-    installation/quickstart
-    installation/configuration
+    getting-started/installation
+    getting-started/launching
+    getting-started/configuration
 
 Usage Documentation
 -------------------
