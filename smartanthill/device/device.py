@@ -38,7 +38,7 @@ class Device(object):
         self.log.info("Received allowed operations: %s" %
                       [o.name for o in self.operations])
 
-    def get_nodes(self):
+    def get_nodes(self):  # pylint: disable=R0201
         # Implement scanner for dev-nodes @TODO
         return []
 
