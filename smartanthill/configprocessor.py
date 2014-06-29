@@ -17,20 +17,20 @@ def get_baseconf():
 @singleton
 class ConfigProcessor(dict):
 
-    def __init__(self, datadir, user_options):
+    def __init__(self, wsdir, user_options):
         self._data = get_baseconf()
-        self.process_datadir_conf(datadir)
+        self.process_workspace_conf(wsdir)
         self.process_user_options(user_options)
 
         dict.__init__(self, self._data)
 
-    def process_datadir_conf(self, datadir_path):
-        dataconf_path = FilePath(os.path.join(datadir_path, "config.json"))
-        if (not dataconf_path.exists()
-                or not dataconf_path.isfile()):  # pragma: no cover
+    def process_workspace_conf(self, wsdir):
+        wsconf_path = FilePath(os.path.join(wsdir, "smartanthill.json"))
+        if (not wsconf_path.exists()
+                or not wsconf_path.isfile()):  # pragma: no cover
             return
         self._data = merge_nested_dicts(self._data,
-                                        load_config(dataconf_path.path))
+                                        load_config(wsconf_path.path))
 
     def process_user_options(self, options):
         assert isinstance(options, dict)

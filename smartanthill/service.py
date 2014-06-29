@@ -51,8 +51,8 @@ class SmartAnthillService(SAMultiService):
 
     def __init__(self, name, options):
         SmartAnthillService.INSTANCE = self
-        self.datadir = options['datadir']
-        self.config = ConfigProcessor(self.datadir, options)
+        self.workspacedir = options['workspacedir']
+        self.config = ConfigProcessor(self.workspacedir, options)
         SAMultiService.__init__(self, name, options)
 
     @staticmethod
@@ -60,13 +60,14 @@ class SmartAnthillService(SAMultiService):
         return SmartAnthillService.INSTANCE
 
     def startService(self):
-        self.log.debug("Initial configuration: %s." % self.config)
-
-        self._preload_subservices(self.config['services'])
-
-        SAMultiService.startService(self)
+        dashboard = ("http://localhost:%d/" %
+                     self.config.get("services.dashboard.options.port"))
         self.log.info(__banner__.replace(
-            "#data#", self.datadir))
+            "#wsdir#", self.workspacedir).replace("#dashboard#", dashboard))
+
+        self.log.debug("Initial configuration: %s." % self.config)
+        self._preload_subservices(self.config['services'])
+        SAMultiService.startService(self)
 
     def _preload_subservices(self, services):
         services = sorted(services.items(), key=lambda s: s[1]['priority'])
@@ -79,10 +80,11 @@ class SmartAnthillService(SAMultiService):
 
 
 class Options(usage.Options):
-    optParameters = [["datadir", "d", ".",
-                      "The path to working data directory"]]
+    optParameters = [["workspacedir", "w", ".",
+                      "The path to workspace directory"]]
 
-    compData = usage.Completions(optActions={"datadir": usage.CompleteDirs()})
+    compData = usage.Completions(
+        optActions={"workspacedir": usage.CompleteDirs()})
 
     longdesc = "SmartAnthill is an intelligent micro-oriented "\
         "networking system (version %s)" % __version__
@@ -105,17 +107,14 @@ class Options(usage.Options):
                 self.optParameters.append([argname, None, v, None, type(v)])
 
     def postOptions(self):
-        if not self['datadir']:
-            raise usage.UsageError("Please specify the path(--datadir=)"
-                                   " to working directory")
-        datadir_path = FilePath(self['datadir'])
-        if not datadir_path.exists() or not datadir_path.isdir():
-            raise usage.UsageError("The path to the working data directory"
+        wsdir_path = FilePath(self['workspacedir'])
+        if not wsdir_path.exists() or not wsdir_path.isdir():
+            raise usage.UsageError("The path to the workspace directory"
                                    " is invalid")
-        elif datadir_path.getPermissions().user.shorthand() != 'rwx':
+        elif wsdir_path.getPermissions().user.shorthand() != 'rwx':
             raise usage.UsageError("You don't have 'read/write/execute'"
-                                   " permissions to working data directory")
-        self['datadir'] = datadir_path.path
+                                   " permissions to workspace directory")
+        self['workspacedir'] = wsdir_path.path
 
 
 def makeService(options):

@@ -24,8 +24,8 @@ __banner__ = """
   /   (___)(_)    Anthill    (_)(___)   /__          Issues:  {issues}
  /    //|| ||   {version:^11}   || ||\\\\     /\\         License: {license}
 /_______________________________________/ /
-\_______________________________________\/           Launched with data: #data#
- \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \\           Portal: #portal#
+\_______________________________________\/           Workspace: #wsdir#
+ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \\           Dashboard: #dashboard#
 """.format(version=__version__,
            description=__description__,
            home=__url__,

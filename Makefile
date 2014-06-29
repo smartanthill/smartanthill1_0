@@ -17,10 +17,10 @@ pushrtfd:
 	curl -X POST http://readthedocs.org/build/smartanthill
 
 buildfw:
-	cd embedded/firmware; platformio run
+	cd embedded/firmware; platformio run -t upload
 
 debug-demo:
-	smartanthill --datadir=examples/blink/data --logger.level=DEBUG
+	smartanthill --workspacedir=examples/arduino-router/workspace --logger.level=DEBUG
 
 test:
 	tox
