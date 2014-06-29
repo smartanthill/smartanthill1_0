@@ -18,6 +18,7 @@ class DeviceService(SAMultiService):
             devid = int(devid)
             assert 0 < devid <= 255
             assert "board" in devoptions
+            assert "connection" in devoptions
 
             try:
                 devobj = Device(devid, devoptions)
@@ -26,6 +27,9 @@ class DeviceService(SAMultiService):
                 self.log.error(e)
 
         SAMultiService.startService(self)
+
+    def get_devices(self):
+        return self._devices
 
     def get_device(self, id_):
         if id_ not in self._devices:

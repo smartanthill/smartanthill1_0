@@ -17,6 +17,7 @@ class Device(object):
         self.log = Logger("device.%d" % id_)
         self.id_ = id_
         self.options = options
+        self.connection = ConnectionInfo(options['connection'])
         self.operations = set([OperationType.PING,
                                OperationType.LIST_OPERATIONS])
         self.board = BoardFactory.newBoard(options['board'])
@@ -36,3 +37,30 @@ class Device(object):
         self.operations = frozenset(self.operations)
         self.log.info("Received allowed operations: %s" %
                       [o.name for o in self.operations])
+
+    def get_nodes(self):
+        # Implement scanner for dev-nodes @TODO
+        return []
+
+
+class ConnectionInfo(object):
+
+    def __init__(self, uri):
+        assert ":" in uri
+        self.uri = uri
+        parts = uri.split(":")
+        self.type_ = parts[0]
+        self.params = dict()
+
+        for p in parts[1:]:
+            key, value = p.split("=")
+            self.params[key] = value
+
+    def __str__(self):
+        return "ConnectionInfo: %s" % self.uri
+
+    def get_uri(self):
+        return self.uri
+
+    def get_type(self):
+        return self.type_

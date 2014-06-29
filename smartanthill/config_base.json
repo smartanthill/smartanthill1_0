@@ -10,22 +10,23 @@
         {
             "enabled": true,
             "priority": 1,
-            "options": {
+            "options":
+            {
                 "resend_delay": 1,
                 "resend_max": 10
             }
         },
 
-        "network":
+        "device":
         {
             "enabled": false,
             "priority": 2,
             "options": {}
         },
 
-        "device":
+        "network":
         {
-            "enabled": false,
+            "enabled": true,
             "priority": 3,
             "options": {}
         },
@@ -41,6 +42,16 @@
                     "enabled": true,
                     "port": 8131
                 }
+            }
+        },
+
+        "dashboard":
+        {
+            "enabled": true,
+            "priority": 5,
+            "options":
+            {
+                "port": 8138
             }
         }
     }

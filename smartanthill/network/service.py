@@ -118,10 +118,17 @@ class RouterService(SAMultiService):
         self._reconnect_nums = 0
 
     def startService(self):
+        connection = self.options['connection']
         try:
-            if self.options['type'] == "serial":
-                SerialPort(self._protocol, self.options['port'], reactor,
-                           baudrate=int(self.options['baudrate']))
+            if connection.get_type() == "serial":
+                _kwargs = connection.params
+                # rename port's argument
+                _kwargs['deviceNameOrPortNumber'] = _kwargs['port']
+                del _kwargs['port']
+                _kwargs['protocol'] = self._protocol
+                _kwargs['reactor'] = reactor
+
+                SerialPort(**_kwargs)
         except:
             self.log.error(NetworkRouterConnectFailure(self.options))
             self._reconnect_nums += 1
@@ -146,7 +153,7 @@ class RouterService(SAMultiService):
                              dict(binary=True))
 
     def outsegment_mqcallback(self, message, properties):
-        # check destination ID  #TODO
+        # check destination ID  @TODO
         if ord(message[2]) not in self.options['deviceids']:
             return False
         self.log.debug("Received outgoing segment %s" % hexlify(message))
@@ -166,11 +173,16 @@ class NetworkService(SAMultiService):
         ControlService("network.control").setServiceParent(self)
         TransportService("network.transport").setServiceParent(self)
 
-        num = 0
-        for opt in self.options['routers']:
-            num += 1
-            RouterService("network.router.%d" % num,
-                          opt).setServiceParent(self)
+        devices = get_service_named("device").get_devices()
+        for devid, devobj in devices.iteritems():
+            if not devobj.options.get("router", False):
+                continue
+
+            _options = {"connection": devobj.connection, "deviceids": [devid]}
+            _options['deviceids'] += [d.id_ for d in devobj.get_nodes()]
+
+            RouterService("network.router.%d" % devid,
+                          _options).setServiceParent(self)
 
         SAMultiService.startService(self)
 
