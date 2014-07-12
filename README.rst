@@ -16,6 +16,11 @@ SmartAnthill
     :target: https://pypi.python.org/pypi/smartanthill/
     :alt:  License
 
+`Home <http://smartanthill.ikravets.com>`_
+| `Documentation <http://docs.smartanthill.ikravets.com/>`_
+| `Issues <https://github.com/ivankravets/smartanthill/issues>`_
+| `Twitter <http://twitter.com/smartanthill>`_
+
 `SmartAnthill <http://smartanthill.ikravets.com/>`_ is an
 intelligent micro-oriented networking system. It opens the door for people that
 are not familiar with electronics and micro-controller programming, but earlier
