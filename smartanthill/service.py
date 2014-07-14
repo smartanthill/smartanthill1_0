@@ -6,7 +6,7 @@ from sys import argv as sys_argv
 from twisted.application.service import MultiService
 from twisted.python import usage
 from twisted.python.filepath import FilePath
-from twisted.python.reflect import namedAny
+from twisted.python.reflect import namedModule
 
 from smartanthill import __banner__, __version__
 from smartanthill.configprocessor import ConfigProcessor, get_baseconf
@@ -75,7 +75,7 @@ class SmartAnthillService(SAMultiService):
             if "enabled" not in sopt or not sopt['enabled']:
                 continue
             path = "smartanthill.%s.service" % name
-            service = namedAny(path).makeService(name, sopt['options'])
+            service = namedModule(path).makeService(name, sopt['options'])
             service.setServiceParent(self)
 
 

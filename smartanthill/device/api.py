@@ -1,7 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from twisted.python.reflect import namedAny
+from twisted.python.reflect import namedObject
 
 from smartanthill.api.handler import APIHandlerBase
 from smartanthill.device.arg import DeviceIDArg
@@ -24,7 +24,7 @@ def get_handlers():
     handlers = []
     for c in OperationType.iterconstants():
         try:
-            handler = namedAny(
+            handler = namedObject(
                 "smartanthill.device.operation.%s.APIHandler" % c.name.lower())
             handlers.append(handler)
         except AttributeError:

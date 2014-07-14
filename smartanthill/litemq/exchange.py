@@ -6,7 +6,7 @@
 from twisted.internet import reactor
 from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
-from twisted.python.reflect import namedAny
+from twisted.python.reflect import namedObject
 
 from smartanthill.exception import LiteMQACKFailed, LiteMQResendFailed
 from smartanthill.log import Logger
@@ -18,7 +18,7 @@ class ExchangeFactory(object):
     @staticmethod
     def newExchange(name, type_):
         obj_path = "smartanthill.litemq.exchange.Exchange%s" % type_.title()
-        obj = namedAny(obj_path)(name)
+        obj = namedObject(obj_path)(name)
         assert isinstance(obj, ExchangeBase)
         return obj
 
