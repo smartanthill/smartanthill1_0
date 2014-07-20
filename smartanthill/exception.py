@@ -40,6 +40,11 @@ class NetworkRouterConnectFailure(SABaseException):
     MESSAGE = "Couldn't connect to router with options=%s"
 
 
+class BoardUnknownId(SABaseException):
+
+    MESSAGE = "Unknown board with ID=%s"
+
+
 class BoardUnknownOperation(SABaseException):
 
     MESSAGE = "Unknown operation '%s' for %s"
@@ -78,3 +83,8 @@ class APIUnknownRequest(SABaseException):
 class APIRequiredParams(SABaseException):
 
     MESSAGE = "These parameters '%s' are required for '%s' action"
+
+
+class WebRouterMatchNotFound(SABaseException):
+
+    MESSAGE = "Could not find any routes by '%s %s'"
