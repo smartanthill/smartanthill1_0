@@ -1,9 +1,11 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from twisted.python.reflect import namedAny
+from twisted.python.reflect import namedObject
 
-from smartanthill.device.operation.base import get_operclass, OperationType
+from smartanthill import __docsurl__
+from smartanthill.device.operation.base import (get_operation_class,
+                                                OperationType)
 from smartanthill.exception import BoardUnknownOperation, DeviceUnknownBoard
 
 
@@ -11,9 +13,11 @@ class BoardFactory(object):  # pylint: disable=R0903
 
     @staticmethod
     def newBoard(name):
-        obj_path = "smartanthill.device.board.Board%s" % name.title()
+        vendor, _ = name.split("_")
+        obj_path = "smartanthill.device.board.%s.Board_%s" % (vendor.lower(),
+                                                              name)
         try:
-            obj = namedAny(obj_path)()
+            obj = namedObject(obj_path)()
         except AttributeError:
             raise DeviceUnknownBoard(name)
         assert isinstance(obj, BoardBase)
@@ -22,10 +26,19 @@ class BoardFactory(object):  # pylint: disable=R0903
 
 class BoardBase(object):
 
+    VENDOR = None
+    NAME = None
+    INFO_URL = __docsurl__
+
+    PLATFORMIO_PLATFORM = None
+    PLATFORMIO_FRAMEWORK = None
+    PLATFORMIO_BOARD = None
+
     PINS_ALIAS = None
     PINS = None
     ANALOG_PINS = None
     PWM_PINS = None
+
     OPERATIONS = [
         OperationType.PING,
         OperationType.LIST_OPERATIONS,
@@ -36,6 +49,33 @@ class BoardBase(object):
         OperationType.WRITE_ANALOG_PIN,
         OperationType.CONFIGURE_ANALOG_REFERENCE
     ]
+
+    def get_id(self):
+        return self.__class__.__name__.replace("Board_", "")
+
+    def get_name(self):
+        return self.NAME if self.NAME else self.get_id()
+
+    def get_vendor(self):
+        return self.VENDOR
+
+    def get_info_url(self):
+        return self.INFO_URL
+
+    def get_pins(self):
+        return self.PINS
+
+    def get_pins_alias(self):
+        return self.PINS_ALIAS
+
+    def get_analog_pins(self):
+        return self.ANALOG_PINS
+
+    def get_pwm_pins(self):
+        return self.PWM_PINS
+
+    def get_extint_pins(self):
+        return self.EXTINT_PINS
 
     def get_pinarg_params(self):
         return (self.PINS, self.PINS_ALIAS)
@@ -52,47 +92,10 @@ class BoardBase(object):
     def get_pinanalogrefarg_params(self):
         raise NotImplementedError
 
-    def launch_device_operation(self, devid, type_, data):
+    def launch_operation(self, devid, type_, data):
         try:
             assert type_ in self.OPERATIONS
-            operclass = get_operclass(type_)
+            operclass = get_operation_class(type_)
         except:
-            raise BoardUnknownOperation(type_.name, self.__class__.__name__)
+            raise BoardUnknownOperation(type_.name, self.get_name())
         return operclass(self, data).launch(devid)
-
-
-class BoardArduino(BoardBase):
-
-    PINS = range(1, 22)
-    PINS_ALIAS = dict(
-        SS=10,
-        MOSI=11,
-        MISO=12,
-        SCK=13,
-
-        SDA=18,
-        SCL=19,
-        LED_BUILTIN=13,
-
-        A0=14,
-        A1=15,
-        A2=16,
-        A3=17,
-        A4=18,
-        A5=19,
-        A6=20,
-        A7=21
-    )
-    ANALOG_PINS = range(14, 22)
-    PWM_PINS = (3, 5, 6, 9, 10, 11)
-
-    def get_pinmodearg_params(self):
-        return ((0, 1, 2), dict(INPUT=0, OUTPUT=1, INPUT_PULLUP=2))
-
-    def get_pinanalogrefarg_params(self):
-        return ((0, 1, 2), dict(DEFAULT=0, EXTERNAL=1, INTERNAL=2))
-
-
-class BoardArduino_Pro5V(BoardArduino):
-
-    INFO_URL = "http://arduino.cc/en/Main/ArduinoBoardProMini"

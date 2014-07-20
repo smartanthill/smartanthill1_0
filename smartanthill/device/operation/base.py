@@ -3,7 +3,7 @@
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 from twisted.python.constants import ValueConstant, Values
-from twisted.python.reflect import namedAny
+from twisted.python.reflect import namedObject
 
 import smartanthill.network.cdc as cdc
 from smartanthill.device.arg import DeviceIDArg
@@ -65,11 +65,11 @@ class OperationBase(object):
         return set(self.REQUIRED_PARAMS) <= set(params)
 
 
-def get_operclass(type_):
+def get_operation_class(type_):
     assert isinstance(type_, ValueConstant)
-    if not hasattr(get_operclass, "cache"):
-        get_operclass.cache = {}
-    if type_.value not in get_operclass.cache:
-        get_operclass.cache[type_.value] = namedAny(
+    if not hasattr(get_operation_class, "cache"):
+        get_operation_class.cache = {}
+    if type_.value not in get_operation_class.cache:
+        get_operation_class.cache[type_.value] = namedObject(
             "smartanthill.device.operation.%s.Operation" % type_.name.lower())
-    return get_operclass.cache[type_.value]
+    return get_operation_class.cache[type_.value]
