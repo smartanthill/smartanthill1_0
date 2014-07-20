@@ -1,7 +1,9 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import json
 import os.path
+from copy import deepcopy
 
 from twisted.python.filepath import FilePath
 from twisted.python.util import sibpath
@@ -15,24 +17,24 @@ def get_baseconf():
 
 
 @singleton
-class ConfigProcessor(dict):
+class ConfigProcessor(object):
 
     def __init__(self, wsdir, user_options):
+        self.wsconfp = FilePath(os.path.join(wsdir, "smartanthill.json"))
+
         self._data = get_baseconf()
-        self.process_workspace_conf(wsdir)
-        self.process_user_options(user_options)
+        self._wsdata = {}
+        self._process_workspace_conf()
+        self._process_user_options(user_options)
 
-        dict.__init__(self, self._data)
-
-    def process_workspace_conf(self, wsdir):
-        wsconf_path = FilePath(os.path.join(wsdir, "smartanthill.json"))
-        if (not wsconf_path.exists()
-                or not wsconf_path.isfile()):  # pragma: no cover
+    def _process_workspace_conf(self):
+        if (not self.wsconfp.exists()
+                or not self.wsconfp.isfile()):  # pragma: no cover
             return
-        self._data = merge_nested_dicts(self._data,
-                                        load_config(wsconf_path.path))
+        self._wsdata = load_config(self.wsconfp.path)
+        self._data = merge_nested_dicts(self._data, deepcopy(self._wsdata))
 
-    def process_user_options(self, options):
+    def _process_user_options(self, options):
         assert isinstance(options, dict)
         for k, v in options.iteritems():
             _dyndict = v
@@ -40,9 +42,13 @@ class ConfigProcessor(dict):
                 _dyndict = {p: _dyndict}
             self._data = merge_nested_dicts(self._data, _dyndict)
 
+    def _write_wsconf(self):
+        with open(self.wsconfp.path, "w") as f:
+            json.dump(self._wsdata, f, sort_keys=True, indent=2)
+
     def get(self, key_path, default=None):
         try:
-            value = self
+            value = self._data
             for k in key_path.split("."):
                 value = value[k]
             return value
@@ -51,3 +57,35 @@ class ConfigProcessor(dict):
                 return default
             else:
                 raise ConfigKeyError(key_path)
+
+    def update(self, key_path, data, write_wsconf=True):
+        newdata = data
+        for k in reversed(key_path.split(".")):
+            newdata = {k: newdata}
+
+        self._data = merge_nested_dicts(self._data, deepcopy(newdata))
+        self._wsdata = merge_nested_dicts(self._wsdata, newdata)
+
+        if write_wsconf:
+            self._write_wsconf()
+
+    def delete(self, key_path, write_wsconf=True):
+        if "." in key_path:
+            _parts = key_path.split(".")
+            _parent = ".".join(_parts[:-1])
+            _delkey = _parts[-1]
+
+            # del from current session
+            del self.get(_parent)[_delkey]
+
+            # del from workspace
+            _tmpwsd = self._wsdata
+            for k in _parent.split("."):
+                _tmpwsd = _tmpwsd[k]
+            del _tmpwsd[_delkey]
+        else:
+            del self._data[key_path]
+            del self._wsdata[key_path]
+
+        if write_wsconf:
+            self._write_wsconf()

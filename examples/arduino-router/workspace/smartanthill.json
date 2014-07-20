@@ -1,18 +1,28 @@
 {
-    "services":
-    {
-        "device":
-        {
-            "enabled": true,
-            "options":
-            {
-                "128":
-                {
-                    "board": "arduino_pro5v",
-                    "connection": "serial:port=/dev/tty.SLAB_USBtoUART:baudrate=9600",
-                    "router": true
-                }
-            }
+  "services": {
+    "device": {
+      "enabled": true, 
+      "options": {
+        "128": {
+          "boardId": "Arduino_Pro16MHzATmega168", 
+          "id": 128, 
+          "name": "My Arduino", 
+          "network": {
+            "bridges": [], 
+            "router": "serial:port=/dev/tty.SLAB_USBtoUART:baudrate=9600"
+          }, 
+          "operationIds": [
+            0, 
+            137, 
+            138, 
+            139, 
+            140, 
+            141, 
+            142, 
+            143
+          ]
         }
+      }
     }
+  }
 }
