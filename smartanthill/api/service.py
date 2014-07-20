@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 from twisted.python.constants import FlagConstant
-from twisted.python.reflect import namedAny
+from twisted.python.reflect import namedModule
 
 from smartanthill.api.handler import APIHandlerBase
 from smartanthill.configprocessor import ConfigProcessor
@@ -23,7 +23,7 @@ class APIService(SAMultiService):
             if "enabled" not in _options or not _options['enabled']:
                 continue
             path = "smartanthill.api.%s" % _name
-            service = namedAny(path).makeService("api.%s" % _name, _options)
+            service = namedModule(path).makeService("api.%s" % _name, _options)
             service.setServiceParent(self)
 
         SAMultiService.startService(self)
@@ -40,11 +40,12 @@ class APIService(SAMultiService):
             if "enabled" not in sopt or not sopt['enabled']:
                 continue
             try:
-                apimodule = namedAny("smartanthill.%s.api" % name)
-            except AttributeError:
+                handlers = namedModule(
+                    "smartanthill.%s.api" % name).get_handlers()
+            except (ImportError, AttributeError):
                 continue
 
-            for handler in apimodule.get_handlers():
+            for handler in handlers:
                 if handler.KEY and handler.PERMISSION:
                     self.log.info("Auto-loaded '%s:%s' handler" % (
                         handler.PERMISSION.name, handler.KEY))

@@ -75,6 +75,7 @@ class REST(Resource):
             self._restservice.log.error(result)
 
         if request.path.endswith(".json"):
+            request.setHeader("content-type", "application/json")
             request.write(self.result_to_json(result))
         elif isinstance(result, Failure):
             request.write("Error: " + self.failure_to_errmsg(result))

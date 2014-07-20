@@ -18,7 +18,10 @@ def singleton(cls):
 def get_service_named(name):
     """ Returns SmartAnthill Service's instance by specified name  """
     from smartanthill.service import SmartAnthillService
-    return SmartAnthillService.instance().getServiceNamed(name)
+    if name == "sas":
+        return SmartAnthillService.instance()
+    else:
+        return SmartAnthillService.instance().getServiceNamed(name)
 
 
 def load_config(path):
@@ -51,3 +54,8 @@ def calc_crc16(dataset):
         crc = crc_table[tbl_idx & 0x0f] ^ (crc >> 4)
 
     return crc & 0xffff
+
+
+def dump(obj):
+    for attr in dir(obj):
+        print "obj.%s = %s" % (attr, getattr(obj, attr))
