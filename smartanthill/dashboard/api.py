@@ -14,6 +14,8 @@ from smartanthill.log import Logger
 from smartanthill.util import get_service_named
 from smartanthill.webrouter import WebRouter
 
+# pylint: disable=W0613
+
 router = WebRouter(prefix="/api")
 
 
@@ -29,7 +31,7 @@ def cors(request):
 
 
 @router.add("/boards$")
-def get_boards(_):
+def get_boards(request):
     boards = get_service_named("device").get_boards()
     data = [{"id": id_, "name": board.get_name()} for id_, board in
             boards.iteritems()]
@@ -37,7 +39,7 @@ def get_boards(_):
 
 
 @router.add("/boards/<board_id>")
-def get_board_info(_, board_id):
+def get_board_info(request, board_id):
     board = get_service_named("device").get_board(board_id)
     data = {
         "id": board_id,
@@ -56,7 +58,7 @@ def get_board_info(_, board_id):
 
 
 @router.add("/devices$")
-def get_devices(_):
+def get_devices(request):
     devices = get_service_named("device").get_devices()
     data = [{
         "id": id_,
@@ -67,7 +69,7 @@ def get_devices(_):
 
 
 @router.add("/devices/<int:devid>")
-def get_device_info(_, devid):
+def get_device_info(request, devid):
     assert 0 < devid <= 255
     device = get_service_named("device").get_device(devid)
     data = {
@@ -93,7 +95,7 @@ def update_device(request, devid):
 
 
 @router.add("/devices/<int:devid>", method="DELETE")
-def delete_device(_, devid):
+def delete_device(request, devid):
     assert 0 < devid <= 255
     ConfigProcessor().delete("services.device.options.%d" % devid)
     sas = get_service_named("sas")
@@ -104,13 +106,13 @@ def delete_device(_, devid):
 
 
 @router.add("/operations")
-def get_operations(_):
+def get_operations(request):
     return [{"id": item.value, "name": item.name} for item in
             OperationType.iterconstants()]
 
 
 @router.add("/serialports")
-def get_serialports(_):
+def get_serialports(request):
     import os
     if os.name == "nt":
         from serial.tools.list_ports_windows import comports
