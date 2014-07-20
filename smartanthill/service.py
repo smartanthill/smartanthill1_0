@@ -66,17 +66,29 @@ class SmartAnthillService(SAMultiService):
             "#wsdir#", self.workspacedir).replace("#dashboard#", dashboard))
 
         self.log.debug("Initial configuration: %s." % self.config)
-        self._preload_subservices(self.config['services'])
+        self._preload_subservices()
         SAMultiService.startService(self)
 
-    def _preload_subservices(self, services):
-        services = sorted(services.items(), key=lambda s: s[1]['priority'])
-        for (name, sopt) in services:
-            if "enabled" not in sopt or not sopt['enabled']:
-                continue
-            path = "smartanthill.%s.service" % name
-            service = namedModule(path).makeService(name, sopt['options'])
-            service.setServiceParent(self)
+    def _preload_subservices(self):
+        services = sorted(self.config.get("services").items(), key=lambda s:
+                          s[1]['priority'])
+        for name, _ in services:
+            self.startSubService(name)
+
+    def startSubService(self, name):
+        sopt = self.config.get("services.%s" % name)
+        if "enabled" not in sopt or not sopt['enabled']:
+            return
+        path = "smartanthill.%s.service" % name
+        service = namedModule(path).makeService(name, sopt['options'])
+        service.setServiceParent(self)
+
+    def stopSubService(self, name):
+        self.removeService(self.getServiceNamed(name))
+
+    def restartSubService(self, name):
+        self.stopSubService(name)
+        self.startSubService(name)
 
 
 class Options(usage.Options):
