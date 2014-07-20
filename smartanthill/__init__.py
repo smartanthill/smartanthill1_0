@@ -9,6 +9,7 @@ __version__ = ".".join([str(s) for s in VERSION])
 __title__ = "smartanthill"
 __description__ = "An intelligent micro-oriented networking system"
 __url__ = "http://smartanthill.ikravets.com"
+__docsurl__ = "http://docs.smartanthill.ikravets.com"
 
 __author__ = "Ivan Kravets"
 __email__ = "me@ikravets.com"
@@ -29,6 +30,6 @@ __banner__ = """
 """.format(version=__version__,
            description=__description__,
            home=__url__,
-           docs="http://docs.smartanthill.ikravets.com/",
+           docs=__docsurl__,
            issues="https://github.com/ivankravets/smartanthill/issues",
            license=__copyright__ + ", " + __license__)
