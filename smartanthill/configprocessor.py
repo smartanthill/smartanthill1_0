@@ -46,6 +46,13 @@ class ConfigProcessor(object):
         with open(self.wsconfp.path, "w") as f:
             json.dump(self._wsdata, f, sort_keys=True, indent=2)
 
+    def __contains__(self, key):
+        try:
+            self.get(key)
+            return True
+        except:
+            return False
+
     def get(self, key_path, default=None):
         try:
             value = self._data

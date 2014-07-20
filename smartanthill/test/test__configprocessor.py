@@ -25,7 +25,7 @@ class ConfigProcessorCase(TestCase):
         self.assertTrue(self.config.get("logger.level"))
 
         _service_structure = set(["enabled", "priority", "options"])
-        for v in self.config["services"].values():
+        for v in self.config.get("services").values():
             self.assertEqual(set(v.keys()), _service_structure)
 
     def test_useroptions(self):
