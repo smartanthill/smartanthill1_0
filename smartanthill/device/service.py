@@ -20,16 +20,14 @@ class DeviceService(SAMultiService):
         self._devices = {}
 
     def startService(self):
-
-        for devid, devoptions in self.options.items():
+        for devid, devoptions in self.options.get("devices", {}).items():
             devid = int(devid)
             assert 0 < devid <= 255
             assert "boardId" in devoptions
             assert "network" in devoptions
 
             try:
-                devobj = Device(devid, devoptions)
-                self._devices[devid] = devobj
+                self._devices[devid] = Device(devid, devoptions)
             except DeviceUnknownBoard, e:
                 self.log.error(e)
 

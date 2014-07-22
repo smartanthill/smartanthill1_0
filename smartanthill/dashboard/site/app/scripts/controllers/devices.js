@@ -130,7 +130,7 @@ angular.module('siteApp')
     $scope.submitted = false;
   };
 
-  /* End Handlers bock */
+  /* End Handlers block */
 
   var usedDevIds = {};
   siteStorage.devices.query(function(data) {

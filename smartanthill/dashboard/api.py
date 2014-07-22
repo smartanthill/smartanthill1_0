@@ -85,7 +85,7 @@ def get_device_info(request, devid):
 @router.add("/devices/<int:devid>", method="POST")
 def update_device(request, devid):
     assert 0 < devid <= 255
-    ConfigProcessor().update("services.device.options.%d" % devid,
+    ConfigProcessor().update("services.device.options.devices.%d" % devid,
                              json.loads(request.content.read()))
     sas = get_service_named("sas")
     sas.stopSubService("network")
@@ -97,7 +97,7 @@ def update_device(request, devid):
 @router.add("/devices/<int:devid>", method="DELETE")
 def delete_device(request, devid):
     assert 0 < devid <= 255
-    ConfigProcessor().delete("services.device.options.%d" % devid)
+    ConfigProcessor().delete("services.device.options.devices.%d" % devid)
     sas = get_service_named("sas")
     sas.stopSubService("network")
     sas.restartSubService("device")
