@@ -12,7 +12,7 @@ angular.module('siteApp')
 })
 
 .controller('DeviceInfoCtrl', function($scope, $routeParams, $location,
-  siteStorage, toaster) {
+  $modal, siteStorage, notifyUser) {
   $scope.operations = siteStorage.operations.query();
   $scope.device = siteStorage.devices.get({
       deviceId: $routeParams.deviceId
@@ -32,31 +32,189 @@ angular.module('siteApp')
     $scope.device.$delete()
 
     .then(function() {
-      toaster.pop(
-        'success',
-        'Device #' + devId,
-        'Devices has been successfully deleted!');
+      notifyUser(
+        'success', 'Device #' + devId + ' has been successfully deleted!');
 
-      siteStorage.clearCache();
       $location.path('/devices');
 
     }, function(data) {
-      toaster.pop(
-        'error', ('An unexpected error occurred when deleteing device (' +
+      notifyUser(
+        'error', ('An unexpected error occurred when deleting device (' +
           data.data + ')')
       );
     });
   };
 
+  $scope.trainIt = function() {
+    var modalInstance = $modal.open({
+      templateUrl: 'views/device_trainit.html',
+      controller: 'DeviceTrainItCtrl',
+      backdrop: false,
+      keyboard: false,
+      resolve: {
+        device: function() {
+          return $scope.device;
+        },
+        operations: function() {
+          return $scope.operations;
+        }
+      }
+    });
+
+    modalInstance.result.then(function(result) {
+      notifyUser('success', result);
+    }, function(failure) {
+      if (failure) {
+        notifyUser('error', failure);
+      }
+    });
+  };
+
+})
+
+.controller('DeviceTrainItCtrl', function($q, $scope, $resource,
+  $modalInstance, siteConfig, siteStorage, device, operations) {
+
+  $scope.serialports = siteStorage.serialports.query();
+  $scope.device = device;
+  $scope.selectedSerialPort = {};
+  $scope.progressbar = {
+    value: 0,
+    info: ''
+
+  };
+  $scope.btnDisabled = {
+    start: false,
+    cancel: false
+  };
+
+  // Deferred chain
+  $scope.deferCancalled = false;
+  $scope.deferred = $q.defer();
+  $scope.deferred.promise.then(function(ccopts) {
+    $scope.btnDisabled.start = true;
+    $scope.progressbar.value = 20;
+    $scope.progressbar.info = 'Building...';
+
+    return $resource('http://localhost:8130/').save(ccopts).$promise;
+  }, function(failure) {
+    return $q.reject(failure);
+  })
+
+  // building promise
+  .then(function(result) {
+      if ($scope.deferCancalled) {
+        return $q.reject();
+      }
+
+      $scope.btnDisabled.cancel = true;
+      $scope.progressbar.value = 60;
+      $scope.progressbar.info = 'Uploading...';
+
+      var data = result;
+      data.serialport = $scope.selectedSerialPort.selected.port;
+      return $resource(siteConfig.apiURL + 'devices/:deviceId/uploadfw', {
+        deviceId: device.id
+      }).save(data).$promise;
+    },
+    function(failure) {
+      var errMsg = '';
+      if (!failure || angular.isString(failure)) {
+        errMsg = failure;
+      } else {
+        errMsg = 'An unexpected error occurred when building firmware.';
+        if (angular.isObject(failure) && failure.data) {
+          errMsg += ' ' + failure.data;
+        }
+      }
+      return $q.reject(errMsg);
+    })
+
+  // uploading promise
+  .then(function(result) {
+      if ($scope.deferCancalled) {
+        return $q.reject();
+      }
+      $scope.progressbar.value = 100;
+      $scope.progressbar.info = 'Completed!';
+      return result.result;
+    },
+    function(failure) {
+      var errMsg = '';
+      if (!failure || angular.isString(failure)) {
+        errMsg = failure;
+      } else {
+        errMsg = 'An unexpected error occurred when uploading firmware.';
+        if (angular.isObject(failure) && failure.data) {
+          errMsg += ' ' + failure.data;
+        }
+      }
+      return $q.reject(errMsg);
+    })
+
+  .then(function(result) {
+    console.log(result);
+      $modalInstance.close('The device has been successfully Train It!-ed. ' +
+                           result);
+    },
+    function(failure) {
+      if (!failure && $scope.btnDisabled.start) {
+        failure = 'The Train It! operation has been cancelled!';
+      }
+      $modalInstance.dismiss(failure);
+    });
+
+  /**
+   * Preparing defines for Cloud Compiler
+   */
+  var ccDefines = {
+    DEVICE_ID: device.id
+  };
+
+  // process operations
+  angular.forEach(operations, function(item) {
+    if (device.operationIds.indexOf(item.id) === -1) {
+      return;
+    }
+    ccDefines[item.name] = item.id;
+  });
+
+  // process network data
+  var _routerURI = device.network.router;
+  switch (_routerURI.substring(0, _routerURI.indexOf(':'))) {
+    case 'serial':
+      ccDefines.ROUTER_SERIAL = null;
+      var match = new RegExp('baudrate=(\\d+)', 'i').exec(_routerURI);
+      ccDefines.ROUTER_SERIAL_BAUDRATE = parseInt(match ? match[1] : 9600);
+      break;
+  }
+
+  // console.log(ccDefines);
+
+  $scope.start = function() {
+    $scope.deferred.resolve({
+      'pioenv': device.boardId,
+      'defines': ccDefines
+    });
+  };
+
+  $scope.cancel = function() {
+    $scope.deferred.reject();
+    $scope.deferCancalled = true;
+  };
+
+  $scope.finish = function() {
+    $modalInstance.close('The device has been successfully Train It!-ed.');
+  };
+
 })
 
 .controller('DeviceAddOrEditCtrl', function($q, $scope, $routeParams,
-  siteStorage, toaster) {
+  $location, siteStorage, notifyUser) {
   $scope.selectBoard = {};
   $scope.editMode = false;
   $scope.prevState = {};
   $scope.operations = siteStorage.operations.query();
-
   /**
    * Handlers
    */
@@ -93,28 +251,21 @@ angular.module('siteApp')
     var _prevOpIDs = $scope.device.operationIds;
     $scope.device.operationIds = [];
     angular.forEach(_prevOpIDs, function(value, id) {
-      $scope.device.operationIds.push(parseInt(id));
+      if (value) {
+        $scope.device.operationIds.push(parseInt(id));
+      }
     });
 
     $scope.device.$save()
 
     .then(function() {
-      toaster.pop(
-        'success',
-        'Device #' + $scope.device.id,
-        'Settings has been successfully ' + (
-          $scope.editMode ? 'updated' : 'added'));
-
-      $scope.flipDeviceOperIDs();
-      $scope.prevState = angular.copy($scope.device);
-      $scope.editMode = true;
-      siteStorage.clearCache();
-
+      notifyUser('success', 'Settings has been successfully ' + (
+        $scope.editMode ? 'updated' : 'added'));
+      $location.path('/devices/' + $scope.device.id);
     }, function(data) {
-      toaster.pop(
-        'error', ('An unexpected error occurred when ' + (
-            $scope.editMode ? 'updating' : 'adding') + ' settings (' +
-          data.data + ')')
+      notifyUser('error', ('An unexpected error occurred when ' + (
+        $scope.editMode ? 'updating' : 'adding') + ' settings (' +
+        data.data + ')')
       );
       $scope.flipDeviceOperIDs();
     })
@@ -148,22 +299,24 @@ angular.module('siteApp')
       });
       return $scope.device.$promise;
     })
-      .then(function() {
-        $scope.boards = siteStorage.boards.query();
-        return $scope.boards.$promise;
-      })
-      .then(function() {
-        angular.forEach($scope.boards, function(item) {
-          if (item.id === $scope.device.boardId) {
-            $scope.selectBoard.selected = item;
-          }
-        });
 
-        $scope.flipDeviceOperIDs();
+    .then(function() {
+      $scope.boards = siteStorage.boards.query();
+      return $scope.boards.$promise;
+    })
 
-        $scope.prevState = angular.copy($scope.device);
-        $scope.editMode = true;
+    .then(function() {
+      angular.forEach($scope.boards, function(item) {
+        if (item.id === $scope.device.boardId) {
+          $scope.selectBoard.selected = item;
+        }
       });
+
+      $scope.flipDeviceOperIDs();
+
+      $scope.prevState = angular.copy($scope.device);
+      $scope.editMode = true;
+    });
     deferred.resolve();
 
   } else {

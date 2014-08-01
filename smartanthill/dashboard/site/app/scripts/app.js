@@ -18,7 +18,7 @@ angular.module('siteApp', [
 ])
 
 .constant('siteConfig', {
-  apiURL: (parseInt(location.port) === 9000? '//localhost:8138' : '') + '/api/'
+  apiURL: (parseInt(location.port) === 9000 ? '//localhost:8138' : '') + '/api/'
 })
 
 .config(function($routeProvider) {
@@ -61,22 +61,40 @@ angular.module('siteApp', [
 })
 
 .factory('siteStorage', function($http, $resource, $cacheFactory, siteConfig) {
-  $http.defaults.cache = $cacheFactory('api');
   return {
-    clearCache: function() {
-      $http.defaults.cache.removeAll();
-    },
     operations: $resource(siteConfig.apiURL + 'operations'),
-    boards: $resource(siteConfig.apiURL  + 'boards/:boardId', {
+    boards: $resource(siteConfig.apiURL + 'boards/:boardId', {
       boardId: '@id'
     }),
-    devices: $resource(siteConfig.apiURL  + 'devices/:deviceId', {
+    devices: $resource(siteConfig.apiURL + 'devices/:deviceId', {
       deviceId: '@id'
-    })
+    }),
+    serialports: $resource(siteConfig.apiURL + 'serialports')
   };
 })
 
-.controller('SiteController', function($scope, $rootScope, $location) {
+.factory('notifyUser', function($log, toaster) {
+  return function(type, message) {
+    switch (type) {
+      case 'success':
+        $log.info(message);
+        toaster.pop('success', message);
+        break;
+
+      case 'warning':
+        $log.warn(message);
+        toaster.pop('warning', message);
+        break;
+
+      default:
+        $log.error(message);
+        toaster.pop('error', message);
+        break;
+    }
+  };
+})
+
+.controller('SiteController', function($scope, $location) {
 
   $scope.isRouteActive = function(route) {
     return $location.path().lastIndexOf(route, 0) === 0;

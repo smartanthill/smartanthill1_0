@@ -3,6 +3,7 @@
 
 import json
 
+from platformio.util import get_serialports
 from twisted.internet.defer import maybeDeferred
 from twisted.python.failure import Failure
 from twisted.web.resource import Resource
@@ -38,7 +39,7 @@ def get_boards(request):
     return sorted(data, key=lambda d: d['id'])
 
 
-@router.add("/boards/<board_id>")
+@router.add("/boards/<board_id>$")
 def get_board_info(request, board_id):
     board = get_service_named("device").get_board(board_id)
     data = {
@@ -68,7 +69,7 @@ def get_devices(request):
     return sorted(data, key=lambda d: d['id'])
 
 
-@router.add("/devices/<int:devid>")
+@router.add("/devices/<int:devid>$")
 def get_device_info(request, devid):
     assert 0 < devid <= 255
     device = get_service_named("device").get_device(devid)
@@ -82,7 +83,7 @@ def get_device_info(request, devid):
     return data
 
 
-@router.add("/devices/<int:devid>", method="POST")
+@router.add("/devices/<int:devid>$", method="POST")
 def update_device(request, devid):
     assert 0 < devid <= 255
     ConfigProcessor().update("services.device.options.devices.%d" % devid,
@@ -94,7 +95,7 @@ def update_device(request, devid):
     return get_device_info(request, devid)
 
 
-@router.add("/devices/<int:devid>", method="DELETE")
+@router.add("/devices/<int:devid>$", method="DELETE")
 def delete_device(request, devid):
     assert 0 < devid <= 255
     ConfigProcessor().delete("services.device.options.devices.%d" % devid)
@@ -105,6 +106,22 @@ def delete_device(request, devid):
     return None
 
 
+@router.add("/devices/<int:devid>/uploadfw", method="POST")
+def uploadfw_device(request, devid):
+    assert 0 < devid <= 255
+
+    def _on_upload_result(result):
+        get_service_named("sas").startSubService("network")
+        return result
+
+    get_service_named("sas").stopSubService("network")
+    device = get_service_named("device").get_device(devid)
+    d = maybeDeferred(device.upload_firmware,
+                      json.loads(request.content.read()))
+    d.addBoth(_on_upload_result)
+    return d
+
+
 @router.add("/operations")
 def get_operations(request):
     return [{"id": item.value, "name": item.name} for item in
@@ -112,16 +129,12 @@ def get_operations(request):
 
 
 @router.add("/serialports")
-def get_serialports(request):
-    import os
-    if os.name == "nt":
-        from serial.tools.list_ports_windows import comports
-    elif os.name == 'posix':
-        from serial.tools.list_ports_posix import comports
-    else:
-        raise ImportError("Sorry: no implementation for your platform ('%s') "
-                          "available" % os.name)
-    data = [{"port": p, "decription": d, "hwid": h} for p, d, h in comports()]
+def get_serialports_route(request):
+    data = get_serialports()
+    for item in data:
+        for k in ["hwid", "description"]:
+            if item[k] == "n/a":
+                item[k] = None
     return data
 
 
