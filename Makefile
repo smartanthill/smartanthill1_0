@@ -1,38 +1,41 @@
-.PHONY: all docs clean-doc clean-py pushrtfd buildfw debug-demo debug-dashboard build-dashboard test clean
+.PHONY: all docs firmware clean test clean
 
 all: docs
 
 docs:
 	$(MAKE) -C docs/ html
 
-clean-doc:
+docs-clean:
 	rm -R docs/_build
 
-clean-py:
-	find . -name '*.pyc' -exec rm -f {} +
-	find . -name '*.pyo' -exec rm -f {} +
-	rm twisted/plugins/dropin.cache
-
-clean-dashboard:
-	cd smartanthill/dashboard/site; grunt clean 
-
-pushrtfd:
-	curl -X POST http://readthedocs.org/build/smartanthill
-
-build-firmware:
+firmware:
 	cd embedded/firmware; platformio run -t upload
 
-debug-demo:
+sa-debug:
 	smartanthill --workspacedir=examples/arduino-router/workspace --logger.level=DEBUG
 
-debug-dashboard:
+cc-debug:
+	twistd -n --pidfile=twistd-cc.pid smartanthill-cc
+
+dashboard-build:
+	cd smartanthill/dashboard/site; grunt build
+
+dashboard-debug:
 	cd smartanthill/dashboard/site; grunt serve
 
-build-dashboard:
-	cd smartanthill/dashboard/site; grunt build
+dashboard-clean:
+	cd smartanthill/dashboard/site; grunt clean
 
 test:
 	tox
 	cd smartanthill/dashboard/site; grunt test
 
-clean: clean-doc clean-py clean-dashboard
+py-clean:
+	find . -name '*.pyc' -exec rm -f {} +
+	find . -name '*.pyo' -exec rm -f {} +
+	rm twisted/plugins/dropin.cache
+
+push-rtd:
+	curl -X POST http://readthedocs.org/build/smartanthill
+
+clean: docs-clean py-clean dashboard-clean
