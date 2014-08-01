@@ -1,11 +1,9 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-# pylint: disable=E0611
-
 from os.path import join
 
-from twisted.application.internet import TCPServer
+from twisted.application.internet import TCPServer  # pylint: disable=E0611
 from twisted.python.log import NullFile
 from twisted.python.util import sibpath
 from twisted.web import server, static

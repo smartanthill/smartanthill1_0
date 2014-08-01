@@ -20,7 +20,7 @@ class APIService(SAMultiService):
         self.autoload_handlers()
 
         for _name, _options in self.options.items():
-            if "enabled" not in _options or not _options['enabled']:
+            if not _options.get("enabled", False):
                 continue
             path = "smartanthill.api.%s" % _name
             service = namedModule(path).makeService("api.%s" % _name, _options)
@@ -37,7 +37,7 @@ class APIService(SAMultiService):
         services = ConfigProcessor().get("services")
         services = sorted(services.items(), key=lambda s: s[1]['priority'])
         for (name, sopt) in services:
-            if "enabled" not in sopt or not sopt['enabled']:
+            if not sopt.get("enabled", False):
                 continue
             try:
                 handlers = namedModule(

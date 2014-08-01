@@ -13,6 +13,10 @@ class LiteMQService(SAMultiService):
         SAMultiService.__init__(self, name, options)
         self._exchanges = {}
 
+    def stopService(self):
+        assert self._exchanges == {}
+        SAMultiService.stopService(self)
+
     def declare_exchange(self, name, type_="direct"):
         if name in self._exchanges:
             return

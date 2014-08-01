@@ -1,11 +1,9 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-# pylint: disable=E0611
-
 from json import dumps as json_dumps
 
-from twisted.application.internet import TCPServer
+from twisted.application.internet import TCPServer  # pylint: disable=E0611
 from twisted.internet.defer import maybeDeferred
 from twisted.python.failure import Failure
 from twisted.python.log import NullFile

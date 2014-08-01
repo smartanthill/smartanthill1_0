@@ -8,9 +8,9 @@ from twisted.python import usage
 from twisted.python.filepath import FilePath
 from twisted.python.reflect import namedModule
 
-from smartanthill import __banner__, __version__
+from smartanthill import __banner__, __description__, __version__
 from smartanthill.configprocessor import ConfigProcessor, get_baseconf
-from smartanthill.log import Logger
+from smartanthill.log import Console, Logger
 
 
 class SAMultiService(MultiService):
@@ -53,6 +53,8 @@ class SmartAnthillService(SAMultiService):
         SmartAnthillService.INSTANCE = self
         self.workspacedir = options['workspacedir']
         self.config = ConfigProcessor(self.workspacedir, options)
+        self.console = Console(100)
+        self._logmessages = []
         SAMultiService.__init__(self, name, options)
 
     @staticmethod
@@ -69,15 +71,9 @@ class SmartAnthillService(SAMultiService):
         self._preload_subservices()
         SAMultiService.startService(self)
 
-    def _preload_subservices(self):
-        services = sorted(self.config.get("services").items(), key=lambda s:
-                          s[1]['priority'])
-        for name, _ in services:
-            self.startSubService(name)
-
     def startSubService(self, name):
         sopt = self.config.get("services.%s" % name)
-        if "enabled" not in sopt or not sopt['enabled']:
+        if not sopt.get("enabled", False):
             return
         path = "smartanthill.%s.service" % name
         service = namedModule(path).makeService(name, sopt['options'])
@@ -90,6 +86,12 @@ class SmartAnthillService(SAMultiService):
         self.stopSubService(name)
         self.startSubService(name)
 
+    def _preload_subservices(self):
+        services = sorted(self.config.get("services").items(), key=lambda s:
+                          s[1]['priority'])
+        for name, _ in services:
+            self.startSubService(name)
+
 
 class Options(usage.Options):
     optParameters = [["workspacedir", "w", ".",
@@ -98,8 +100,7 @@ class Options(usage.Options):
     compData = usage.Completions(
         optActions={"workspacedir": usage.CompleteDirs()})
 
-    longdesc = "SmartAnthill is an intelligent micro-oriented "\
-        "networking system (version %s)" % __version__
+    longdesc = "%s (version %s)" % (__description__, __version__)
 
     allowed_defconf_opts = ("logger.level",)
 

@@ -9,7 +9,7 @@ from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks, maybeDeferred, returnValue
 from twisted.internet.serialport import SerialPort
 
-import smartanthill.network.protocol as p
+import smartanthill.network.protocol as sanp
 from smartanthill.exception import NetworkRouterConnectFailure
 from smartanthill.service import SAMultiService
 from smartanthill.util import get_service_named
@@ -19,7 +19,7 @@ class ControlService(SAMultiService):
 
     def __init__(self, name):
         SAMultiService.__init__(self, name)
-        self._protocol = p.ControlProtocolWrapping(
+        self._protocol = sanp.ControlProtocolWrapping(
             self.climessage_protocallback)
         self._litemq = None
 
@@ -59,7 +59,7 @@ class TransportService(SAMultiService):
 
     def __init__(self, name):
         SAMultiService.__init__(self, name)
-        self._protocol = p.TransportProtocolWrapping(
+        self._protocol = sanp.TransportProtocolWrapping(
             self.rawmessage_protocallback)
         self._litemq = None
 
@@ -93,7 +93,7 @@ class TransportService(SAMultiService):
     @inlineCallbacks
     def outmessage_mqcallback(self, message, properties):
         self.log.debug("Received outgoing message %s" % hexlify(message))
-        ctrlmsg = p.ControlProtocol.rawmessage_to_message(message)
+        ctrlmsg = sanp.ControlProtocol.rawmessage_to_message(message)
 
         def _on_err(failure):
             self._litemq.produce("network", "transport->err", ctrlmsg)
@@ -113,7 +113,9 @@ class RouterService(SAMultiService):
 
     def __init__(self, name, options):
         SAMultiService.__init__(self, name, options)
-        self._protocol = p.RoutingProtocolWrapping(self.inpacket_protocallback)
+        self._protocol = sanp.RoutingProtocolWrapping(
+            self.inpacket_protocallback)
+        self._router_device = None
         self._litemq = None
         self._reconnect_nums = 0
         self._reconnect_callid = None
@@ -131,9 +133,8 @@ class RouterService(SAMultiService):
                     _kwargs['deviceNameOrPortNumber'] = _kwargs['port']
                     del _kwargs['port']
 
-                SerialPort(**_kwargs)
-        except Exception, e:
-            print e
+                self._router_device = SerialPort(**_kwargs)
+        except:
             self.log.error(NetworkRouterConnectFailure(self.options))
             self._reconnect_nums += 1
             self._reconnect_callid = reactor.callLater(
@@ -141,21 +142,28 @@ class RouterService(SAMultiService):
             return
 
         self._litemq = get_service_named("litemq")
-        self._litemq.consume("network", "routing.out", "transport->routing",
-                             self.outsegment_mqcallback)
+        self._litemq.consume(
+            exchange="network",
+            queue="routing.out." + self.name,
+            routing_key="transport->routing",
+            callback=self.outsegment_mqcallback
+        )
+
         SAMultiService.startService(self)
 
     def stopService(self):
         SAMultiService.stopService(self)
         if self._reconnect_callid:
             self._reconnect_callid.cancel()
+        if self._router_device:
+            self._router_device.loseConnection()
         if self._litemq:
-            self._litemq.unconsume("network", "routing.out")
+            self._litemq.unconsume("network", "routing.out." + self.name)
 
     def inpacket_protocallback(self, packet):
         self.log.debug("Received incoming packet %s" % hexlify(packet))
         self._litemq.produce("network", "routing->transport",
-                             p.RoutingProtocol.packet_to_segment(packet),
+                             sanp.RoutingProtocol.packet_to_segment(packet),
                              dict(binary=True))
 
     def outsegment_mqcallback(self, message, properties):
