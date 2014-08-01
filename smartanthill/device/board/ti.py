@@ -7,9 +7,6 @@ from smartanthill.device.board.base import BoardBase
 class BoardTIMSP430G2Base(BoardBase):
     VENDOR = "Texas Instruments"
 
-    PLATFORMIO_PLATFORM = "timsp430"
-    PLATFORMIO_FRAMEWORK = "energia"
-
     PINS = range(2, 16) + [18, 19]
     PINS_ALIAS = dict(
         # Labels
@@ -66,7 +63,6 @@ class BoardTIMSP430G2Base(BoardBase):
 class Board_TI_LPmsp430g2231(BoardTIMSP430G2Base):
 
     NAME = "TI LaunchPad MSP430 (msp430g2231)"
-    PLATFORMIO_BOARD = "lpmsp430g2231"
 
     def __init__(self):
         self.PINS_ALIAS['MOSI'] = 14
@@ -76,7 +72,6 @@ class Board_TI_LPmsp430g2231(BoardTIMSP430G2Base):
 class Board_TI_LPmsp430g2452(BoardTIMSP430G2Base):
 
     NAME = "TI LaunchPad MSP430 (msp430g2452)"
-    PLATFORMIO_BOARD = "lpmsp430g2452"
 
     PWM_PINS = (4, 14)
 
@@ -88,28 +83,23 @@ class Board_TI_LPmsp430g2452(BoardTIMSP430G2Base):
 class Board_TI_LPmsp430g2553(BoardTIMSP430G2Base):
 
     NAME = "TI LaunchPad MSP430 (msp430g2553)"
-    PLATFORMIO_BOARD = "lpmsp430g2553"
 
 
 class Board_TI_FPmsp430fr5739(BoardTIMSP430G2Base):
 
     NAME = "TI FraunchPad MSP430 (msp430fr5739)"
-    PLATFORMIO_BOARD = "lpmsp430fr5739"
 
 
 class Board_TI_LPmsp430f5529(BoardTIMSP430G2Base):
 
     NAME = "TI LaunchPad MSP430 (msp430f5529, 16MHz)"
-    PLATFORMIO_BOARD = "lpmsp430f5529"
 
 
 class Board_TI_LPmsp430f5529_25(BoardTIMSP430G2Base):
 
     NAME = "TI LaunchPad MSP430 (msp430f5529, 25MHz)"
-    PLATFORMIO_BOARD = "lpmsp430f5529_25"
 
 
 class Board_TI_LPmsp430fr5969(BoardTIMSP430G2Base):
 
     NAME = "TI LaunchPad MSP430 (msp430fr5969)"
-    PLATFORMIO_BOARD = "lpmsp430fr5969"

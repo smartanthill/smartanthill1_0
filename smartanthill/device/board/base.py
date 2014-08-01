@@ -30,10 +30,6 @@ class BoardBase(object):
     NAME = None
     INFO_URL = __docsurl__
 
-    PLATFORMIO_PLATFORM = None
-    PLATFORMIO_FRAMEWORK = None
-    PLATFORMIO_BOARD = None
-
     PINS_ALIAS = None
     PINS = None
     ANALOG_PINS = None

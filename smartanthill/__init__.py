@@ -4,6 +4,8 @@
 # pylint: disable=W1401
 
 VERSION = (0, 0, 0)
+FIRMWARE_VERSION = (1, 0)
+
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "smartanthill"
