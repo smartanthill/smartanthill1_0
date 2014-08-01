@@ -138,6 +138,11 @@ def get_serialports_route(request):
     return data
 
 
+@router.add("/console")
+def console(request):
+    return get_service_named("sas").console.get_messages()
+
+
 class REST(Resource):
 
     isLeaf = True

@@ -74,3 +74,20 @@ class Logger(object):
             log.err(*msg, **params)
         else:
             log.msg(*msg, **params)
+
+
+class Console(object):
+
+    def __init__(self, buffer_size):
+        self.buffer_size = buffer_size
+        self._messages = []
+        log.addObserver(self.on_emit)
+
+    def get_messages(self):
+        return self._messages
+
+    def on_emit(self, data):
+        level = data['_salevel'].name if "_salevel" in data else None
+        self._messages.append(
+            (data['message'], data['system'].split("#")[0], level)
+        )
