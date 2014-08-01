@@ -22,7 +22,7 @@ Super-Quick
 -----------
 
 To install or upgrade |SA|, download
-`get-smartanthill.py <https://raw.githubusercontent.com/ivankravets/smartanthill/develop/scripts/get-smartanthill.py>`_ script.
+`get-smartanthill.py <https://raw.githubusercontent.com/ivankravets/smartanthill/develop/get-smartanthill.py>`_ script.
 
 Then run the following (which may require administrator access):
 
@@ -34,7 +34,7 @@ An alternative short version for *Mac/Linux* users:
 
 .. code-block:: bash
 
-    $ curl -L http://bit.ly/1ofLO1D | python
+    $ curl -L http://bit.ly/1qyr6K1 | python
 
 
 On *Windows OS* it may look like:
