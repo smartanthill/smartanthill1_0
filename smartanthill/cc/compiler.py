@@ -51,7 +51,7 @@ class PlatformIOBuilder(object):
         output = utils.getProcessOutput(
             "platformio", args=("run", "-e", self.env_name),
             env=environ.update(newenvs),
-            path=sibpath(__file__, "firmware")
+            path=sibpath(__file__, "embedded")
         )
         output.addCallbacks(self._on_run_callback, self._on_run_errback)
         return self._defer

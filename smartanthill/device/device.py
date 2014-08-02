@@ -58,7 +58,7 @@ class Device(object):
         tmp_dir = mkdtemp()
         platformioini_path = sibpath(
             dirname(__file__),
-            join("cc", "firmware", "platformio.ini")
+            join("cc", "embedded", "platformio.ini")
         )
 
         # show Alias: uploader
