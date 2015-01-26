@@ -1,8 +1,8 @@
 SmartAnthill
 ============
 
-.. image:: https://travis-ci.org/ivankravets/smartanthill.svg?branch=develop
-    :target: https://travis-ci.org/ivankravets/smartanthill
+.. image:: https://travis-ci.org/smartanthill/smartanthill.svg?branch=develop
+    :target: https://travis-ci.org/smartanthill/smartanthill
     :alt: Build Status
 .. image:: https://coveralls.io/repos/ivankravets/smartanthill/badge.png?branch=develop
     :target: https://coveralls.io/r/ivankravets/smartanthill?branch=develop
