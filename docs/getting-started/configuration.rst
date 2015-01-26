@@ -26,7 +26,7 @@ Base Configuration
 ------------------
 
 The *Base Configuration* is predefined in |SASys|.
-See `config_base.json <https://github.com/ivankravets/smartanthill/blob/develop/smartanthill/config_base.json>`_.
+See `config_base.json <https://github.com/smartanthill/smartanthill1_0/blob/develop/smartanthill/config_base.json>`_.
 
 
 .. _wsdir:
