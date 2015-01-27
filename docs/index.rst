@@ -1,8 +1,8 @@
 .. |SA| replace:: *SmartAnthill*
 .. |SANet| replace:: *SmartAnthill Network*
 
-SmartAnthill: An intelligent micro-oriented networking system
-=============================================================
+SmartAnthill 1.0: An intelligent micro-oriented networking system
+=================================================================
 
 :Release: |release|
 :Date:    |today|
@@ -10,9 +10,8 @@ SmartAnthill: An intelligent micro-oriented networking system
 :Home:    http://smartanthill.ikravets.com
 
 .. warning::
-    |SA| has not been released yet. The documentation is being updated. Please
-    `follow us <http://smartanthill.ikravets.com>`_ and you will be
-    informed about all news.
+    The further work on the |SA| Project has been moved to 
+    `SmartAnthill 2.0 <https://github.com/smartanthill>`_.
 
 **SmartAnthill** opens the door for people that are not familiar with
 electronics and micro-controller programming, but earlier had dream to use it.
