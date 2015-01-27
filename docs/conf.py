@@ -44,7 +44,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'SmartAnthill'
+project = u'SmartAnthill 1.0'
 copyright = u'2013-2014, Ivan Kravets'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -242,8 +242,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'SmartAnthill', u'SmartAnthill Documentation',
-   u'Ivan Kravets', 'SmartAnthill', 'One line description of project.',
+  ('index', 'SmartAnthill 1.0', u'SmartAnthill Documentation',
+   u'Ivan Kravets', 'SmartAnthill 1.0', 'One line description of project.',
    'Miscellaneous'),
 ]
 
