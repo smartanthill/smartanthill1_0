@@ -21,13 +21,13 @@ SmartAnthill
 | `Issues <https://github.com/ivankravets/smartanthill/issues>`_
 | `Twitter <http://twitter.com/smartanthill>`_
 
-`SmartAnthill <http://smartanthill.ikravets.com/>`_ is an
+**SmartAnthill** is an
 intelligent micro-oriented networking system. It opens the door for people that
 are not familiar with electronics and micro-controller programming, but earlier
 had dream to use it. The main goal of SmartAnthill is to destroy the wall
 between usual user and hardware world. Thanks to this system we can combine
 the independent micro-devices or micro-based networks into general
-`SmartAnthill Network <http://docs.smartanthill.ikravets.com/en/latest/specification/network/index.html>`_.
+`SmartAnthill Network <http://smartanthill-10.readthedocs.org/en/latest/specification/network/index.html>`_.
 
 You do not need to learn micro-programming languages, you do not need to install
 any *IDE* or *Toolchain*. All you need is to connect micro-device to
@@ -47,17 +47,6 @@ Applications
 * Energy
 * Data acquisition
 * System management
-
-Home Page
----------
-
-All information about this project you can find on special
-`SmartAnthill Home Page <http://smartanthill.ikravets.com>`_.
-
-Documentation
--------------
-
-You can find detailed `documentation here <http://docs.smartanthill.ikravets.com/>`_.
 
 Questions
 ---------
