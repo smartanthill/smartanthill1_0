@@ -17,7 +17,7 @@ SmartAnthill
     :alt:  License
 
 `Home <http://smartanthill.ikravets.com>`_
-| `Documentation <http://docs.smartanthill.ikravets.com/>`_
+| `Documentation <http://smartanthill-10.readthedocs.org/en/latest//>`_
 | `Issues <https://github.com/ivankravets/smartanthill/issues>`_
 | `Twitter <http://twitter.com/smartanthill>`_
 
