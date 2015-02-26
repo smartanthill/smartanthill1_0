@@ -4,15 +4,12 @@ SmartAnthill
 .. image:: https://travis-ci.org/smartanthill/smartanthill1_0.svg?branch=develop
     :target: https://travis-ci.org/smartanthill/smartanthill1_0
     :alt: Build Status
-.. image:: https://coveralls.io/repos/smartanthill/smartanthill1_0/badge.svg 
+.. image:: https://coveralls.io/repos/smartanthill/smartanthill1_0/badge.svg
     :target: https://coveralls.io/r/smartanthill/smartanthill1_0
-.. image:: https://gemnasium.com/ivankravets/smartanthill.png
-    :target: https://gemnasium.com/ivankravets/smartanthill
+.. image:: https://gemnasium.com/smartanthill/smartanthill1_0.svg
+    :target: https://gemnasium.com/smartanthill/smartanthill1_0
     :alt: Dependency Status
-.. image:: https://pypip.in/version/smartanthill/badge.png
-    :target: https://pypi.python.org/pypi/smartanthill/
-    :alt: Latest Version
-.. image:: https://pypip.in/license/smartanthill/badge.png
+.. image:: https://pypip.in/license/platformio/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/smartanthill/
     :alt:  License
 
