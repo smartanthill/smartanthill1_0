@@ -28,8 +28,8 @@ class ConfigProcessor(object):
         self._process_user_options(user_options)
 
     def _process_workspace_conf(self):
-        if (not self.wsconfp.exists()
-                or not self.wsconfp.isfile()):  # pragma: no cover
+        if (not self.wsconfp.exists() or not
+                self.wsconfp.isfile()):  # pragma: no cover
             return
         self._wsdata = load_config(self.wsconfp.path)
         self._data = merge_nested_dicts(self._data, deepcopy(self._wsdata))

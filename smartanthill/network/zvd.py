@@ -44,9 +44,12 @@ class ZeroVirtualDevice(object):
             return
 
         for item in self._resqueue:
-            if (item[1].get_dataclassifier() == message.get_dataclassifier()
-                    and item[1].source == message.destination
-                    and item[1].destination == message.source):
+            conds = [
+                item[1].get_dataclassifier() == message.get_dataclassifier(),
+                item[1].source == message.destination,
+                item[1].destination == message.source
+            ]
+            if all(conds):
                 self._resqueue.remove(item)
                 item[0].callback(message.data)
                 return True
