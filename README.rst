@@ -4,7 +4,7 @@ SmartAnthill
 .. image:: https://travis-ci.org/smartanthill/smartanthill1_0.svg?branch=develop
     :target: https://travis-ci.org/smartanthill/smartanthill1_0
     :alt: Build Status
-.. image:: https://coveralls.io/repos/smartanthill/smartanthill1_0/badge.svg
+.. image:: https://coveralls.io/repos/smartanthill/smartanthill1_0/badge.svg?branch=develop
     :target: https://coveralls.io/r/smartanthill/smartanthill1_0
 .. image:: https://gemnasium.com/smartanthill/smartanthill1_0.svg
     :target: https://gemnasium.com/smartanthill/smartanthill1_0
